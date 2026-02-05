@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/utils/app_images.dart';
-import 'package:islami/features/Quran/data/repo/quran_repo_impl.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/manager/quran_cubit/quran_cubit.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/search_textfield.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/sura_list.dart';
-import 'package:islami/features/home/presentation/views/home_view.dart';
 import 'package:islami/generated/l10n.dart';
 
 class QuranView extends StatelessWidget {
