@@ -9,9 +9,7 @@ import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Sebha/presentation/views/local_sypha.dart';
 
 class SebhaView extends StatefulWidget {
-  const SebhaView({
-    super.key,
-  });
+  const SebhaView({super.key});
 
   @override
   State<SebhaView> createState() => _SebhaViewState();
@@ -28,7 +26,7 @@ class _SebhaViewState extends State<SebhaView> {
   @override
   void initState() {
     super.initState();
-    total = Prefs.getData(key: 'الاجمالي') ?? 0;
+    total = Prefs.getData(key: 'total') ?? 0;
     openBox();
   }
 
@@ -49,38 +47,41 @@ class _SebhaViewState extends State<SebhaView> {
           ),
         ),
         //*****Screen */
-        SizedBox(
-          height: 40.sp,
-        ),
+        SizedBox(height: 40.sp),
         //carosel text
         carousalSliderSection(),
-        SizedBox(
-          height: 20.sp,
-        ),
+        SizedBox(height: 20.sp),
         GestureDetector(
           onTap: () {
-            counter++;
-            syphaBox.getAt(currentIndex)!.counter = counter.toString();
-            total++;
-            setState(() {});
+            setState(() {
+              counter++;
+              total++;
+              // تعديل القيمة في الأوبجكت
+              var currentItem = syphaBox.getAt(currentIndex)!;
+              currentItem.counter = counter.toString();
+
+              // السطر السحري اللي كان ناقصك (عشان يسيف فعلياً):
+              syphaBox.putAt(currentIndex, currentItem);
+
+              // سيف الإجمالي في الـ Prefs برضه عشان يثبت
+              Prefs.saveData(key: 'الاجمالي', value: total);
+            });
           },
           child: Container(
             width: 300.sp,
             height: 350.sp,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                  Assets.imagesSebha,
-                ),
+                image: AssetImage(Assets.imagesSebha),
                 fit: BoxFit.fill,
               ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 80.sp,
-                ),
+                SizedBox(height: 80.sp),
+
+                /******** */
                 Text(
                   selectedValue,
                   style: GoogleFonts.amiri(
@@ -88,24 +89,40 @@ class _SebhaViewState extends State<SebhaView> {
                     color: Colors.white,
                   ),
                 ),
-                Text(
-                  counter.toString(),
-                  style: GoogleFonts.amiri(
+                /****** */
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                        return ScaleTransition(scale: animation, child: child);
+                      },
+                  child: Text(
+                    '$counter',
+                    
+                    key: ValueKey<int>(
+                      counter,
+                    ), // مهم جداً عشان يعرف إن الرقم اتغير
+                    style: GoogleFonts.amiri(
                       fontSize: 30.sp,
                       color: Colors.white,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                      fontFeatures: [
+                    // const FontFeature.tabularFigures(), // بيخلي الأرقام تحت بعضها لو في لستة
+                    const FontFeature('arab'), // تفعيل خصائص الأرقام العربية
+                  ],
+                    ),
+                  ),
                 ),
+               
               ],
             ),
           ),
         ),
-        // Chose Sebha Name
 
+        // Chose Sebha Name
         Row(
           children: [
-            const Spacer(
-              flex: 1,
-            ),
+            const Spacer(flex: 1),
             GestureDetector(
               onTap: () {
                 log("Refresh");
@@ -120,9 +137,7 @@ class _SebhaViewState extends State<SebhaView> {
                 color: Colors.white,
               ),
             ),
-            const Spacer(
-              flex: 5,
-            ),
+            const Spacer(flex: 5),
             GestureDetector(
               onTap: () {
                 log("Reset");
@@ -135,18 +150,43 @@ class _SebhaViewState extends State<SebhaView> {
                 color: Colors.white,
               ),
             ),
-            const Spacer(
-              flex: 1,
+            const Spacer(flex: 1),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'الاجمالي :',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: Text(
+                '$total',
+                key: ValueKey<int>(
+                  counter,
+                ), // مهم جداً عشان يعرف إن الرقم اتغير
+                style: GoogleFonts.amiri(
+                  fontSize: 30.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontFeatures: [
+                    // const FontFeature.tabularFigures(), // بيخلي الأرقام تحت بعضها لو في لستة
+                    const FontFeature('arab'), // تفعيل خصائص الأرقام العربية
+                  ],
+                ),
+              ),
             ),
           ],
         ),
-        Text(
-          'Total : $total',
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold),
-        )
       ],
     );
   }
@@ -155,10 +195,7 @@ class _SebhaViewState extends State<SebhaView> {
     return CarouselSlider.builder(
       itemBuilder: (context, index, realIndex) => Text(
         syphaBox.getAt(index)!.name,
-        style: GoogleFonts.amiri(
-          fontSize: 36.sp,
-          color: Colors.white,
-        ),
+        style: GoogleFonts.amiri(fontSize: 36.sp, color: Colors.white),
       ),
       itemCount: 4,
       options: CarouselOptions(
@@ -191,19 +228,19 @@ class _SebhaViewState extends State<SebhaView> {
               child: Column(
                 children: [
                   Column(
-                    children: List.generate(
-                      4,
-                      (index) {
-                        return Text.rich(
-                          TextSpan(children: [
+                    children: List.generate(4, (index) {
+                      return Text.rich(
+                        TextSpan(
+                          children: [
                             TextSpan(text: syphaBox.getAt(index)!.name),
                             const TextSpan(text: " : "),
                             TextSpan(
-                                text: syphaBox.getAt(index)!.historyCounter)
-                          ]),
-                        );
-                      },
-                    ),
+                              text: syphaBox.getAt(index)!.historyCounter,
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
                   ),
                   Divider(
                     color: Colors.black,
@@ -214,10 +251,11 @@ class _SebhaViewState extends State<SebhaView> {
                   Text(
                     'الاجمالي : ${totalHistoryCounter()}',
                     style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold),
-                  )
+                      color: Colors.black,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -246,13 +284,14 @@ class _SebhaViewState extends State<SebhaView> {
   }
 
   void clearHistoryData() {
-    log('lets clean it ********');
-    for (var item in syphaBox.values) {
-      // item.counter = '0';
+    for (int i = 0; i < syphaBox.length; i++) {
+      var item = syphaBox.getAt(i)!;
       item.historyCounter = '0';
+      syphaBox.putAt(i, item); // حفظ التعديل
     }
     totalHistory = 0;
     printAllData();
+    setState(() {});
   }
 
   int totalCounter() {
@@ -267,22 +306,24 @@ class _SebhaViewState extends State<SebhaView> {
     totalHistory = 0;
     for (var item in syphaBox.values) {
       totalHistory = totalHistory + int.parse(item.historyCounter);
-      
     }
     return totalHistory;
   }
 
   void clearCounterData() {
-    log('lets clean it ********');
-    for (var item in syphaBox.values) {
+    for (int i = 0; i < syphaBox.length; i++) {
+      var item = syphaBox.getAt(i)!;
       item.historyCounter =
           (int.parse(item.historyCounter) + int.parse(item.counter)).toString();
       item.counter = '0';
+
+      // لازم تخزن الأوبجكت بعد التعديل
+      syphaBox.putAt(i, item);
     }
     total = 0;
     counter = 0;
     Prefs.saveData(key: 'total', value: total);
-    // log(syphaBox.containsKey('counter').toString());
+    setState(() {});
   }
 
   Future<void> openBox() async {
@@ -297,9 +338,8 @@ class _SebhaViewState extends State<SebhaView> {
         LocalSypha(name: "الحمد لله", counter: '0', historyCounter: '0'),
         LocalSypha(name: "لا إله إلا الله", counter: '0', historyCounter: '0'),
         LocalSypha(name: "الله أكبر", counter: '0', historyCounter: '0'),
-        LocalSypha(name:'استغفر الله', counter: '0', historyCounter: '0'),
+        LocalSypha(name: 'استغفر الله', counter: '0', historyCounter: '0'),
       ]);
-
     }
 
     // Print all data in the syphaBox
@@ -311,7 +351,7 @@ class _SebhaViewState extends State<SebhaView> {
     // Iterate through all the items in the syphaBox
     for (var item in syphaBox.values) {
       print(item.toString()); // Print each item's data
-      syphaBox.getAt(0)!.historyCounter = '20';
+      // syphaBox.getAt(0)!.historyCounter = '20';
       print('Name: ${item.name}');
       print('Counter: ${item.counter}');
       print('History Counter: ${item.historyCounter}');
