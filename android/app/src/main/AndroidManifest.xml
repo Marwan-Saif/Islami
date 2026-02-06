@@ -9,6 +9,7 @@ Retrieved 2025-12-04, License - CC BY-SA 4.0
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />  
     <application
         android:label="islami"
         android:name="${applicationName}"
