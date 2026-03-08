@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 
 class AyahNumber extends StatelessWidget {
@@ -18,13 +19,14 @@ class AyahNumber extends StatelessWidget {
       children: [
         Image.asset(
           Assets.imagesAyahNumber,
-          height: volum,
+          width: 45.w,
+          color: AppColors.primaryColor,
         ),
         Text(
           number.toString(),
           style: TextStyle(
               color: Colors.white,
-              fontSize: size ?? 20.sp,
+              fontSize:14.sp,
               fontWeight: FontWeight.bold),
         ),
       ],
