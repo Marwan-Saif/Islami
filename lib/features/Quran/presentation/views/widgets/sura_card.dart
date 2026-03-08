@@ -1,17 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
+import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/widgets/ayah_number.dart';
 import 'package:islami/features/Quran/data/models/surah_model.dart';
 import 'package:islami/generated/l10n.dart';
 
 class SuraCard extends StatelessWidget {
-  const SuraCard({
-    super.key, required this.surahModel,
-  });
-  final SurahModel surahModel ;
+  const SuraCard({super.key, required this.surahModel});
+  final SurahModel surahModel;
 
   @override
   Widget build(BuildContext context) {
@@ -19,42 +18,44 @@ class SuraCard extends StatelessWidget {
       onTap: () {
         context.push(AppRouter.surahScreen, extra: surahModel.ayahs);
       },
+      highlightColor: AppColors.primaryColor.withValues(alpha: 50),
+      splashColor: AppColors.primaryColor.withValues(alpha: 0),
       child: Row(
         textDirection: TextDirection.ltr,
         children: [
-           AyahNumber(number: surahModel.number!,),
-          const Spacer(
-            flex: 1,
-          ),
+          AyahNumber(number: surahModel.number!),
+          const Spacer(flex: 1),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text(surahModel.englishName!,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  )),
+              Text(
+                surahModel.englishName!,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(
                 '   ${S.of(context).Verse} ${surahModel.ayahs!.last.numberInSurah}',
                 textDirection: TextDirection.rtl,
-                style:  TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
                 ),
-              )
+              ),
             ],
           ),
-          const Spacer(
-            flex: 9,
-          ),
-           Text(surahModel.name!,
-              style: TextStyle(
+          const Spacer(flex: 9),
+          Text(
+            surahModel.name!,
+            style: GoogleFonts.amiri(
                 color: Colors.white,
-                fontSize: 20.sp,
+                fontSize: 26.sp,
                 fontWeight: FontWeight.bold,
-              ))
+              ),
+          ),
         ],
       ),
     );

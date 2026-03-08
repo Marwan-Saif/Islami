@@ -55,7 +55,8 @@ class AzkarListViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return SizedBox(
+      height: 200.h,
         child: ListView.separated(
       padding:
           EdgeInsetsDirectional.symmetric(vertical: 20.sp, horizontal: 20.sp),

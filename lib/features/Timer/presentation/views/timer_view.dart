@@ -10,40 +10,53 @@ class TimerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      // mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(height: 20.sp),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsetsDirectional.symmetric(horizontal: 60),
-          child: Image.asset(
-            Assets.imagesMosque001,
-            // width: 200.sp,
-            height: 150.sp,
-            fit: BoxFit.fill,
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(), 
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 20.h), 
+          
+          Container(
+            width: double.infinity,
+            margin: EdgeInsetsDirectional.symmetric(horizontal: 60.w),
+            child: Image.asset(
+              Assets.imagesMosque001,
+              height: 150.h,
+              fit: BoxFit.cover, 
+            ),
           ),
-        ),
-        SizedBox(
-          height: 20.sp,
-        ),
-        PrayerTimer(),
-        SizedBox(
-          height: 10.sp,
-        ),
-        const Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: Text(
-            '    الأذكار  ',
-            style: TextStyle(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          
+          SizedBox(height: 20.h),
+          
+          const PrayerTimer(),
+          
+          SizedBox(height: 20.h),
+          
+          Padding(
+            padding: EdgeInsetsDirectional.only(end: 20.w), 
+            child: Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Text(
+                'الأذكار', 
+                style: TextStyle(
+                  color: Colors.white, 
+                  fontSize: 18.sp, 
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
-        ),
 
-        //zekr card
-        const ZekrListView()
-      ],
+          SizedBox(height: 10.h),
+
+          
+          const ZekrListView(),
+
+          
+          SizedBox(height: 80.h), 
+        ],
+      ),
     );
   }
 }

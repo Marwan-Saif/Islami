@@ -30,12 +30,15 @@ class PrayerTimerCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            prayerName,
-            style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-                color: isHighlighted ? Colors.white : Colors.black),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              prayerName,
+              style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  color: isHighlighted ? Colors.white : Colors.black),
+            ),
           ),
           const SizedBox(height: 2),
           // Text.rich(
@@ -59,14 +62,17 @@ class PrayerTimerCard extends StatelessWidget {
           //     ],
           // ))
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              time,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 30.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isHighlighted ? Colors.white : Colors.black),
+            padding:  EdgeInsets.symmetric(horizontal: 12.0.sp),
+            child: FittedBox(
+               fit: BoxFit.scaleDown,
+              child: Text(
+                time,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isHighlighted ? Colors.white : Colors.black),
+              ),
             ),
           ),
           Text(
