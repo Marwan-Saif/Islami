@@ -47,7 +47,7 @@ class _DefaultScreenState extends State<DefaultScreen> {
             body: IndexedStack(
               index: currentIndex,
               children: [
-                QuranView(),
+                RadioView(),
 
                 // AudioPlayerScreen(),
                 QuranView(),
