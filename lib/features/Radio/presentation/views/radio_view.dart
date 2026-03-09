@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:islami/core/services/audio_services.dart';
 import 'package:islami/core/utils/app_colors.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:islami/features/Radio/data/models/audio_model.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
 class RadioView extends StatefulWidget {
   const RadioView({super.key});
@@ -14,21 +17,23 @@ class RadioView extends StatefulWidget {
 class _RadioViewState extends State<RadioView> {
   @override
   Widget build(BuildContext context) {
-    
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),  
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 20.h),
-            
 
             Center(
               child: Column(
                 children: [
-                  Icon(Icons.radio_rounded, color: AppColors.primaryColor, size: 45.sp),
+                  Icon(
+                    Icons.radio_rounded,
+                    color: AppColors.primaryColor,
+                    size: 45.sp,
+                  ),
                   Text(
                     'الراديو والتلاوات',
                     style: GoogleFonts.amiri(
@@ -40,14 +45,13 @@ class _RadioViewState extends State<RadioView> {
                 ],
               ),
             ),
-            
-            SizedBox(height: 30.h),
 
+            SizedBox(height: 30.h),
 
             const LiveRadioCard(),
 
             SizedBox(height: 30.h),
-            
+
             Text(
               'المكتبة الصوتية',
               style: TextStyle(
@@ -56,29 +60,25 @@ class _RadioViewState extends State<RadioView> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            
-            SizedBox(height: 16.h),
 
+            SizedBox(height: 16.h),
 
             _buildSelectionCard(
               title: 'اختيار القارئ',
               subtitle: 'اختر شيخك المفضل للاستماع',
               icon: Icons.person_search_rounded,
               onTap: () {
-
                 print("تم الضغط على اختيار القارئ");
               },
             ),
 
             SizedBox(height: 16.h),
 
-            
             _buildSelectionCard(
               title: 'اختيار التلاوة',
               subtitle: 'اختر السورة أو الجزء المطلوب',
               icon: Icons.menu_book_rounded,
               onTap: () {
-                
                 print("تم الضغط على اختيار التلاوة");
               },
             ),
@@ -90,7 +90,6 @@ class _RadioViewState extends State<RadioView> {
     );
   }
 
-  
   Widget _buildSelectionCard({
     required String title,
     required String subtitle,
@@ -106,11 +105,13 @@ class _RadioViewState extends State<RadioView> {
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.4),
           borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: AppColors.primaryColor.withOpacity(0.3), width: 1.5),
+          border: Border.all(
+            color: AppColors.primaryColor.withOpacity(0.3),
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
-            
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
@@ -119,10 +120,9 @@ class _RadioViewState extends State<RadioView> {
               ),
               child: Icon(icon, color: AppColors.primaryColor, size: 30.sp),
             ),
-            
+
             SizedBox(width: 20.w),
-            
-            
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,15 +138,12 @@ class _RadioViewState extends State<RadioView> {
                   SizedBox(height: 4.h),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 13.sp,
-                    ),
+                    style: TextStyle(color: Colors.white54, fontSize: 13.sp),
                   ),
                 ],
               ),
             ),
-            
+
             // سهم الدخول
             Icon(
               Icons.arrow_forward_ios_rounded,
@@ -171,50 +168,35 @@ class LiveRadioCard extends StatefulWidget {
 }
 
 class _LiveRadioCardState extends State<LiveRadioCard> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  bool isPlaying = false;
-  bool isLoading = false;
-  
-  
-  final String radioUrl = 'https://backup.qurango.net/radio/abdulbasit_abdulsamad_mojawwad';
+  // أخذ نسخة من السيرفس (Singleton) اللي عملناه في الـ Canvas
+  final AudioService _audioService = AudioService();
 
-  @override
-  void dispose() {
-    _audioPlayer.dispose(); 
-    super.dispose();
-  }
-
-  Future<void> _toggleRadio() async {
-    try {
-      if (isPlaying) {
-        await _audioPlayer.pause();
-        setState(() {
-          isPlaying = false;
-        });
-      } else {
-        setState(() {
-          isLoading = true; 
-        });
-        await _audioPlayer.play(UrlSource(radioUrl));
-        setState(() {
-          isPlaying = true;
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-        isPlaying = false;
-      });
-      print("Error playing radio: $e");
-    }
-  }
+  // تجهيز الـ Playlist كمتغير عشان نقدر نقارن بيه في الـ UI
+  final List<AudioModel> playlist = [
+    AudioModel(
+      id: 'surah_1',
+      title: 'سورة الفاتحة',
+      subtitle: 'عبد الباري محمد',
+      url: "https://backup.qurango.net/radio/abdulbari_mohammad",
+    ),
+    AudioModel(
+      id: 'surah_2',
+      title: 'سورة البقرة',
+      subtitle: 'عبد الله بصفر',
+      url: "https://backup.qurango.net/radio/abdullah_basfer",
+    ),
+    AudioModel(
+      id: 'surah_3',
+      title: 'سورة آل عمران',
+      subtitle: 'عبد الله خياط',
+      url: "https://backup.qurango.net/radio/abdullah_khayyat",
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      // height: 180.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
         gradient: LinearGradient(
@@ -244,66 +226,117 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
               color: Colors.black.withOpacity(0.1),
             ),
           ),
-          
           Padding(
             padding: EdgeInsets.all(24.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
+            child: StreamBuilder<SequenceState?>(
+              // 1. هنا بنراقب إيه اللي شغال دلوقتي في المشغل بالكامل
+              stream: _audioService.audioPlayer.sequenceStateStream,
+              builder: (context, sequenceSnapshot) {
+                final currentTag = sequenceSnapshot.data?.currentSource?.tag;
+                final MediaItem? currentMediaItem = currentTag is MediaItem ? currentTag : null;
+
+                // 2. بنحدد النصوص: لو في حاجة شغالة نعرضها، لو مفيش نعرض أول عنصر في الـ Playlist
+                final String displayTitle = currentMediaItem?.title ?? playlist.first.title;
+                final String displaySubtitle = currentMediaItem?.artist ?? playlist.first.subtitle;
+
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'البث المباشر',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    // النصوص بقت تتغير ديناميكياً
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          displaySubtitle, // اسم القارئ (مثل: عبد الباري محمد)
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          displayTitle, // اسم السورة أو الإذاعة (مثل: سورة الفاتحة)
+                          style: GoogleFonts.amiri(
+                            color: Colors.black,
+                            fontSize: 26.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'عبد الباسط عبد الصمد',
-                      style: GoogleFonts.amiri(
-                        color: Colors.black,
-                        fontSize: 26.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+
+                    // زرار التشغيل
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: StreamBuilder<PlayerState>(
+                        stream: _audioService.audioPlayer.playerStateStream,
+                        builder: (context, playerSnapshot) {
+                          final playerState = playerSnapshot.data;
+                          final processingState = playerState?.processingState;
+                          final playing = playerState?.playing ?? false;
+
+                          final bool isLoading = processingState == ProcessingState.loading || processingState == ProcessingState.buffering;
+
+                          // 1. حالة التحميل
+                          if (isLoading) {
+                            return _buildPlayButton(
+                              child: Padding(
+                                padding: EdgeInsets.all(15.w),
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primaryColor,
+                                  strokeWidth: 3,
+                                ),
+                              ),
+                            );
+                          } 
+                          // 2. حالة التشغيل (يعرض Pause)
+                          else if (playing) {
+                            return _buildPlayButton(
+                              icon: Icons.pause_rounded,
+                              onTap: _audioService.pauseAudio,
+                            );
+                          } 
+                          // 3. حالة الإيقاف أو البداية (يعرض Play)
+                          else {
+                            return _buildPlayButton(
+                              icon: Icons.play_arrow_rounded,
+                              onTap: () async {
+                                if (currentMediaItem != null) {
+                                  // لو في ملف محمل فعلاً لكن متوقف، كمل تشغيله
+                                  await _audioService.audioPlayer.play();
+                                } else {
+                                  // لو مفيش أي حاجة شغالة، ابدأ القائمة من الأول
+                                  await _audioService.playList(playlist);
+                                }
+                              },
+                            );
+                          }
+                        },
+                      )
                     ),
                   ],
-                ),
-                
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: InkWell(
-                    onTap: isLoading ? null : _toggleRadio, 
-                    child: Container(
-                      width: 60.w,
-                      height: 60.w,
-                      decoration: const BoxDecoration(
-                        color: Colors.black,
-                        shape: BoxShape.circle,
-                      ),
-                      child: isLoading 
-                          ? Padding(
-                              padding: EdgeInsets.all(15.w),
-                              child: CircularProgressIndicator(
-                                color: AppColors.primaryColor,
-                                strokeWidth: 3,
-                              ),
-                            )
-                          : Icon(
-                              isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                              color: AppColors.primaryColor,
-                              size: 35.sp,
-                            ),
-                    ),
-                  ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // دالة مساعدة لرسم الزرار الدائري بأسلوب نظيف
+  Widget _buildPlayButton({IconData? icon, Widget? child, VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 60.w,
+        height: 60.w,
+        decoration: const BoxDecoration(
+          color: Colors.black,
+          shape: BoxShape.circle,
+        ),
+        child: child ?? Icon(icon, color: AppColors.primaryColor, size: 35.sp),
       ),
     );
   }

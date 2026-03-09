@@ -15,12 +15,21 @@ import 'package:islami/features/Timer/data/hive/zekr_localdata.dart';
 import 'package:islami/generated/l10n.dart';
 
 import 'package:islami/hive_helper/register_adapters.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
-void main() async { 
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setUpServiceLocator();
   await Hive.initFlutter();
   registerAdapters();
+  // تهيئة مشغل الصوت للعمل في الخلفية وإظهار شريط الإشعارات
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+    androidShowNotificationBadge: true,
+  ); 
+  //  JustAudioBackground.init();
   await Hive.openBox<LocalSypha>('SyphaBox');
   await Hive.openBox<ZekrLocalDataMoel>(kZekrBox);
   await ScreenUtil.ensureScreenSize();
@@ -35,7 +44,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("${MediaQuery.of(context).size.height}  ${MediaQuery.of(context).size.width} ${MediaQuery.of(context).devicePixelRatio}");
+    log(
+      "${MediaQuery.of(context).size.height}  ${MediaQuery.of(context).size.width} ${MediaQuery.of(context).devicePixelRatio}",
+    );
     return ScreenUtilInit(
       minTextAdapt: true,
       designSize: const Size(395, 825),
@@ -49,9 +60,7 @@ class MainApp extends StatelessWidget {
         ],
         supportedLocales: S.delegate.supportedLocales,
         locale: const Locale('ar'),
-        theme: ThemeData(
-          textTheme: GoogleFonts.poppinsTextTheme(),
-        ),
+        theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
         routerConfig: AppRouter.router,
       ),
     );

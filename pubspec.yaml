@@ -33,6 +33,8 @@ dependencies:
   geolocator: ^13.0.4
   permission_handler: ^12.0.1
   audioplayers: ^6.6.0
+  just_audio: ^0.10.5
+  just_audio_background: ^0.0.1-beta.17
 
 dev_dependencies:
   intl_utils: ^2.8.6

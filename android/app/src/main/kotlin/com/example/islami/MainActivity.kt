@@ -1,5 +1,7 @@
 package com.example.islami
 
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity // <-- ضيف السطر ده
 
-class MainActivity : FlutterActivity()
+// غير FlutterActivity لـ AudioServiceActivity
+class MainActivity: AudioServiceActivity() {
+}
