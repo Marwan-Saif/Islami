@@ -29,6 +29,8 @@ class BottomNavItem extends StatelessWidget {
               padding: const EdgeInsets.all(5.0),
               child: Image.asset(
                 icon,
+                // الأيقونات ملفات كبيرة (البوصلة 1295px)، فبتتفك بحجم ظهورها بس
+                cacheWidth: (50 * MediaQuery.devicePixelRatioOf(context)).ceil(),
                 fit: BoxFit.fill,
                 color: isSelected
                     ? AppColors.primaryColor

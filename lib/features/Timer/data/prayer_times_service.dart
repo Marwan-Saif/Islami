@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,8 +18,10 @@ class PrayerTimesService {
   static const String _cityKey = 'prayer_city';
 
   // الافتراضي (المنوفية) لحد ما المستخدم يسمح بالموقع أو يختار مدينة
-  static final Coordinates _defaultCoordinates =
-      Coordinates(30.5657224, 31.0168763);
+  static final Coordinates _defaultCoordinates = Coordinates(
+    30.5657224,
+    31.0168763,
+  );
   static const String _defaultTimeZone = 'Africa/Cairo';
 
   /// بيزيد مع أي تغيير في الموقع أو طريقة الحساب عشان كارت المواقيت يعيد الحساب
@@ -26,9 +29,9 @@ class PrayerTimesService {
 
   // ---------- طريقة الحساب ----------
   static PrayerMethodOption get method => kPrayerMethods.firstWhere(
-        (m) => m.key == Prefs.getData(key: _methodKey),
-        orElse: () => kPrayerMethods.first,
-      );
+    (m) => m.key == Prefs.getData(key: _methodKey),
+    orElse: () => kPrayerMethods.first,
+  );
 
   static bool get isHanafi => Prefs.getData(key: _madhabKey) == 'hanafi';
 
@@ -40,9 +43,19 @@ class PrayerTimesService {
 
   /// الطريقة المختارة (الافتراضي الهيئة المصرية) والمذهب (الافتراضي الشافعي،
   /// والمكتبة بتخلي الحنفي هو الافتراضي فلازم نحدده)
-  static PrayerCalculationParameters calculationParameters() {
-    final params = method.parameters();
-    params.madhab = isHanafi ? PrayerMadhab.hanafi : PrayerMadhab.shafi;
+  static PrayerCalculationParameters calculationParameters() =>
+      _parameters(method.key, isHanafi);
+
+  static PrayerCalculationParameters _parameters(
+    String methodKey,
+    bool hanafi,
+  ) {
+    final option = kPrayerMethods.firstWhere(
+      (m) => m.key == methodKey,
+      orElse: () => kPrayerMethods.first,
+    );
+    final params = option.parameters();
+    params.madhab = hanafi ? PrayerMadhab.hanafi : PrayerMadhab.shafi;
     return params;
   }
 
@@ -78,16 +91,34 @@ class PrayerTimesService {
   static String get _timeZone {
     final city = manualCity;
     if (city != null) return city.timeZone;
-    return usesDeviceLocation ? NotificationHelper.location.name : _defaultTimeZone;
+    return usesDeviceLocation
+        ? NotificationHelper.location.name
+        : _defaultTimeZone;
   }
 
-  static PrayerTimes forDate(DateTime date) {
-    return PrayerTimes(
-      coordinates: _coordinates,
-      calculationParameters: calculationParameters(),
-      precision: true,
-      locationName: _timeZone,
-      dateTime: date,
+  /// مواقيت [days] يوم من [start].
+  /// مكتبة المواقيت بتعيد تحميل قاعدة بيانات المناطق الزمنية كلها مع كل يوم
+  /// (عشرات الملي ثانية على الموبايل)، فالحساب بيتعمل في isolate عشان الـ UI ميقفش
+  static Future<List<DayPrayerTimes>> forDays(DateTime start, {int days = 1}) {
+    final coordinates = _coordinates;
+    final latitude = coordinates.latitude;
+    final longitude = coordinates.longitude;
+    final methodKey = method.key;
+    final hanafi = isHanafi;
+    final timeZone = _timeZone;
+    return Isolate.run(
+      () => [
+        for (int day = 0; day < days; day++)
+          DayPrayerTimes._from(
+            PrayerTimes(
+              coordinates: Coordinates(latitude, longitude),
+              calculationParameters: _parameters(methodKey, hanafi),
+              precision: true,
+              locationName: timeZone,
+              dateTime: start.add(Duration(days: day)),
+            ),
+          ),
+      ],
     );
   }
 
@@ -140,6 +171,62 @@ class PrayerTimesService {
 
 /// بيجدول الأذان للأيام الجاية، لأن مواعيد الصلاة بتتغير كل يوم
 /// فمينفعش إشعار واحد يتكرر يومياً في نفس الساعة
+/// مواقيت يوم واحد (الفجر، الشروق، الظهر، العصر، المغرب، العشاء)
+class DayPrayerTimes {
+  DayPrayerTimes._(this._instants, this._wallTimes);
+
+  factory DayPrayerTimes._from(PrayerTimes times) {
+    final all = [
+      times.fajrStartTime!,
+      times.sunrise!,
+      times.dhuhrStartTime!,
+      times.asrStartTime!,
+      times.maghribStartTime!,
+      times.ishaStartTime!,
+    ];
+    return DayPrayerTimes._(
+      [
+        for (final time in all)
+          DateTime.fromMillisecondsSinceEpoch(time.millisecondsSinceEpoch),
+      ],
+      // TZDateTime مش بيتبعت بين الـ isolates، فبناخد الساعة بتوقيت المكان كـ DateTime عادي
+      [
+        for (final time in all)
+          DateTime(time.year, time.month, time.day, time.hour, time.minute),
+      ],
+    );
+  }
+
+  static const List<String> names = [
+    'fajr',
+    'sunrise',
+    'dhuhr',
+    'asr',
+    'maghrib',
+    'isha',
+  ];
+
+  final List<DateTime> _instants;
+  final List<DateTime> _wallTimes;
+
+  /// الوقت المطلق (للإشعارات ولمعرفة الصلاة الجاية)
+  DateTime instant(int index) => _instants[index];
+
+  /// الساعة بتوقيت المكان نفسه للعرض
+  DateTime wallTime(int index) => _wallTimes[index];
+
+  /// ترتيب الصلوات الخمس (من غير الشروق) في القايمة
+  static const List<int> prayerIndexes = [0, 2, 3, 4, 5];
+
+  /// أول وقت لسه مجاش، أو null لو العشاء عدت
+  int? nextIndex(DateTime now) {
+    for (int i = 0; i < _instants.length; i++) {
+      if (_instants[i].isAfter(now)) return i;
+    }
+    return null;
+  }
+}
+
 class PrayerNotifications {
   static const String _enabledKey = 'adhan_enabled';
   static const String _reminderKey = 'adhan_reminder_minutes';
@@ -183,7 +270,9 @@ class PrayerNotifications {
     for (int day = 0; day < _maxDaysAhead; day++) {
       for (int prayer = 0; prayer < 5; prayer++) {
         await NotificationHelper.cancelNotifications(_idFor(day, prayer));
-        await NotificationHelper.cancelNotifications(_reminderIdFor(day, prayer));
+        await NotificationHelper.cancelNotifications(
+          _reminderIdFor(day, prayer),
+        );
       }
     }
     if (!isEnabled) return;
@@ -191,23 +280,18 @@ class PrayerNotifications {
     final arabic = AppSettings.instance.isArabic;
     final reminder = reminderMinutes;
     final now = DateTime.now();
-    for (int day = 0; day < _daysAhead; day++) {
-      final times = PrayerTimesService.forDate(now.add(Duration(days: day)));
-      final prayerTimes = [
-        times.fajrStartTime,
-        times.dhuhrStartTime,
-        times.asrStartTime,
-        times.maghribStartTime,
-        times.ishaStartTime,
-      ];
-      for (int i = 0; i < prayerTimes.length; i++) {
-        final time = prayerTimes[i];
-        if (time == null || !isPrayerEnabled(i)) continue;
+    final days = await PrayerTimesService.forDays(now, days: _daysAhead);
+    for (int day = 0; day < days.length; day++) {
+      for (int i = 0; i < DayPrayerTimes.prayerIndexes.length; i++) {
+        final time = days[day].instant(DayPrayerTimes.prayerIndexes[i]);
+        if (!isPrayerEnabled(i)) continue;
         final name = prayerDisplayName(i);
         await NotificationHelper.scheduleAdhan(
           id: _idFor(day, i),
           title: arabic ? 'صلاة $name' : '$name prayer',
-          body: arabic ? 'حان الآن موعد صلاة $name' : 'It is time for $name prayer',
+          body: arabic
+              ? 'حان الآن موعد صلاة $name'
+              : 'It is time for $name prayer',
           time: time,
         );
         if (reminder > 0) {

@@ -71,6 +71,7 @@ flutter:
     - assets/sound/azan.mp3
     - assets/sound/azan_short.wav
     - assets/sound/notification.wav
+    - assets/google_fonts/
 
 flutter_assets:
   assets_path: assets/images/

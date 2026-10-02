@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -24,27 +25,49 @@ import 'package:just_audio_background/just_audio_background.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // التصميم كله مبني على الوضع الطولي (designSize 395x825)
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  _registerFontLicenses();
+  // الخطوط متضمنة في assets/google_fonts بدل ما تتنزل من النت أول مرة
+  // (كان أول تشغيل أو التشغيل من غير نت بيعرض خط تاني لحد ما الخط يوصل)
+  GoogleFonts.config.allowRuntimeFetching = false;
   setUpServiceLocator();
-  await Hive.initFlutter();
-  registerAdapters();
-  // تهيئة مشغل الصوت للعمل في الخلفية وإظهار شريط الإشعارات
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.marwansaif.islami.channel.audio',
-    androidNotificationChannelName: 'تشغيل الراديو والتلاوات',
-    androidNotificationOngoing: true,
-    androidShowNotificationBadge: true,
-  );
-  //  JustAudioBackground.init();
-  await Hive.openBox<LocalSypha>('SyphaBox');
-  await Hive.openBox<ZekrLocalDataMoel>(kZekrBox);
-  await Hive.openBox(ReadingTracker.boxName);
-  await ScreenUtil.ensureScreenSize();
-  await Prefs.init();
-  await NotificationHelper.init();
+  // كل التهيئات دي مستقلة عن بعض، فبتشتغل مع بعض بدل ما تستنى واحدة ورا التانية
+  await Future.wait([
+    // التصميم كله مبني على الوضع الطولي (designSize 395x825)
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
+    _openHiveBoxes(),
+    // تهيئة مشغل الصوت للعمل في الخلفية وإظهار شريط الإشعارات
+    JustAudioBackground.init(
+      androidNotificationChannelId: 'com.marwansaif.islami.channel.audio',
+      androidNotificationChannelName: 'تشغيل الراديو والتلاوات',
+      androidNotificationOngoing: true,
+      androidShowNotificationBadge: true,
+    ),
+    ScreenUtil.ensureScreenSize(),
+    Prefs.init(),
+    NotificationHelper.init(),
+  ]);
   runApp(const MainApp());
   _scheduleNotifications();
+}
+
+Future<void> _openHiveBoxes() async {
+  await Hive.initFlutter();
+  registerAdapters();
+  await Future.wait([
+    Hive.openBox<LocalSypha>('SyphaBox'),
+    Hive.openBox<ZekrLocalDataMoel>(kZekrBox),
+    Hive.openBox(ReadingTracker.boxName),
+  ]);
+}
+
+void _registerFontLicenses() {
+  LicenseRegistry.addLicense(() async* {
+    for (final font in ['Amiri', 'Poppins']) {
+      final license =
+          await rootBundle.loadString('assets/google_fonts/OFL-$font.txt');
+      yield LicenseEntryWithLineBreaks([font], license);
+    }
+  });
 }
 
 /// بنعيد جدولة كل الإشعارات مع كل فتحة للأبلكيشن:
@@ -68,9 +91,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log(
-      "${MediaQuery.of(context).size.height}  ${MediaQuery.of(context).size.width} ${MediaQuery.of(context).devicePixelRatio}",
-    );
     return ScreenUtilInit(
       minTextAdapt: true,
       designSize: const Size(395, 825),

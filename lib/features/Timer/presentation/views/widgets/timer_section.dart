@@ -6,7 +6,6 @@ import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_card.dart';
 import 'package:islami/generated/l10n.dart';
-import 'package:prayers_times/prayers_times.dart';
 import 'package:intl/intl.dart';
 
 class PrayerTimer extends StatefulWidget {
@@ -18,7 +17,7 @@ class PrayerTimer extends StatefulWidget {
 
 class _PrayerTimerState extends State<PrayerTimer> {
   // الأسماء والتواريخ بتتعمل format في build عشان تتغير مع لغة التطبيق
-  PrayerTimes? _prayerTimes;
+  DayPrayerTimes? _today;
   bool adhanEnabled = PrayerNotifications.isEnabled;
 
   @override
@@ -49,9 +48,10 @@ class _PrayerTimerState extends State<PrayerTimer> {
     ));
   }
 
-  void _initializePrayerTimes() {
+  Future<void> _initializePrayerTimes() async {
     // جدولة الأذان بقت في main عشان تشتغل حتى لو الشاشة دي متفتحتش
-    setState(() => _prayerTimes = PrayerTimesService.forDate(DateTime.now()));
+    final days = await PrayerTimesService.forDays(DateTime.now());
+    if (mounted) setState(() => _today = days.first);
   }
 
   Future<void> _toggleAdhan() async {
@@ -85,8 +85,8 @@ class _PrayerTimerState extends State<PrayerTimer> {
 
   @override
   Widget build(BuildContext context) {
-    final prayerTimes = _prayerTimes;
-    if (prayerTimes == null) {
+    final today = _today;
+    if (today == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -95,18 +95,17 @@ class _PrayerTimerState extends State<PrayerTimer> {
     final currentDay = DateFormat('EEEE', language).format(now);
     final currentDate = DateFormat.MMMEd(language).format(now);
     final prayerTimesList = [
-      for (final (name, time) in [
-        ('fajr', prayerTimes.fajrStartTime!),
-        ('sunrise', prayerTimes.sunrise!),
-        ('dhuhr', prayerTimes.dhuhrStartTime!),
-        ('asr', prayerTimes.asrStartTime!),
-        ('maghrib', prayerTimes.maghribStartTime!),
-        ('isha', prayerTimes.ishaStartTime!),
-      ])
-        (_prayerName(name), _formatDate(time), DateFormat('a', language).format(time)),
+      for (int i = 0; i < DayPrayerTimes.names.length; i++)
+        (
+          _prayerName(DayPrayerTimes.names[i]),
+          _formatDate(today.wallTime(i)),
+          DateFormat('a', language).format(today.wallTime(i)),
+        ),
     ];
-    final next = prayerTimes.nextPrayer();
-    final nextTime = prayerTimes.timeForPrayer(next);
+    // بعد العشاء الصلاة الجاية فجر بكرة (تقريباً نفس وقت فجر النهارده)
+    final nextIndex = today.nextIndex(now) ?? 0;
+    final next = DayPrayerTimes.names[nextIndex];
+    final nextTime = today.wallTime(nextIndex);
     final city = PrayerTimesService.manualCity;
     return Container(
       margin: EdgeInsetsDirectional.symmetric(horizontal: 20.sp),
@@ -189,12 +188,10 @@ class _PrayerTimerState extends State<PrayerTimer> {
               ),
               Expanded(
                 child: Text(
-                  nextTime == null
-                      ? ''
-                      : S.of(context).nextPrayer(
-                          _prayerName(next),
-                          DateFormat('hh:mm a', language).format(nextTime),
-                        ), 
+                  S.of(context).nextPrayer(
+                    _prayerName(next),
+                    DateFormat('hh:mm a', language).format(nextTime),
+                  ), 
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.black),
                 ),

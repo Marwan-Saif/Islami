@@ -28,6 +28,33 @@ class DefaultScreen extends StatefulWidget {
 
 class _DefaultScreenState extends State<DefaultScreen> {
   int currentIndex = 2;
+  // الرئيسية بس بتتبني مع فتح الأبلكيشن (بدل الخمس تابات مرة واحدة)،
+  // وباقي التابات بتتبني في الخلفية بعدها، وبعد كده بتفضل محفوظة في الـ IndexedStack
+  final Set<int> _builtTabs = {2};
+
+  @override
+  void initState() {
+    super.initState();
+    _prebuildTabs();
+  }
+
+  // تاب واحد كل frame بعد ما الرئيسية تستقر، عشان أول فتحة لأي تاب متهنجش
+  Future<void> _prebuildTabs() async {
+    await Future.delayed(const Duration(seconds: 2));
+    for (final index in const [1, 0, 3, 4]) {
+      if (!mounted) return;
+      if (_builtTabs.add(index)) setState(() {});
+      await WidgetsBinding.instance.endOfFrame;
+    }
+  }
+
+  static Widget _tab(int index) => switch (index) {
+        0 => const RadioView(),
+        1 => const QuranView(),
+        2 => const TimerView(),
+        3 => const SebhaView(),
+        _ => const QiblaScreen(),
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -47,19 +74,14 @@ class _DefaultScreenState extends State<DefaultScreen> {
             body: IndexedStack(
               index: currentIndex,
               children: [
-                RadioView(),
-
-                // AudioPlayerScreen(),
-                QuranView(),
-                TimerView(),
-                SebhaView(),
-                // SebhaView(),
-                QiblaScreen()
+                for (int i = 0; i < 5; i++)
+                  _builtTabs.contains(i) ? _tab(i) : const SizedBox.shrink(),
               ],
             ),
             bottomNavigationBar: CustomBottomNaBar(
               currentIndex: (index) {
                 currentIndex = index;
+                _builtTabs.add(index);
                 setState(() {});
               },
             ),

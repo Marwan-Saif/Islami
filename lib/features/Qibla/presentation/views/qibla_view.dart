@@ -152,6 +152,10 @@ class _QiblaScreenState extends State<QiblaScreen>
             )
           else if (_status != _QiblaStatus.ready)
             _buildStatusMessage(compassSize)
+          // التاب مش ظاهر (IndexedStack بيقفل الـ TickerMode): بنفصل الحساس
+          // عشان قراءاته متفضلش تعيد بناء البوصلة في الخلفية
+          else if (!TickerMode.valuesOf(context).enabled)
+            SizedBox(height: compassSize)
           else
           StreamBuilder<QiblahDirection>(
             stream: FlutterQiblah.qiblahStream,

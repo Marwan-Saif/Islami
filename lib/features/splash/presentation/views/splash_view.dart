@@ -14,23 +14,22 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 2), () {
+    super.initState();
+    // بعد أول frame بنفك صور الشاشة الرئيسية وإحنا لسه على الـ splash،
+    // عشان أول ما الرئيسية تظهر متقفش وهي بتفك الصور
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.wait([
+        Future.delayed(const Duration(milliseconds: 1200)),
+        for (final image in const [
+          Assets.imagesTajMahalAgraIndia,
+          Assets.imagesMosque001,
+          Assets.imagesTimerBackground,
+        ])
+          precacheImage(AssetImage(image), context),
+      ]);
       if (!mounted) return;
       context.go(AppRouter.homeView);
-      // if (Prefs.getData(key: kIsOnBoardingViewSeen) == true) {
-      //   // print(
-      //   //     "ابقي عدل النفجيشن للهوم لما تحط الشيرد بريفرنس بتاع تسجيل الدخول ");
-      //   if (getit.get<FirebaseAuthServices>().isUserSignedIn()) {
-      //     GoRouter.of(context).pushReplacement(AppRouter.homeView);
-      //   } else {
-      //     GoRouter.of(context).pushReplacement(AppRouter.signinView);
-      //   }
-      // } else {
-      //   GoRouter.of(context).pushReplacement(AppRouter.onBoarding);
-      // }
     });
-
-    super.initState();
   }
 
   @override
