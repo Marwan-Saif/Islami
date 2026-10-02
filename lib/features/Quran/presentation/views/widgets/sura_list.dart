@@ -11,12 +11,12 @@ class SurasList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<QuranCubit, QuranState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
+    return BlocBuilder<QuranCubit, QuranState>(
       builder: (context, state) {
-        if (state is GetQuranSuccess && state.quranModel.data!.isEmpty) {
+        if (state is! GetQuranSuccess) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state.surahs.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 40),
             child: Text(
@@ -25,14 +25,11 @@ class SurasList extends StatelessWidget {
             ),
           );
         }
-        return state is !GetQuranSuccess
-            ? const Center(
-                child: CircularProgressIndicator(),
-        ):
-        Expanded(
+        return Expanded(
           child: ListView.separated(
-              itemCount: state.quranModel.data!.length,
-              itemBuilder: (context, index) =>  SuraCard(surahModel: state.quranModel.data![index],),
+              itemCount: state.surahs.length,
+              itemBuilder: (context, index) =>
+                  SuraCard(surah: state.surahs[index]),
               separatorBuilder: (context, index) => const Divider(
                     color: Colors.grey,
                     thickness: 1.5,

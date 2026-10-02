@@ -7,7 +7,7 @@ import 'package:islami/core/services/audio_services.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/widgets/ayah_number.dart';
 import 'package:islami/features/Radio/data/models/reciter_model.dart';
-import 'package:islami/features/Radio/data/surah_names.dart';
+import 'package:islami/core/utils/quran_utils.dart';
 import 'package:islami/features/Radio/presentation/views/widgets/recitation_scaffold.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -132,7 +132,7 @@ class SurahAudioTile extends StatelessWidget {
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
-                kSurahNames[surahNumber - 1],
+                surahTitle(surahNumber),
                 style: GoogleFonts.amiri(
                   color: isCurrent ? AppColors.primaryColor : Colors.white,
                   fontSize: 20.sp,

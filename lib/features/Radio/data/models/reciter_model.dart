@@ -1,5 +1,5 @@
 import 'package:islami/features/Radio/data/models/audio_model.dart';
-import 'package:islami/features/Radio/data/surah_names.dart';
+import 'package:islami/core/utils/quran_utils.dart';
 
 class ReciterModel {
   final int id;
@@ -67,7 +67,7 @@ class MoshafModel {
         for (var surah in surahList)
           AudioModel(
             id: audioId(reciter, surah),
-            title: kSurahNames[surah - 1],
+            title: surahTitle(surah),
             subtitle: reciter.name,
             url: surahUrl(surah),
           ),

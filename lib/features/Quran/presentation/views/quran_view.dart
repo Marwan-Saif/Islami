@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/get_it.dart';
+import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/manager/quran_cubit/quran_cubit.dart';
@@ -9,10 +12,22 @@ import 'package:islami/features/Quran/presentation/views/widgets/search_textfiel
 import 'package:islami/features/Quran/presentation/views/widgets/sura_list.dart';
 import 'package:islami/generated/l10n.dart';
 
-class QuranView extends StatelessWidget {
+class QuranView extends StatefulWidget {
   const QuranView({
     super.key,
   });
+
+  @override
+  State<QuranView> createState() => _QuranViewState();
+}
+
+class _QuranViewState extends State<QuranView> {
+  String _query = '';
+
+  // البحث في الآيات محتاج كلمة حقيقية مش رقم سورة
+  bool get _canSearchAyahs =>
+      int.tryParse(_query.trim()) == null &&
+      QuranCubit.normalizeArabic(_query).length >= 2;
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +52,19 @@ class QuranView extends StatelessWidget {
               child: Column(children: [
                 Builder(
                   builder: (context) => SearchTextField(
-                    hintText: 'ابحث عن سورة بالاسم أو الرقم',
-                    onChanged: context.read<QuranCubit>().search,
+                    hintText: 'ابحث عن سورة أو آية',
+                    onChanged: (query) {
+                      setState(() => _query = query);
+                      context.read<QuranCubit>().search(query);
+                    },
                   ),
                 ),
+                if (_canSearchAyahs)
+                  _AyahSearchTile(
+                    query: _query,
+                    onTap: () => context.push(AppRouter.ayahSearchView,
+                        extra: _query.trim()),
+                  ),
                 Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(
@@ -55,6 +79,29 @@ class QuranView extends StatelessWidget {
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+class _AyahSearchTile extends StatelessWidget {
+  const _AyahSearchTile({required this.query, required this.onTap});
+  final String query;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      dense: true,
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.manage_search_rounded,
+          color: AppColors.primaryColor),
+      title: Text(
+        'ابحث في الآيات عن «${query.trim()}»',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(color: AppColors.primaryColor, fontSize: 15.sp),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:islami/features/Radio/data/models/reciter_model.dart';
-import 'package:islami/features/Radio/data/surah_names.dart';
+import 'package:islami/core/utils/quran_utils.dart';
 import 'package:islami/features/Radio/domain/recitations_repo.dart';
 import 'package:islami/features/Radio/presentation/manager/reciters_cubit/reciters_cubit.dart';
 
@@ -45,8 +45,7 @@ void main() {
       final reciter = _reciter(1, 'مشاري العفاسي');
       final playlist = reciter.moshaf.first.toPlaylist(reciter);
       expect(playlist.map((audio) => audio.title),
-          [kSurahNames[0], kSurahNames[1], kSurahNames[113]]);
-      expect(kSurahNames.length, 114);
+          [surahTitle(1), surahTitle(2), surahTitle(114)]);
       expect(playlist.every((audio) => audio.subtitle == 'مشاري العفاسي'), isTrue);
     });
 

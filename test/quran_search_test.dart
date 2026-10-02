@@ -1,56 +1,74 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:islami/features/Quran/data/models/surah_model.dart';
-import 'package:islami/features/Quran/domain/quran_repo.dart';
+import 'package:islami/core/utils/quran_utils.dart';
+import 'package:islami/features/Quran/data/repo/quran_repo_impl.dart';
 import 'package:islami/features/Quran/presentation/manager/quran_cubit/quran_cubit.dart';
-
-class _FakeQuranRepo implements QuranRepo {
-  @override
-  Future<QuranModel> getQuranData() async => QuranModel(data: [
-        // نفس شكل الأسماء في assets/data/quran.json (متشكلة)
-        SurahModel(number: 1, name: 'سُورَةُ الْفَاتِحَةِ', englishName: 'Al-Faatiha'),
-        SurahModel(number: 3, name: 'سُورَةُ آلِ عِمۡرَانَ', englishName: 'Aal-i-Imraan'),
-        SurahModel(number: 18, name: 'سُورَةُ الكَهۡفِ', englishName: 'Al-Kahf'),
-      ]);
-}
+import 'package:quran_with_tafsir/quran_with_tafsir.dart';
 
 void main() {
-  late QuranCubit cubit;
+  final repo = QuranRepoImpl();
 
-  setUp(() async {
-    cubit = QuranCubit(_FakeQuranRepo())..getQuran();
-    await Future<void>.delayed(Duration.zero);
+  group('surah search (real package data)', () {
+    late QuranCubit cubit;
+
+    setUp(() => cubit = QuranCubit(repo)..getQuran());
+    tearDown(() => cubit.close());
+
+    List<int> numbers() =>
+        (cubit.state as GetQuranSuccess).surahs.map((s) => s.number).toList();
+
+    test('loads all 114 surahs', () => expect(numbers().length, 114));
+
+    test('arabic search ignores tashkeel and the word surah', () {
+      cubit.search('الكهف');
+      expect(numbers(), [18]);
+      cubit.search('سورة ال عمران');
+      expect(numbers(), [3]);
+    });
+
+    test('english search ignores case, dashes and diacritics', () {
+      cubit.search('fatiha');
+      expect(numbers(), [1]);
+      cubit.search('KAHF');
+      expect(numbers(), [18]);
+    });
+
+    test('number search', () {
+      cubit.search('18');
+      expect(numbers(), [18]);
+    });
+
+    test('clearing the query shows all surahs', () {
+      cubit.search('kahf');
+      cubit.search('');
+      expect(numbers().length, 114);
+    });
   });
 
-  tearDown(() => cubit.close());
+  group('quran text', () {
+    test('ayah end glyphs are removed from every ayah', () {
+      final glyph = RegExp('[ﰀ-﴿]');
+      for (int surah = 1; surah <= 114; surah++) {
+        for (final ayah in repo.getAyahs(surah)) {
+          final text = cleanAyahText(ayah.text);
+          expect(glyph.hasMatch(text), isFalse, reason: '$surah:${ayah.id}');
+          expect(text.trim(), isNotEmpty);
+        }
+      }
+    });
 
-  List<int?> numbers() =>
-      (cubit.state as GetQuranSuccess).quranModel.data!.map((s) => s.number).toList();
+    test('al-baqara has 286 ayahs and tafsir for ayat al-kursi', () {
+      expect(repo.getAyahs(2).length, 286);
+      expect(repo.getTafsir(2)[255], isNotEmpty);
+    });
 
-  test('arabic search ignores tashkeel', () {
-    cubit.search('الكهف');
-    expect(numbers(), [18]);
-  });
+    test('surah titles', () {
+      expect(surahTitle(1), 'سورة الفَاتِحة');
+      expect(QuranService.instance.getSurahMetadata(9).ayahCount, 129);
+    });
 
-  test('arabic search ignores the word surah and alef forms', () {
-    cubit.search('سورة ال عمران');
-    expect(numbers(), [3]);
-    cubit.search('آل عمران');
-    expect(numbers(), [3]);
-  });
-
-  test('english search ignores case and dashes', () {
-    cubit.search('alfaatiha');
-    expect(numbers(), [1]);
-  });
-
-  test('number search', () {
-    cubit.search('18');
-    expect(numbers(), [18]);
-  });
-
-  test('clearing the query shows all surahs', () {
-    cubit.search('kahf');
-    cubit.search('');
-    expect(numbers(), [1, 3, 18]);
+    test('ayah search finds verses', () async {
+      final results = await repo.searchAyahs('الحمد لله رب العالمين');
+      expect(results.any((a) => a.surahNumber == 1 && a.id == 2), isTrue);
+    });
   });
 }

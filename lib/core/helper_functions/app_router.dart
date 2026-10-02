@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:islami/features/Quran/data/models/surah_model.dart';
+import 'package:islami/features/Quran/presentation/views/ayah_search_view.dart';
 import 'package:islami/features/Quran/presentation/views/surah_view.dart';
 import 'package:islami/features/Radio/data/models/reciter_model.dart';
 import 'package:islami/features/Radio/presentation/views/reciter_surahs_view.dart';
@@ -21,6 +21,7 @@ abstract class AppRouter {
   static const String test = '/test';
 
   static const String surahScreen = '/surahScreen';
+  static const String ayahSearchView = '/ayahSearchView';
   static const String recitersView = '/recitersView';
   static const String reciterSurahsView = '/reciterSurahsView';
 
@@ -60,10 +61,13 @@ abstract class AppRouter {
     ),
     GoRoute(
       path: surahScreen,
-      builder: (context, state) {
-        final surah = state.extra as SurahModel;
-        return SurahScreen(ayahs: surah.ayahs!, title: surah.name ?? '');
-      },
+      builder: (context, state) =>
+          SurahScreen(args: state.extra as SurahScreenArgs),
+    ),
+    GoRoute(
+      path: ayahSearchView,
+      builder: (context, state) =>
+          AyahSearchView(query: state.extra as String),
     ),
     GoRoute(
       path: recitersView,

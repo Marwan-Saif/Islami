@@ -5,14 +5,7 @@ sealed class QuranState {}
 
 final class QuranInitial extends QuranState {}
 
-final class GetQuranLoading  extends QuranState {}
-
-final class GetQuranError extends QuranState {
-  final String error;
-  GetQuranError(this.error);
-}
-
 final class GetQuranSuccess extends QuranState {
-  final QuranModel quranModel;
-  GetQuranSuccess(this.quranModel);
+  final List<SurahMetadata> surahs;
+  GetQuranSuccess(this.surahs);
 }
