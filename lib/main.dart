@@ -11,6 +11,7 @@ import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/services/shared_prefs.dart';
+import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Sebha/presentation/views/local_sypha.dart';
 import 'package:islami/features/Timer/data/azkar_notifications.dart';
 import 'package:islami/features/Timer/data/hive/zekr_localdata.dart';
@@ -37,6 +38,7 @@ void main() async {
   //  JustAudioBackground.init();
   await Hive.openBox<LocalSypha>('SyphaBox');
   await Hive.openBox<ZekrLocalDataMoel>(kZekrBox);
+  await Hive.openBox(ReadingTracker.boxName);
   await ScreenUtil.ensureScreenSize();
   await Prefs.init();
   await NotificationHelper.init();

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +9,7 @@ import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/quran_utils.dart';
 import 'package:islami/core/widgets/ayah_number.dart';
+import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/ayah_actions_sheet.dart';
 import 'package:just_audio/just_audio.dart';
@@ -30,9 +33,21 @@ class _SurahBodyState extends State<SurahBody> {
   late final List<List<Ayah>> _pages;
   late final int _initialIndex;
 
+  // متابعة التلاوة: الصفحة بتتحسب اتقرت لو آخرها ظهر على الشاشة
+  // وفضلت ظاهرة 4 ثواني على الأقل (عشان الفتح والقفل بسرعة ميتحسبش)
+  static const Duration _minReadTime = Duration(seconds: 4);
+  final ItemPositionsListener _positions = ItemPositionsListener.create();
+  final Map<int, DateTime> _firstSeen = {};
+  final Set<int> _markedPages = {};
+  Timer? _readTimer;
+
   @override
   void initState() {
     super.initState();
+    _positions.itemPositions.addListener(_checkReadPages);
+    // لو المستخدم واقف على صفحة من غير scroll الـ listener مش هيتنده
+    _readTimer = Timer.periodic(
+        const Duration(seconds: 2), (_) => _checkReadPages());
     final ayahs = getit.get<QuranRepo>().getAyahs(widget.surahNumber);
     _pages = [];
     for (final ayah in ayahs) {
@@ -50,6 +65,51 @@ class _SurahBodyState extends State<SurahBody> {
     _initialIndex = pageIndex < 0 ? 0 : pageIndex + 1;
   }
 
+  void _checkReadPages() {
+    final now = DateTime.now();
+    for (final position in _positions.itemPositions.value) {
+      if (position.index == 0) continue;
+      final visible =
+          position.itemLeadingEdge < 1 && position.itemTrailingEdge > 0;
+      if (!visible) continue;
+      final page = _pages[position.index - 1].first.page;
+      final seen = _firstSeen.putIfAbsent(page, () => now);
+      final endVisible = position.itemTrailingEdge <= 1;
+      if (endVisible &&
+          now.difference(seen) >= _minReadTime &&
+          _markedPages.add(page)) {
+        ReadingTracker.instance.markPageRead(page).then((completedKhatma) {
+          if (completedKhatma && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('مبارك! أتممت ختمة كاملة للقرآن الكريم'),
+            ));
+          }
+        });
+      }
+    }
+  }
+
+  // أول آية في أعلى صفحة ظاهرة
+  ReadingPosition? get _currentPosition {
+    final visible = _positions.itemPositions.value
+        .where((p) => p.index > 0 && p.itemTrailingEdge > 0)
+        .toList()
+      ..sort((a, b) => a.index.compareTo(b.index));
+    if (visible.isEmpty) return null;
+    final ayah = _pages[visible.first.index - 1].first;
+    return ReadingPosition(
+        surah: widget.surahNumber, ayah: ayah.id, page: ayah.page);
+  }
+
+  @override
+  void dispose() {
+    _readTimer?.cancel();
+    _positions.itemPositions.removeListener(_checkReadPages);
+    final position = _currentPosition;
+    if (position != null) ReadingTracker.instance.saveLastRead(position);
+    super.dispose();
+  }
+
   void _showAyahActions(Ayah ayah) {
     showAyahActionsSheet(context, surahNumber: widget.surahNumber, ayah: ayah);
   }
@@ -65,6 +125,7 @@ class _SurahBodyState extends State<SurahBody> {
             : null;
         return ScrollablePositionedList.builder(
           initialScrollIndex: _initialIndex,
+          itemPositionsListener: _positions,
           itemCount: _pages.length + 1,
           itemBuilder: (context, index) {
             if (index == 0) return _SurahHeader(surahNumber: widget.surahNumber);

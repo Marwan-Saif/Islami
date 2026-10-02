@@ -8,6 +8,7 @@ import 'package:islami/core/services/shared_prefs.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/quran_utils.dart';
 import 'package:islami/features/Quran/data/ayah_reciters.dart';
+import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Radio/data/models/audio_model.dart';
 import 'package:quran_with_tafsir/quran_with_tafsir.dart';
@@ -71,6 +72,22 @@ class _AyahActions extends StatefulWidget {
 class _AyahActionsState extends State<_AyahActions> {
   bool _showTafsir = false;
   AyahReciter _reciter = selectedAyahReciter;
+  late bool _bookmarked = ReadingTracker.instance
+      .isBookmarked(widget.surahNumber, widget.ayah.id);
+
+  Future<void> _toggleBookmark() async {
+    final added = await ReadingTracker.instance.toggleBookmark(ReadingPosition(
+      surah: widget.surahNumber,
+      ayah: widget.ayah.id,
+      page: widget.ayah.page,
+    ));
+    if (!mounted) return;
+    setState(() => _bookmarked = added);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(added ? 'تمت إضافة العلامة' : 'تمت إزالة العلامة'),
+      duration: const Duration(seconds: 2),
+    ));
+  }
 
   Future<void> _playAyah() async {
     Navigator.of(context).pop();
@@ -184,6 +201,13 @@ class _AyahActionsState extends State<_AyahActions> {
                       color: Colors.white, fontSize: 15.sp, height: 1.7),
                 ),
               ),
+            _ActionTile(
+              icon: _bookmarked
+                  ? Icons.bookmark_remove_rounded
+                  : Icons.bookmark_add_rounded,
+              title: _bookmarked ? 'إزالة العلامة' : 'إضافة علامة',
+              onTap: _toggleBookmark,
+            ),
             _ActionTile(
               icon: Icons.copy_rounded,
               title: 'نسخ الآية',

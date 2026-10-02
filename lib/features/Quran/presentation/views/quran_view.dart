@@ -8,6 +8,7 @@ import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/manager/quran_cubit/quran_cubit.dart';
+import 'package:islami/features/Quran/presentation/views/widgets/reading_tracker_card.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/search_textfield.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/sura_list.dart';
 import 'package:islami/generated/l10n.dart';
@@ -50,6 +51,7 @@ class _QuranViewState extends State<QuranView> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Column(children: [
+                const ReadingTrackerCard(),
                 Builder(
                   builder: (context) => SearchTextField(
                     hintText: 'ابحث عن سورة أو آية',
