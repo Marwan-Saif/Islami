@@ -2,8 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_card.dart';
 import 'package:prayers_times/prayers_times.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +22,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
   
   String nextPrayerName = '';
   String nextPrayerTimeFormatted = '';
+  bool adhanEnabled = PrayerNotifications.isEnabled;
 
   @override
   void initState() {
@@ -30,21 +31,21 @@ class _PrayerTimerState extends State<PrayerTimer> {
   }
 
   void _initializePrayerTimes() {
-    Coordinates coordinates = Coordinates(30.5657224, 31.0168763);
-
-    PrayerCalculationParameters params = PrayerCalculationMethod.karachi();
-    params.madhab = PrayerMadhab.hanafi;
-
-    PrayerTimes prayerTimes = PrayerTimes(
-      coordinates: coordinates,
-      calculationParameters: params,
-      precision: true,
-      locationName: "Africa/Cairo",
-    );
+    // جدولة الأذان بقت في main عشان تشتغل حتى لو الشاشة دي متفتحتش
+    PrayerTimes prayerTimes = PrayerTimesService.forDate(DateTime.now());
 
     _addTimesToList(prayerTimes);
     _calculateNextPrayer(prayerTimes);
-    _createNotification(prayerTimes);
+  }
+
+  Future<void> _toggleAdhan() async {
+    setState(() => adhanEnabled = !adhanEnabled);
+    await PrayerNotifications.setEnabled(adhanEnabled);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(adhanEnabled ? 'تم تفعيل الأذان' : 'تم إيقاف الأذان'),
+      duration: const Duration(seconds: 2),
+    ));
   }
 
   void _addTimesToList(PrayerTimes prayerTimes) {
@@ -80,15 +81,6 @@ class _PrayerTimerState extends State<PrayerTimer> {
 
   String _formatDate(DateTime date) {
     return DateFormat('hh:mm').format(date); 
-  }
-
-  void _createNotification(PrayerTimes prayerTimes) {
-    
-    NotificationHelper.scheduleNotification('صلاة الفجر', 'حان الآن موعد صلاة الفجر', TimeOfDay.fromDateTime(prayerTimes.fajrStartTime!), 1);
-    NotificationHelper.scheduleNotification('صلاة الظهر', 'حان الآن موعد صلاة الظهر', TimeOfDay.fromDateTime(prayerTimes.dhuhrStartTime!), 2);
-    NotificationHelper.scheduleNotification('صلاة العصر', 'حان الآن موعد صلاة العصر', TimeOfDay.fromDateTime(prayerTimes.asrStartTime!), 3);
-    NotificationHelper.scheduleNotification('صلاة المغرب', 'حان الآن موعد صلاة المغرب', TimeOfDay.fromDateTime(prayerTimes.maghribStartTime!), 4);
-    NotificationHelper.scheduleNotification('صلاة العشاء', 'حان الآن موعد صلاة العشاء', TimeOfDay.fromDateTime(prayerTimes.ishaStartTime!), 5);
   }
 
   @override
@@ -173,8 +165,12 @@ class _PrayerTimerState extends State<PrayerTimer> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.volume_off, color: Colors.black),
+                onPressed: _toggleAdhan,
+                tooltip: adhanEnabled ? 'إيقاف الأذان' : 'تفعيل الأذان',
+                icon: Icon(
+                  adhanEnabled ? Icons.volume_up : Icons.volume_off,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),

@@ -7,12 +7,14 @@ Retrieved 2025-12-04, License - CC BY-SA 4.0
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- إشعارات الأذان والأذكار: إذن الإشعارات لأندرويد 13+، وإعادة الجدولة بعد restart الموبايل -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />  
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    //*** لازم نضيف الأذونات دي عشان نقدر نتحكم في مشغل الصوت من شريط الإشعارات ونخليه يشتغل في الخلفية */
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- لازم نضيف الأذونات دي عشان نقدر نتحكم في مشغل الصوت من شريط الإشعارات ونخليه يشتغل في الخلفية -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
@@ -42,7 +44,18 @@ Retrieved 2025-12-04, License - CC BY-SA 4.0
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        //*** لازم نضيف الريسيفر ده عشان نقدر نتحكم في  زراير مشغل الصوت من شريط الإشعارات
+        <!-- من غير الريسيفرز دول flutter_local_notifications مش بتعرض الإشعارات المجدولة خالص،
+             والتاني بيرجع يجدولها بعد restart الموبايل أو تحديث الأبلكيشن -->
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+        <!-- لازم نضيف الريسيفر ده عشان نقدر نتحكم في زراير مشغل الصوت من شريط الإشعارات -->
         <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver"
             android:exported="true">
             <intent-filter>

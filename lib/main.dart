@@ -12,7 +12,9 @@ import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/services/shared_prefs.dart';
 import 'package:islami/features/Sebha/presentation/views/local_sypha.dart';
+import 'package:islami/features/Timer/data/azkar_notifications.dart';
 import 'package:islami/features/Timer/data/hive/zekr_localdata.dart';
+import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/generated/l10n.dart';
 
 import 'package:islami/hive_helper/register_adapters.dart';
@@ -36,10 +38,24 @@ void main() async {
   await Hive.openBox<LocalSypha>('SyphaBox');
   await Hive.openBox<ZekrLocalDataMoel>(kZekrBox);
   await ScreenUtil.ensureScreenSize();
-  NotificationHelper.init();
-  NotificationHelper.cancelAllNotifications();
   await Prefs.init();
+  await NotificationHelper.init();
   runApp(const MainApp());
+  _scheduleNotifications();
+}
+
+/// بنعيد جدولة كل الإشعارات مع كل فتحة للأبلكيشن:
+/// الأذان بيتجدول لأيام قدام بس، والأذكار بتتقرا من الإعدادات المتخزنة
+Future<void> _scheduleNotifications() async {
+  try {
+    await NotificationHelper.requestPermissions();
+    // بيشيل أي إشعارات قديمة بالـ IDs والـ channel القديمة قبل الجدولة
+    await NotificationHelper.cancelAllNotifications();
+    await AzkarNotifications.scheduleFromStorage();
+    await PrayerNotifications.scheduleUpcoming();
+  } catch (e) {
+    log('failed to schedule notifications: $e');
+  }
 }
 
 class MainApp extends StatelessWidget {

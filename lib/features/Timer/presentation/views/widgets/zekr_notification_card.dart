@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/utils/app_colors.dart';
+import 'package:islami/features/Timer/data/azkar_notifications.dart';
 import 'package:islami/features/Timer/data/hive/zekr_localdata.dart';
 import 'package:islami/features/Timer/domain/zekr_repo.dart';
 import 'package:islami/features/Timer/presentation/manager/Azkar/azkar_cubit.dart';
@@ -97,15 +98,20 @@ class _NotificationCardState extends State<NotificationCard> {
                             onTap: () {
                               showTimePicker(
                                 context: context,
-                                initialTime: TimeOfDay.now(),
+                                initialTime: AzkarNotifications.parseTimeOfDay(
+                                    context
+                                        .read<AzkarCubit>()
+                                        .azkarLocalDataList[widget.index]
+                                        .zekrtime),
                               ).then((value) {
-                                if (!context.mounted) return;
+                                // value بيرجع null لو المستخدم داس إلغاء
+                                if (value == null || !context.mounted) return;
                                 log(
                                   value.toString(),
                                 );
-                                //في فرق ساعتين
-                                timeOfDay = value ?? TimeOfDay.now();
-                                timePicked = "${value!.hour}:${value.minute}";
+                                timeOfDay = value;
+                                timePicked =
+                                    "${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}";
                                 log(timePicked);
                                 context.read<AzkarCubit>().updatelocalData(
                                     index: widget.index,

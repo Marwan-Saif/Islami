@@ -25,12 +25,12 @@ List<String> kFileNames = [
 List<ZekrLocalDataMoel> kAzkarData = [
   ZekrLocalDataMoel(
       zekrName: 'أذكار الصباح',
-      zekrBody: 'لا تنسي أذكار الصباح',
+      zekrBody: 'لا تنسَ أذكار الصباح',
       zekrtime: "07:00",
       zekrAllawed: true),
   ZekrLocalDataMoel(
       zekrName: 'أذكار المساء',
-      zekrBody: "'لا تنسي أذكار المساء'",
+      zekrBody: 'لا تنسَ أذكار المساء',
       zekrtime: '19:00',
       zekrAllawed: true)
 ];
