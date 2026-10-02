@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/audio_services.dart';
+import 'package:islami/core/services/get_it.dart';
+import 'package:islami/features/Radio/domain/recitations_repo.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/features/Radio/data/models/audio_model.dart';
 import 'package:just_audio/just_audio.dart';
@@ -17,6 +21,7 @@ class RadioView extends StatefulWidget {
 class _RadioViewState extends State<RadioView> {
   @override
   Widget build(BuildContext context) {
+    final lastSelection = getit.get<RecitationsRepo>().getLastSelection();
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
@@ -67,8 +72,10 @@ class _RadioViewState extends State<RadioView> {
               title: 'اختيار القارئ',
               subtitle: 'اختر شيخك المفضل للاستماع',
               icon: Icons.person_search_rounded,
-              onTap: () {
-                debugPrint("تم الضغط على اختيار القارئ");
+              onTap: () async {
+                await context.push(AppRouter.recitersView);
+                // عشان اسم القارئ في الكارت التاني يتحدث
+                if (mounted) setState(() {});
               },
             ),
 
@@ -76,10 +83,14 @@ class _RadioViewState extends State<RadioView> {
 
             _buildSelectionCard(
               title: 'اختيار التلاوة',
-              subtitle: 'اختر السورة أو الجزء المطلوب',
+              subtitle: 'السور بصوت ${lastSelection.reciter.name}',
               icon: Icons.menu_book_rounded,
-              onTap: () {
-                debugPrint("تم الضغط على اختيار التلاوة");
+              onTap: () async {
+                await context.push(
+                  AppRouter.reciterSurahsView,
+                  extra: lastSelection,
+                );
+                if (mounted) setState(() {});
               },
             ),
 
@@ -255,6 +266,8 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        // أسماء سور التلاوات متشكلة فالتشكيل بيطلع لفوق
+                        SizedBox(height: 6.h),
                         Text(
                           displayTitle, // اسم السورة أو الإذاعة (مثل: سورة الفاتحة)
                           style: GoogleFonts.amiri(

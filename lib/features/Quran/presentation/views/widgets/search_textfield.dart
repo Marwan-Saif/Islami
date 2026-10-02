@@ -4,11 +4,18 @@ import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 
 class SearchTextField extends StatelessWidget {
-  const SearchTextField({super.key});
+  const SearchTextField({
+    super.key,
+    this.hintText = 'Enter text here',
+    this.onChanged,
+  });
+  final String hintText;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      onChanged: onChanged,
       style:  TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w500,
@@ -16,7 +23,7 @@ class SearchTextField extends StatelessWidget {
           decoration: TextDecoration.none),
       decoration: InputDecoration(
         fillColor: Colors.white,
-        hintText: 'Enter text here', // Hint text
+        hintText: hintText,
         hintStyle:  TextStyle(
             color: Colors.white, fontWeight: FontWeight.w500, fontSize: 16.sp),
 

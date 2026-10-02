@@ -1,6 +1,9 @@
 import 'package:go_router/go_router.dart';
 import 'package:islami/features/Quran/data/models/surah_model.dart';
 import 'package:islami/features/Quran/presentation/views/surah_view.dart';
+import 'package:islami/features/Radio/data/models/reciter_model.dart';
+import 'package:islami/features/Radio/presentation/views/reciter_surahs_view.dart';
+import 'package:islami/features/Radio/presentation/views/reciters_view.dart';
 import 'package:islami/features/Sebha/presentation/views/test.dart';
 import 'package:islami/features/Timer/domain/zekr_entity.dart';
 import 'package:islami/features/Timer/presentation/views/zekr_view.dart';
@@ -18,6 +21,8 @@ abstract class AppRouter {
   static const String test = '/test';
 
   static const String surahScreen = '/surahScreen';
+  static const String recitersView = '/recitersView';
+  static const String reciterSurahsView = '/reciterSurahsView';
 
   // static const String signupView = '/signupView';
 
@@ -58,6 +63,21 @@ abstract class AppRouter {
       builder: (context, state) => SurahScreen(
         ayahs: state.extra as List<Ayahs>,
       ),
+    ),
+    GoRoute(
+      path: recitersView,
+      builder: (context, state) => const RecitersView(),
+    ),
+    GoRoute(
+      path: reciterSurahsView,
+      builder: (context, state) {
+        final selection =
+            state.extra as ({ReciterModel reciter, MoshafModel moshaf});
+        return ReciterSurahsView(
+          reciter: selection.reciter,
+          moshaf: selection.moshaf,
+        );
+      },
     ),
     // GoRoute(
     //   path: signupView,
