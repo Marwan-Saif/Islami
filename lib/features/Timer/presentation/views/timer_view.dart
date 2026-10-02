@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/features/Hadith/presentation/views/widgets/hadith_books_section.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_section.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/zekr_section.dart';
 
@@ -51,6 +52,8 @@ class TimerView extends StatelessWidget {
 
           
           const ZekrListView(),
+
+          const HadithBooksSection(),
 
           
           SizedBox(height: 80.h), 

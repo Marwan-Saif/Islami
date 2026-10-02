@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:islami/features/Hadith/presentation/views/hadith_list_view.dart';
+import 'package:islami/features/Hadith/presentation/views/hadith_sections_view.dart';
 import 'package:islami/features/Quran/presentation/views/ayah_search_view.dart';
 import 'package:islami/features/Quran/presentation/views/reading_tracker_view.dart';
 import 'package:islami/features/Quran/presentation/views/surah_view.dart';
@@ -24,6 +26,9 @@ abstract class AppRouter {
   static const String surahScreen = '/surahScreen';
   static const String ayahSearchView = '/ayahSearchView';
   static const String readingTrackerView = '/readingTrackerView';
+  static const String hadithSectionsView = '/hadithSectionsView';
+  static const String hadithListView = '/hadithListView';
+  static const String hadithFavoritesView = '/hadithFavoritesView';
   static const String recitersView = '/recitersView';
   static const String reciterSurahsView = '/reciterSurahsView';
 
@@ -65,6 +70,22 @@ abstract class AppRouter {
       path: surahScreen,
       builder: (context, state) =>
           SurahScreen(args: state.extra as SurahScreenArgs),
+    ),
+    GoRoute(
+      path: hadithSectionsView,
+      builder: (context, state) =>
+          HadithSectionsView(bookKey: state.extra as String),
+    ),
+    GoRoute(
+      path: hadithListView,
+      builder: (context, state) {
+        final args = state.extra as ({String book, int section});
+        return HadithListView(bookKey: args.book, sectionNumber: args.section);
+      },
+    ),
+    GoRoute(
+      path: hadithFavoritesView,
+      builder: (context, state) => const HadithFavoritesView(),
     ),
     GoRoute(
       path: readingTrackerView,
