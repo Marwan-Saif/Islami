@@ -117,7 +117,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
               Expanded(
                 flex: 2,
                 child: Text(
-                  "مواقيت الصلاه\n$currentDay",
+                  "مواقيت الصلاة\n$currentDay",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.amiri(fontSize: 18.sp, color: Colors.black, fontWeight: FontWeight.bold),
                 ),

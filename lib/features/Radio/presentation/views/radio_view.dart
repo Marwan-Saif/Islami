@@ -184,22 +184,23 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
 
   // تجهيز الـ Playlist كمتغير عشان نقدر نقارن بيه في الـ UI
   final List<AudioModel> playlist = [
+    // دي إذاعات بث مباشر لكل قارئ مش سور معينة
     AudioModel(
-      id: 'surah_1',
-      title: 'سورة الفاتحة',
-      subtitle: 'عبد الباري محمد',
+      id: 'radio_abdulbari_mohammad',
+      title: 'إذاعة عبد الباري محمد',
+      subtitle: 'بث مباشر',
       url: "https://backup.qurango.net/radio/abdulbari_mohammad",
     ),
     AudioModel(
-      id: 'surah_2',
-      title: 'سورة البقرة',
-      subtitle: 'عبد الله بصفر',
+      id: 'radio_abdullah_basfer',
+      title: 'إذاعة عبد الله بصفر',
+      subtitle: 'بث مباشر',
       url: "https://backup.qurango.net/radio/abdullah_basfer",
     ),
     AudioModel(
-      id: 'surah_3',
-      title: 'سورة آل عمران',
-      subtitle: 'عبد الله خياط',
+      id: 'radio_abdullah_khayyat',
+      title: 'إذاعة عبد الله خياط',
+      subtitle: 'بث مباشر',
       url: "https://backup.qurango.net/radio/abdullah_khayyat",
     ),
   ];

@@ -65,7 +65,8 @@ class AzkarListViewBody extends StatelessWidget {
         zekrList: azkar[index],
       ),
       separatorBuilder: (context, index) => SizedBox(width: 20.sp),
-      itemCount: 7,
+      // كان مكتوب 7 ثابت فـ "أذكار النوم" (الملف التامن) مكنتش بتظهر
+      itemCount: azkar.length,
       scrollDirection: Axis.horizontal,
     ));
   }
