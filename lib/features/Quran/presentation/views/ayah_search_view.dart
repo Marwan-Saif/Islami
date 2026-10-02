@@ -9,6 +9,7 @@ import 'package:islami/core/utils/quran_utils.dart';
 import 'package:islami/core/widgets/appbar.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/views/surah_view.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:quran_with_tafsir/quran_with_tafsir.dart';
 
 class AyahSearchView extends StatefulWidget {
@@ -27,7 +28,7 @@ class _AyahSearchViewState extends State<AyahSearchView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: customAppBar(context, 'نتائج «${widget.query}»'),
+      appBar: customAppBar(context, S.of(context).searchResultsFor(widget.query)),
       body: FutureBuilder<List<Ayah>>(
         future: _results,
         builder: (context, snapshot) {
@@ -40,7 +41,7 @@ class _AyahSearchViewState extends State<AyahSearchView> {
           if (ayahs.isEmpty) {
             return Center(
               child: Text(
-                'لا توجد آيات تحتوي على «${widget.query}»',
+                S.of(context).noAyahsFor(widget.query),
                 style: TextStyle(color: Colors.white70, fontSize: 16.sp),
               ),
             );
@@ -63,7 +64,7 @@ class _AyahSearchViewState extends State<AyahSearchView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${surahTitle(ayah.surahNumber)} • آية ${ayah.id}',
+                        S.of(context).ayahRefDot(surahTitle(ayah.surahNumber), ayah.id),
                         style: TextStyle(color: Colors.white54, fontSize: 13.sp),
                       ),
                       SizedBox(height: 4.h),

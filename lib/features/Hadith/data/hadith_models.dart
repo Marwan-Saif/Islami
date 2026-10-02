@@ -1,10 +1,21 @@
+import 'package:islami/core/services/app_settings.dart';
+import 'package:islami/generated/l10n.dart';
+
 class HadithBook {
-  const HadithBook({required this.key, required this.name, required this.sections});
+  const HadithBook({
+    required this.key,
+    required this.nameAr,
+    required this.nameEn,
+    required this.sections,
+  });
 
   /// اسم الكتاب في hadith-api (bukhari, muslim, ...)
   final String key;
-  final String name;
+  final String nameAr;
+  final String nameEn;
   final List<HadithSection> sections;
+
+  String get name => AppSettings.instance.isArabic ? nameAr : nameEn;
 }
 
 class HadithSection {
@@ -17,8 +28,8 @@ class HadithSection {
   final int lastHadith;
 
   String get rangeLabel => firstHadith == lastHadith
-      ? 'الحديث $firstHadith'
-      : 'الأحاديث $firstHadith - $lastHadith';
+      ? S.current.hadithNumber(firstHadith)
+      : S.current.hadithRange(firstHadith, lastHadith);
 }
 
 class Hadith {
@@ -26,6 +37,10 @@ class Hadith {
   final String bookKey;
   final num number;
   final String text;
+
+  // المفضلة ممكن يبقى فيها أحاديث بالعربي والإنجليزي مع بعض
+  bool get isArabic =>
+      RegExp('[؀-ۿ]').hasMatch(text.substring(0, text.length.clamp(0, 30)));
 
   Map<String, dynamic> toJson() => {'book': bookKey, 'number': number, 'text': text};
 

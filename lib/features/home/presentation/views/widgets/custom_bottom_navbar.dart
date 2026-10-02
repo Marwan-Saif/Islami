@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/home/presentation/views/widgets/bottom_nav_item.dart';
+import 'package:islami/generated/l10n.dart';
 
 class CustomBottomNaBar extends StatefulWidget {
   const CustomBottomNaBar({
@@ -17,12 +18,12 @@ class CustomBottomNaBar extends StatefulWidget {
 class _CustomBottomNaBarState extends State<CustomBottomNaBar> {
   var currentIndex = 2;
 
-  static const List<({String icon, String label})> _items = [
-    (icon: Assets.imagesRadio, label: 'Radio'),
-    (icon: Assets.imagesQuranIcon, label: 'Quran'),
-    (icon: Assets.imagesTime, label: 'Home'),
-    (icon: Assets.imagesTasbih, label: 'Tasbih'),
-    (icon: Assets.imagesCompass, label: 'Qiblah'),
+  List<({String icon, String label})> get _items => [
+    (icon: Assets.imagesRadio, label: S.of(context).navRadio),
+    (icon: Assets.imagesQuranIcon, label: S.of(context).navQuran),
+    (icon: Assets.imagesTime, label: S.of(context).navHome),
+    (icon: Assets.imagesTasbih, label: S.of(context).navTasbih),
+    (icon: Assets.imagesCompass, label: S.of(context).navQibla),
   ];
 
   @override

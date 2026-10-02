@@ -8,6 +8,7 @@ import 'package:islami/core/services/get_it.dart';
 import 'package:islami/features/Radio/domain/recitations_repo.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/features/Radio/data/models/audio_model.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
@@ -40,7 +41,7 @@ class _RadioViewState extends State<RadioView> {
                     size: 45.sp,
                   ),
                   Text(
-                    'الراديو والتلاوات',
+                    S.of(context).radioAndRecitations,
                     style: GoogleFonts.amiri(
                       color: Colors.white,
                       fontSize: 28.sp,
@@ -58,7 +59,7 @@ class _RadioViewState extends State<RadioView> {
             SizedBox(height: 30.h),
 
             Text(
-              'المكتبة الصوتية',
+              S.of(context).audioLibrary,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.sp,
@@ -69,8 +70,8 @@ class _RadioViewState extends State<RadioView> {
             SizedBox(height: 16.h),
 
             _buildSelectionCard(
-              title: 'اختيار القارئ',
-              subtitle: 'اختر شيخك المفضل للاستماع',
+              title: S.of(context).chooseReciter,
+              subtitle: S.of(context).chooseReciterSubtitle,
               icon: Icons.person_search_rounded,
               onTap: () async {
                 await context.push(AppRouter.recitersView);
@@ -82,8 +83,8 @@ class _RadioViewState extends State<RadioView> {
             SizedBox(height: 16.h),
 
             _buildSelectionCard(
-              title: 'اختيار التلاوة',
-              subtitle: 'السور بصوت ${lastSelection.reciter.name}',
+              title: S.of(context).chooseRecitation,
+              subtitle: S.of(context).surahsByReciter(lastSelection.reciter.name),
               icon: Icons.menu_book_rounded,
               onTap: () async {
                 await context.push(
@@ -183,24 +184,25 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
   final AudioService _audioService = AudioService();
 
   // تجهيز الـ Playlist كمتغير عشان نقدر نقارن بيه في الـ UI
-  final List<AudioModel> playlist = [
+  // getter عشان الأسماء تتبني بلغة التطبيق الحالية
+  List<AudioModel> get playlist => [
     // دي إذاعات بث مباشر لكل قارئ مش سور معينة
     AudioModel(
       id: 'radio_abdulbari_mohammad',
-      title: 'إذاعة عبد الباري محمد',
-      subtitle: 'بث مباشر',
+      title: S.of(context).radioAbdulbari,
+      subtitle: S.of(context).liveBroadcast,
       url: "https://backup.qurango.net/radio/abdulbari_mohammad",
     ),
     AudioModel(
       id: 'radio_abdullah_basfer',
-      title: 'إذاعة عبد الله بصفر',
-      subtitle: 'بث مباشر',
+      title: S.of(context).radioBasfar,
+      subtitle: S.of(context).liveBroadcast,
       url: "https://backup.qurango.net/radio/abdullah_basfer",
     ),
     AudioModel(
       id: 'radio_abdullah_khayyat',
-      title: 'إذاعة عبد الله خياط',
-      subtitle: 'بث مباشر',
+      title: S.of(context).radioKhayat,
+      subtitle: S.of(context).liveBroadcast,
       url: "https://backup.qurango.net/radio/abdullah_khayyat",
     ),
   ];

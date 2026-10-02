@@ -1,4 +1,5 @@
 import 'package:islami/features/Timer/data/hive/zekr_localdata.dart';
+import 'package:islami/generated/l10n.dart';
 
 String kLanguage = 'ar';
 String kZekrBox = "zekr_box";
@@ -12,16 +13,20 @@ const List<String> kFiles = [
   'assets/data/أذكا_ الطعام.json',
   'assets/data/أذكار_النوم.json',
 ];
-List<String> kFileNames = [
-  'أذكار الصباح',
-  'أذكار المساء',
-  'أذكار الصلاة',
-  'أذكار المسجد',
-  'أذكار بعد الصلاة',
-  'أذكار الاستيقاظ',
-  'أذكار الطعام',
-  'أذكار النوم',
+/// أسماء الأذكار بنفس ترتيب kFiles وبلغة التطبيق
+/// (الـ widgets تبعت S.of(context) عشان تتبني تاني لما اللغة تتغير)
+List<String> azkarNames(S s) => [
+  s.azkarMorning,
+  s.azkarEvening,
+  s.azkarPrayer,
+  s.azkarMosque,
+  s.azkarAfterPrayer,
+  s.azkarWakingUp,
+  s.azkarFood,
+  s.azkarSleep,
 ];
+
+List<String> get kFileNames => azkarNames(S.current);
 List<ZekrLocalDataMoel> kAzkarData = [
   ZekrLocalDataMoel(
       zekrName: 'أذكار الصباح',

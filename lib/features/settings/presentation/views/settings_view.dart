@@ -5,12 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/services/app_settings.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/widgets/appbar.dart';
+import 'package:islami/features/Timer/data/azkar_notifications.dart';
 import 'package:islami/features/Quran/data/ayah_reciters.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/ayah_actions_sheet.dart';
 import 'package:islami/features/Timer/data/prayer_settings_data.dart';
 import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/features/settings/presentation/views/widgets/about_section.dart';
 import 'package:islami/features/settings/presentation/views/widgets/settings_widgets.dart';
+import 'package:islami/generated/l10n.dart';
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -64,6 +66,8 @@ class _SettingsViewState extends State<SettingsView> {
 
   Future<void> _setLanguage(String code) async {
     await _settings.setLanguage(code);
+    // نصوص الإشعارات بتتكتب وقت الجدولة، فبنجدولها تاني باللغة الجديدة
+    await AzkarNotifications.scheduleFromStorage();
     await PrayerNotifications.scheduleUpcoming();
   }
 
@@ -134,9 +138,9 @@ class _SettingsViewState extends State<SettingsView> {
   Future<void> _pickMethod() async {
     final current = PrayerTimesService.method;
     final picked = await _pickFromSheet<PrayerMethodOption>(
-      title: 'طريقة حساب المواقيت',
+      title: S.of(context).prayerCalculationMethod,
       options: kPrayerMethods,
-      label: (m) => _settings.isArabic ? m.nameAr : m.nameEn,
+      label: (m) => m.name,
       isSelected: (m) => m.key == current.key,
     );
     if (picked == null) return;
@@ -148,9 +152,9 @@ class _SettingsViewState extends State<SettingsView> {
     final current = PrayerTimesService.manualCity;
     bool useGps = false;
     final picked = await _pickFromSheet<PrayerCity>(
-      title: 'الموقع',
+      title: S.of(context).location,
       options: kPrayerCities,
-      label: (c) => _settings.isArabic ? c.nameAr : c.nameEn,
+      label: (c) => c.name,
       isSelected: (c) => c.key == current?.key,
       header: Builder(
         builder: (sheetContext) => ListTile(
@@ -160,7 +164,7 @@ class _SettingsViewState extends State<SettingsView> {
           },
           leading: const Icon(Icons.my_location, color: AppColors.primaryColor),
           title: Text(
-            'استخدام موقعي الحالي (GPS)',
+            S.of(context).useMyLocation,
             style: TextStyle(color: AppColors.primaryColor, fontSize: 15.sp),
           ),
           trailing: current == null
@@ -176,9 +180,7 @@ class _SettingsViewState extends State<SettingsView> {
       setState(() {});
       if (!updated) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('فعّل الموقع واسمح للتطبيق بالوصول إليه'),
-          ),
+          SnackBar(content: Text(S.of(context).enableLocationHint)),
         );
       }
     } else if (picked != null) {
@@ -190,7 +192,7 @@ class _SettingsViewState extends State<SettingsView> {
   Future<void> _pickReciter() async {
     final current = selectedAyahReciter;
     final picked = await _pickFromSheet<AyahReciter>(
-      title: 'القارئ الافتراضي للآيات',
+      title: S.of(context).defaultAyahReciter,
       options: kAyahReciters,
       label: (r) => r.name,
       isSelected: (r) => r.id == current.id,
@@ -202,10 +204,10 @@ class _SettingsViewState extends State<SettingsView> {
 
   String get _locationLabel {
     final city = PrayerTimesService.manualCity;
-    if (city != null) return _settings.isArabic ? city.nameAr : city.nameEn;
+    if (city != null) return city.name;
     return PrayerTimesService.usesDeviceLocation
-        ? 'موقعي الحالي (GPS)'
-        : 'المنوفية (افتراضي)';
+        ? S.of(context).myLocation
+        : S.of(context).defaultCity(S.of(context).defaultCityName);
   }
 
   @override
@@ -213,12 +215,12 @@ class _SettingsViewState extends State<SettingsView> {
     final method = PrayerTimesService.method;
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: customAppBar(context, 'الإعدادات'),
+      appBar: customAppBar(context, S.of(context).settings),
       body: ListView(
         padding: EdgeInsets.all(16.r),
         children: [
           SettingsSection(
-            title: 'اللغة',
+            title: S.of(context).language,
             icon: Icons.language_rounded,
             children: [
               SegmentedChoice<String>(
@@ -229,7 +231,7 @@ class _SettingsViewState extends State<SettingsView> {
             ],
           ),
           SettingsSection(
-            title: 'صوت الأذان',
+            title: S.of(context).adhanSound,
             icon: Icons.volume_up_rounded,
             children: [
               RadioGroup<AdhanSound>(
@@ -244,10 +246,10 @@ class _SettingsViewState extends State<SettingsView> {
                         contentPadding: EdgeInsets.zero,
                         title: Text(
                           switch (sound) {
-                            AdhanSound.full => 'الأذان كاملاً',
-                            AdhanSound.short => 'أذان مختصر (أول 30 ثانية)',
-                            AdhanSound.tone => 'تنبيه قصير',
-                            AdhanSound.silent => 'صامت (إشعار فقط)',
+                            AdhanSound.full => S.of(context).adhanFull,
+                            AdhanSound.short => S.of(context).adhanShort,
+                            AdhanSound.tone => S.of(context).adhanTone,
+                            AdhanSound.silent => S.of(context).adhanSilent,
                           },
                           style: TextStyle(
                             color: Colors.white,
@@ -257,7 +259,7 @@ class _SettingsViewState extends State<SettingsView> {
                         secondary: _soundAssets.containsKey(sound)
                             ? IconButton(
                                 onPressed: () => _togglePreview(sound),
-                                tooltip: 'استماع',
+                                tooltip: S.of(context).listen,
                                 icon: Icon(
                                   _previewing == sound
                                       ? Icons.stop_circle_outlined
@@ -273,23 +275,26 @@ class _SettingsViewState extends State<SettingsView> {
             ],
           ),
           SettingsSection(
-            title: 'مواقيت الصلاة',
+            title: S.of(context).prayerTimes,
             icon: Icons.access_time_rounded,
             children: [
               SettingsTile(
-                title: 'طريقة الحساب',
-                value: _settings.isArabic ? method.nameAr : method.nameEn,
+                title: S.of(context).calculationMethod,
+                value: method.name,
                 onTap: _pickMethod,
               ),
               SettingsTile(
-                title: 'الموقع',
+                title: S.of(context).location,
                 value: _locationLabel,
                 onTap: _pickLocation,
               ),
               Padding(
                 padding: EdgeInsets.only(top: 8.h),
                 child: SegmentedChoice<bool>(
-                  options: const {false: 'العصر: شافعي', true: 'العصر: حنفي'},
+                  options: {
+                    false: S.of(context).asrShafi,
+                    true: S.of(context).asrHanafi,
+                  },
                   selected: PrayerTimesService.isHanafi,
                   onChanged: (hanafi) async {
                     await PrayerTimesService.setHanafi(hanafi);
@@ -300,7 +305,7 @@ class _SettingsViewState extends State<SettingsView> {
             ],
           ),
           SettingsSection(
-            title: 'الأذان لكل صلاة',
+            title: S.of(context).adhanPerPrayer,
             icon: Icons.notifications_active_rounded,
             children: [
               for (int prayer = 0; prayer < 5; prayer++)
@@ -313,13 +318,13 @@ class _SettingsViewState extends State<SettingsView> {
                   activeThumbColor: AppColors.primaryColor,
                   contentPadding: EdgeInsets.zero,
                   title: Text(
-                    'صلاة ${kPrayerNamesAr[prayer]}',
+                    S.of(context).prayerName(prayerDisplayName(prayer)),
                     style: TextStyle(color: Colors.white, fontSize: 15.sp),
                   ),
                 ),
               SizedBox(height: 6.h),
               Text(
-                'تذكير قبل الصلاة',
+                S.of(context).reminderBeforePrayer,
                 style: TextStyle(color: Colors.white70, fontSize: 14.sp),
               ),
               SizedBox(height: 6.h),
@@ -328,7 +333,9 @@ class _SettingsViewState extends State<SettingsView> {
                 children: [
                   for (final minutes in PrayerNotifications.reminderOptions)
                     ChoiceChip(
-                      label: Text(minutes == 0 ? 'بدون' : '$minutes دقيقة'),
+                      label: Text(minutes == 0
+                          ? S.of(context).off
+                          : S.of(context).minutesCount(minutes)),
                       selected: PrayerNotifications.reminderMinutes == minutes,
                       onSelected: (_) async {
                         await PrayerNotifications.setReminderMinutes(minutes);
@@ -347,11 +354,11 @@ class _SettingsViewState extends State<SettingsView> {
             ],
           ),
           SettingsSection(
-            title: 'القراءة',
+            title: S.of(context).reading,
             icon: Icons.menu_book_rounded,
             children: [
               Text(
-                'حجم خط المصحف',
+                S.of(context).quranFontSize,
                 style: TextStyle(color: Colors.white70, fontSize: 14.sp),
               ),
               Slider(
@@ -375,7 +382,7 @@ class _SettingsViewState extends State<SettingsView> {
                 ),
               ),
               SettingsTile(
-                title: 'القارئ الافتراضي للآيات',
+                title: S.of(context).defaultAyahReciter,
                 value: selectedAyahReciter.name,
                 onTap: _pickReciter,
               ),
@@ -388,7 +395,7 @@ class _SettingsViewState extends State<SettingsView> {
                 activeThumbColor: AppColors.primaryColor,
                 contentPadding: EdgeInsets.zero,
                 title: Text(
-                  'إظهار الترجمة الإنجليزية',
+                  S.of(context).showEnglishTranslation,
                   style: TextStyle(color: Colors.white, fontSize: 15.sp),
                 ),
                 subtitle: Text(

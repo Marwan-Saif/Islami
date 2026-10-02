@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/features/settings/presentation/views/widgets/settings_widgets.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,29 +22,28 @@ class AboutSection extends StatelessWidget {
     if (!opened && context.mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('تعذر فتح المتجر')));
+      ).showSnackBar(SnackBar(content: Text(S.of(context).storeOpenFailed)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return SettingsSection(
-      title: 'عن التطبيق',
+      title: S.of(context).aboutApp,
       icon: Icons.info_outline_rounded,
       children: [
         SettingsTile(
-          title: 'مشاركة التطبيق',
+          title: S.of(context).shareApp,
           value: null,
           icon: Icons.share_rounded,
           onTap: () => SharePlus.instance.share(
             ShareParams(
-              text:
-                  'تطبيق إسلامي: القرآن الكريم ومواقيت الصلاة والأذكار والأحاديث\n$_storeUrl',
+              text: S.of(context).shareAppText(_storeUrl),
             ),
           ),
         ),
         SettingsTile(
-          title: 'قيّم التطبيق',
+          title: S.of(context).rateApp,
           value: null,
           icon: Icons.star_rate_rounded,
           onTap: () => _rate(context),
@@ -54,7 +54,10 @@ class AboutSection extends StatelessWidget {
             padding: EdgeInsets.only(top: 8.h),
             child: Text(
               snapshot.hasData
-                  ? 'الإصدار ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
+                  ? S.of(context).appVersion(
+                      snapshot.data!.version,
+                      snapshot.data!.buildNumber,
+                    )
                   : '',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.primaryColor, fontSize: 13.sp),

@@ -6,6 +6,7 @@ import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/quran_utils.dart';
 import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Quran/presentation/views/surah_view.dart';
+import 'package:islami/generated/l10n.dart';
 
 /// كارت صغير فوق قائمة السور: الختمة والورد اليومي و"أكمل القراءة"
 class ReadingTrackerCard extends StatelessWidget {
@@ -41,7 +42,7 @@ class ReadingTrackerCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'متابعة التلاوة',
+                        S.of(context).readingTracker,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15.sp,
@@ -49,16 +50,18 @@ class ReadingTrackerCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'ورد اليوم ${tracker.todayPages}/${tracker.dailyGoal} صفحات'
-                        '${tracker.streak > 1 ? ' • ${tracker.streak} أيام متتالية' : ''}',
+                        S.of(context).todayWird(tracker.todayPages, tracker.dailyGoal) +
+                            (tracker.streak > 1 ? S.of(context).streakSuffix(tracker.streak) : ''),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                       ),
                       Text(
                         lastRead == null
-                            ? 'ابدأ ختمتك من سورة الفاتحة'
-                            : 'آخر قراءة: ${surahTitle(lastRead.surah)} - آية ${lastRead.ayah}',
+                            ? S.of(context).startKhatmaHint
+                            : S.of(context).lastReadAt(
+                                S.of(context).ayahRef(surahTitle(lastRead.surah), lastRead.ayah),
+                              ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: Colors.white54, fontSize: 12.sp),
@@ -81,7 +84,9 @@ class ReadingTrackerCard extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 14.w),
                     visualDensity: VisualDensity.compact,
                   ),
-                  child: Text(lastRead == null ? 'ابدأ' : 'أكمل'),
+                  child: Text(lastRead == null
+                      ? S.of(context).start
+                      : S.of(context).continueReading),
                 ),
               ],
             ),

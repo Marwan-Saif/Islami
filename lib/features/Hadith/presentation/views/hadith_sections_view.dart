@@ -39,7 +39,9 @@ class HadithSectionsView extends StatelessWidget {
             subtitle: Text(
               section.nameEn,
               textDirection: TextDirection.ltr,
-              textAlign: TextAlign.right,
+              textAlign: Directionality.of(context) == TextDirection.rtl
+                  ? TextAlign.right
+                  : TextAlign.left,
               style: TextStyle(color: Colors.white54, fontSize: 12.sp),
             ),
             trailing: Icon(Icons.arrow_forward_ios_rounded,

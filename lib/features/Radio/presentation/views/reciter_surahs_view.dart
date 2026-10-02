@@ -9,6 +9,7 @@ import 'package:islami/core/widgets/ayah_number.dart';
 import 'package:islami/features/Radio/data/models/reciter_model.dart';
 import 'package:islami/core/utils/quran_utils.dart';
 import 'package:islami/features/Radio/presentation/views/widgets/recitation_scaffold.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
@@ -32,7 +33,7 @@ class ReciterSurahsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RecitationScaffold(
-      title: 'التلاوات',
+      title: S.of(context).recitations,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
@@ -57,7 +58,7 @@ class ReciterSurahsView extends StatelessWidget {
                 Expanded(
                   child: _HeaderButton(
                     icon: Icons.play_arrow_rounded,
-                    label: 'تشغيل الكل',
+                    label: S.of(context).playAll,
                     filled: true,
                     onTap: () => _play(0),
                   ),
@@ -66,7 +67,7 @@ class ReciterSurahsView extends StatelessWidget {
                 Expanded(
                   child: _HeaderButton(
                     icon: Icons.swap_horiz_rounded,
-                    label: 'تغيير القارئ',
+                    label: S.of(context).changeReciter,
                     onTap: () => context.pushReplacement(AppRouter.recitersView),
                   ),
                 ),

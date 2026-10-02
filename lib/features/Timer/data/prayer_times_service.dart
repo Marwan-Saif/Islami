@@ -203,7 +203,7 @@ class PrayerNotifications {
       for (int i = 0; i < prayerTimes.length; i++) {
         final time = prayerTimes[i];
         if (time == null || !isPrayerEnabled(i)) continue;
-        final name = arabic ? kPrayerNamesAr[i] : kPrayerNamesEn[i];
+        final name = prayerDisplayName(i);
         await NotificationHelper.scheduleAdhan(
           id: _idFor(day, i),
           title: arabic ? 'صلاة $name' : '$name prayer',

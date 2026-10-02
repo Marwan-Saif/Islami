@@ -6,6 +6,7 @@ import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/features/Hadith/data/hadith_books.dart';
 import 'package:islami/features/Hadith/data/hadith_models.dart';
+import 'package:islami/generated/l10n.dart';
 
 /// قسم الأحاديث في الشاشة الرئيسية تحت الأذكار
 class HadithBooksSection extends StatelessWidget {
@@ -26,11 +27,11 @@ class HadithBooksSection extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsetsDirectional.only(end: 20.w),
+          padding: EdgeInsetsDirectional.only(start: 20.w),
           child: Align(
-            alignment: AlignmentDirectional.centerEnd,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(
-              'الأحاديث',
+              S.of(context).hadiths,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.sp,
@@ -49,7 +50,7 @@ class HadithBooksSection extends StatelessWidget {
             itemBuilder: (context, index) {
               if (index == 0) {
                 return _BookCard(
-                  title: 'المفضلة',
+                  title: S.of(context).favorites,
                   icon: Icons.favorite_rounded,
                   onTap: () => context.push(AppRouter.hadithFavoritesView),
                 );

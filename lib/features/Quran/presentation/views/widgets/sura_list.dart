@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/features/Quran/presentation/manager/quran_cubit/quran_cubit.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/sura_card.dart';
+import 'package:islami/generated/l10n.dart';
 
 class SurasList extends StatelessWidget {
   const SurasList({
@@ -20,7 +21,7 @@ class SurasList extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(top: 40),
             child: Text(
-              'لا توجد سورة بهذا الاسم',
+              S.of(context).noSurahFound,
               style: TextStyle(color: Colors.white70, fontSize: 16.sp),
             ),
           );

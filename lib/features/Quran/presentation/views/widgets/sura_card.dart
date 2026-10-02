@@ -65,7 +65,7 @@ class SuraCard extends StatelessWidget {
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerRight,
               child: Text(
-                surahTitle(surah.number),
+                surahTitleArabic(surah.number),
                 style: GoogleFonts.amiri(
                   color: Colors.white,
                   fontSize: 26.sp,

@@ -7,6 +7,7 @@ import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Hadith/presentation/views/widgets/hadith_books_section.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_section.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/zekr_section.dart';
+import 'package:islami/generated/l10n.dart';
 
 class TimerView extends StatelessWidget {
   const TimerView({super.key});
@@ -36,7 +37,7 @@ class TimerView extends StatelessWidget {
                 end: 8.w,
                 child: IconButton(
                   onPressed: () => context.push(AppRouter.settingsView),
-                  tooltip: 'الإعدادات',
+                  tooltip: S.of(context).settings,
                   icon: Icon(
                     Icons.settings_rounded,
                     color: AppColors.primaryColor,
@@ -54,11 +55,11 @@ class TimerView extends StatelessWidget {
           SizedBox(height: 20.h),
 
           Padding(
-            padding: EdgeInsetsDirectional.only(end: 20.w),
+            padding: EdgeInsetsDirectional.only(start: 20.w),
             child: Align(
-              alignment: AlignmentDirectional.centerEnd,
+              alignment: AlignmentDirectional.centerStart,
               child: Text(
-                'الأذكار',
+                S.of(context).azkar,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18.sp,

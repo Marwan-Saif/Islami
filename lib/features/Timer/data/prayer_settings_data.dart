@@ -1,7 +1,12 @@
+import 'package:islami/core/services/app_settings.dart';
 import 'package:prayers_times/prayers_times.dart';
 
 const List<String> kPrayerNamesAr = ['الفجر', 'الظهر', 'العصر', 'المغرب', 'العشاء'];
 const List<String> kPrayerNamesEn = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+
+/// اسم الصلاة (0 الفجر ... 4 العشاء) بلغة التطبيق
+String prayerDisplayName(int prayer) =>
+    AppSettings.instance.isArabic ? kPrayerNamesAr[prayer] : kPrayerNamesEn[prayer];
 
 class PrayerMethodOption {
   const PrayerMethodOption(this.key, this.nameAr, this.nameEn, this.parameters);
@@ -9,6 +14,8 @@ class PrayerMethodOption {
   final String nameAr;
   final String nameEn;
   final PrayerCalculationParameters Function() parameters;
+
+  String get name => AppSettings.instance.isArabic ? nameAr : nameEn;
 }
 
 final List<PrayerMethodOption> kPrayerMethods = [
@@ -38,6 +45,8 @@ class PrayerCity {
   final double latitude;
   final double longitude;
   final String timeZone;
+
+  String get name => AppSettings.instance.isArabic ? nameAr : nameEn;
 }
 
 /// مدن لتحديد الموقع يدوياً لو الـ GPS مقفول

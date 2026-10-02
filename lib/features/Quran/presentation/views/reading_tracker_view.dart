@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/quran_utils.dart';
@@ -9,6 +10,7 @@ import 'package:islami/core/widgets/appbar.dart';
 import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Quran/presentation/views/surah_view.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/reading_tracker_card.dart';
+import 'package:islami/generated/l10n.dart';
 
 class ReadingTrackerView extends StatelessWidget {
   const ReadingTrackerView({super.key});
@@ -32,7 +34,7 @@ class ReadingTrackerView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 12.h),
-            Text('الورد اليومي',
+            Text(S.of(context).dailyWird,
                 style: GoogleFonts.amiri(
                     color: AppColors.primaryColor,
                     fontSize: 22.sp,
@@ -41,11 +43,15 @@ class ReadingTrackerView extends StatelessWidget {
               ListTile(
                 onTap: () => Navigator.of(context).pop(pages),
                 title: Text(
-                  pages == 20 ? 'جزء كامل (20 صفحة)' : '$pages ${pages <= 10 && pages > 2 ? 'صفحات' : 'صفحة'}',
+                  pages == 20
+                      ? S.of(context).fullJuz
+                      : S.of(context).pagesCount(pages),
                   style: TextStyle(color: Colors.white, fontSize: 15.sp),
                 ),
                 subtitle: Text(
-                  'ختمة كل ${(ReadingTracker.totalPages / pages).ceil()} يوم تقريباً',
+                  S.of(context).khatmaEveryDays(
+                    (ReadingTracker.totalPages / pages).ceil(),
+                  ),
                   style: TextStyle(color: Colors.white54, fontSize: 12.sp),
                 ),
                 trailing: pages == tracker.dailyGoal
@@ -64,18 +70,18 @@ class ReadingTrackerView extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.backgroundColor,
-        title: const Text('بدء ختمة جديدة',
-            style: TextStyle(color: AppColors.primaryColor)),
-        content: const Text('سيتم تصفير تقدم الختمة الحالية، هل أنت متأكد؟',
-            style: TextStyle(color: Colors.white)),
+        title: Text(S.of(context).startNewKhatma,
+            style: const TextStyle(color: AppColors.primaryColor)),
+        content: Text(S.of(context).resetKhatmaConfirm,
+            style: const TextStyle(color: Colors.white)),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('إلغاء')),
+              child: Text(S.of(context).cancel)),
           TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('ابدأ من جديد',
-                  style: TextStyle(color: Colors.redAccent))),
+              child: Text(S.of(context).startOver,
+                  style: const TextStyle(color: Colors.redAccent))),
         ],
       ),
     );
@@ -87,7 +93,7 @@ class ReadingTrackerView extends StatelessWidget {
     final tracker = ReadingTracker.instance;
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: customAppBar(context, 'متابعة التلاوة'),
+      appBar: customAppBar(context, S.of(context).readingTracker),
       body: ValueListenableBuilder<int>(
         valueListenable: tracker.changes,
         builder: (context, _, _) {
@@ -97,7 +103,7 @@ class ReadingTrackerView extends StatelessWidget {
             padding: EdgeInsets.all(16.r),
             children: [
               _Section(
-                title: 'الختمة',
+                title: S.of(context).khatma,
                 child: Row(
                   children: [
                     ProgressRing(progress: tracker.khatmaProgress, size: 84.r),
@@ -107,12 +113,12 @@ class ReadingTrackerView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _InfoText(
-                              'قرأت ${tracker.khatmaPages.length} من ${ReadingTracker.totalPages} صفحة'),
-                          _InfoText('الختمات المكتملة: ${tracker.completedKhatmas}'),
+                              S.of(context).readPagesOf(tracker.khatmaPages.length, ReadingTracker.totalPages)),
+                          _InfoText(S.of(context).completedKhatmas(tracker.completedKhatmas)),
                           TextButton.icon(
                             onPressed: () => _confirmReset(context),
                             icon: const Icon(Icons.restart_alt_rounded),
-                            label: const Text('بدء ختمة جديدة'),
+                            label: Text(S.of(context).startNewKhatma),
                             style: TextButton.styleFrom(
                                 foregroundColor: AppColors.primaryColor,
                                 padding: EdgeInsets.zero),
@@ -124,17 +130,17 @@ class ReadingTrackerView extends StatelessWidget {
                 ),
               ),
               _Section(
-                title: 'الورد اليومي',
+                title: S.of(context).dailyWird,
                 action: TextButton(
                   onPressed: () => _pickGoal(context),
-                  child: const Text('تعديل الهدف',
-                      style: TextStyle(color: AppColors.primaryColor)),
+                  child: Text(S.of(context).editGoal,
+                      style: const TextStyle(color: AppColors.primaryColor)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _InfoText(
-                        'اليوم ${tracker.todayPages} من ${tracker.dailyGoal} صفحات'),
+                        S.of(context).todayPagesOf(tracker.todayPages, tracker.dailyGoal)),
                     SizedBox(height: 8.h),
                     LinearProgressIndicator(
                       value: (tracker.todayPages / tracker.dailyGoal).clamp(0, 1),
@@ -146,13 +152,13 @@ class ReadingTrackerView extends StatelessWidget {
                     SizedBox(height: 12.h),
                     _WeekChart(goal: tracker.dailyGoal),
                     SizedBox(height: 8.h),
-                    _InfoText('أيام متتالية: ${tracker.streak}'),
+                    _InfoText(S.of(context).streakDays(tracker.streak)),
                   ],
                 ),
               ),
               if (lastRead != null)
                 _Section(
-                  title: 'آخر قراءة',
+                  title: S.of(context).lastRead,
                   child: _PositionTile(
                     position: lastRead,
                     icon: Icons.menu_book_rounded,
@@ -160,10 +166,9 @@ class ReadingTrackerView extends StatelessWidget {
                   ),
                 ),
               _Section(
-                title: 'العلامات',
+                title: S.of(context).bookmarks,
                 child: bookmarks.isEmpty
-                    ? const _InfoText(
-                        'اضغط مطولاً على أي آية واختار "إضافة علامة"')
+                    ? _InfoText(S.of(context).bookmarksEmpty)
                     : Column(
                         children: [
                           for (final bookmark in bookmarks)
@@ -251,15 +256,15 @@ class _PositionTile extends StatelessWidget {
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: AppColors.primaryColor),
-      title: Text('${surahTitle(position.surah)} - آية ${position.ayah}',
+      title: Text(S.of(context).ayahRef(surahTitle(position.surah), position.ayah),
           style: TextStyle(color: Colors.white, fontSize: 15.sp)),
-      subtitle: Text('صفحة ${position.page}',
+      subtitle: Text(S.of(context).pageNumber(position.page),
           style: TextStyle(color: Colors.white54, fontSize: 12.sp)),
       trailing: onDelete == null
           ? null
           : IconButton(
               onPressed: onDelete,
-              tooltip: 'حذف العلامة',
+              tooltip: S.of(context).deleteBookmark,
               icon: const Icon(Icons.delete_outline, color: Colors.white54),
             ),
     );
@@ -271,12 +276,15 @@ class _WeekChart extends StatelessWidget {
   const _WeekChart({required this.goal});
   final int goal;
 
-  static const List<String> _dayNames = ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'ح'];
-
   @override
   Widget build(BuildContext context) {
     final tracker = ReadingTracker.instance;
     final today = DateTime.now();
+    // أول حرف من اسم اليوم حسب لغة التطبيق (ن ث ر... / M T W...)
+    final dayLetter = DateFormat(
+      'EEEEE',
+      Localizations.localeOf(context).languageCode,
+    );
     final days = [for (int i = 6; i >= 0; i--) today.subtract(Duration(days: i))];
     final maxPages = [
       goal,
@@ -308,7 +316,7 @@ class _WeekChart extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  Text(_dayNames[day.weekday - 1],
+                  Text(dayLetter.format(day),
                       style: TextStyle(color: Colors.white54, fontSize: 11.sp)),
                 ],
               ),

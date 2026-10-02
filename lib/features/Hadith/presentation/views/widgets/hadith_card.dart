@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/features/Hadith/data/hadith_models.dart';
 import 'package:islami/features/Hadith/data/hadith_repo.dart';
+import 'package:islami/generated/l10n.dart';
 
 class HadithCard extends StatefulWidget {
   const HadithCard({super.key, required this.hadith, this.showBookName = false});
@@ -28,7 +29,7 @@ class _HadithCardState extends State<HadithCard> {
   }
 
   String get _title {
-    final number = 'الحديث ${widget.hadith.number}';
+    final number = S.of(context).hadithNumber(widget.hadith.number);
     if (!widget.showBookName) return number;
     return '${_repo.bookByKey(widget.hadith.bookKey).name} • $number';
   }
@@ -38,7 +39,9 @@ class _HadithCardState extends State<HadithCard> {
     if (!mounted) return;
     setState(() => _favorite = added);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(added ? 'تمت الإضافة للمفضلة' : 'تمت الإزالة من المفضلة'),
+      content: Text(added
+          ? S.of(context).addedToFavorites
+          : S.of(context).removedFromFavorites),
       duration: const Duration(seconds: 2),
     ));
   }
@@ -47,7 +50,10 @@ class _HadithCardState extends State<HadithCard> {
     await Clipboard.setData(ClipboardData(text: '${widget.hadith.text}\n[$_title]'));
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('تم نسخ الحديث'), duration: Duration(seconds: 2)),
+      SnackBar(
+        content: Text(S.of(context).hadithCopied),
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 
@@ -77,12 +83,14 @@ class _HadithCardState extends State<HadithCard> {
               ),
               IconButton(
                 onPressed: _copy,
-                tooltip: 'نسخ',
+                tooltip: S.of(context).copy,
                 icon: const Icon(Icons.copy_rounded, color: Colors.white54),
               ),
               IconButton(
                 onPressed: _toggleFavorite,
-                tooltip: _favorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة',
+                tooltip: _favorite
+                    ? S.of(context).removeFromFavorites
+                    : S.of(context).addToFavorites,
                 icon: Icon(
                   _favorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
                   color: AppColors.primaryColor,
@@ -90,14 +98,26 @@ class _HadithCardState extends State<HadithCard> {
               ),
             ],
           ),
-          Text(
-            widget.hadith.text,
-            style: GoogleFonts.amiri(
-              color: Colors.white,
-              fontSize: 18.sp,
-              height: 1.8,
+          if (widget.hadith.isArabic)
+            Text(
+              widget.hadith.text,
+              textDirection: TextDirection.rtl,
+              style: GoogleFonts.amiri(
+                color: Colors.white,
+                fontSize: 18.sp,
+                height: 1.8,
+              ),
+            )
+          else
+            Text(
+              widget.hadith.text,
+              textDirection: TextDirection.ltr,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15.sp,
+                height: 1.6,
+              ),
             ),
-          ),
         ],
       ),
     );

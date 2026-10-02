@@ -11,6 +11,7 @@ import 'package:islami/features/Radio/data/models/reciter_model.dart';
 import 'package:islami/features/Radio/domain/recitations_repo.dart';
 import 'package:islami/features/Radio/presentation/manager/reciters_cubit/reciters_cubit.dart';
 import 'package:islami/features/Radio/presentation/views/widgets/recitation_scaffold.dart';
+import 'package:islami/generated/l10n.dart';
 
 class RecitersView extends StatelessWidget {
   const RecitersView({super.key});
@@ -21,14 +22,14 @@ class RecitersView extends StatelessWidget {
       create: (context) =>
           RecitersCubit(getit.get<RecitationsRepo>())..getReciters(),
       child: RecitationScaffold(
-        title: 'اختيار القارئ',
+        title: S.of(context).chooseReciter,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
               Builder(
                 builder: (context) => SearchTextField(
-                  hintText: 'ابحث عن قارئ',
+                  hintText: S.of(context).searchReciter,
                   onChanged: context.read<RecitersCubit>().search,
                 ),
               ),
@@ -63,7 +64,7 @@ class RecitersListBody extends StatelessWidget {
         if (state.reciters.isEmpty) {
           return Center(
             child: Text(
-              'لا يوجد قارئ بهذا الاسم',
+              S.of(context).noReciterFound,
               style: TextStyle(color: Colors.white70, fontSize: 16.sp),
             ),
           );
@@ -129,7 +130,7 @@ class ReciterCard extends StatelessWidget {
                   Text(
                     rewayat == 1
                         ? reciter.moshaf.first.name
-                        : '$rewayat روايات',
+                        : S.of(context).rewayatCount(rewayat),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: Colors.white54, fontSize: 13.sp),
@@ -177,7 +178,7 @@ class ReciterCard extends StatelessWidget {
             children: [
               SizedBox(height: 16.h),
               Text(
-                'اختر الرواية',
+                S.of(context).chooseRewaya,
                 style: GoogleFonts.amiri(
                   color: AppColors.primaryColor,
                   fontSize: 22.sp,
@@ -199,7 +200,7 @@ class ReciterCard extends StatelessWidget {
                           style: TextStyle(color: Colors.white, fontSize: 16.sp),
                         ),
                         subtitle: Text(
-                          '${moshaf.surahList.length} سورة',
+                          S.of(context).surahCount(moshaf.surahList.length),
                           style: TextStyle(color: Colors.white54, fontSize: 12.sp),
                         ),
                       ),
@@ -239,7 +240,7 @@ class _ErrorView extends StatelessWidget {
               foregroundColor: AppColors.primaryColor,
               side: const BorderSide(color: AppColors.primaryColor),
             ),
-            child: const Text('إعادة المحاولة'),
+            child: Text(S.of(context).retry),
           ),
         ],
       ),

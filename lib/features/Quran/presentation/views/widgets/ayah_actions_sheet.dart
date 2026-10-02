@@ -11,6 +11,7 @@ import 'package:islami/features/Quran/data/ayah_reciters.dart';
 import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Radio/data/models/audio_model.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:quran_with_tafsir/quran_with_tafsir.dart';
 
 const String _ayahReciterKey = 'ayah_reciter';
@@ -34,7 +35,7 @@ int? ayahFromAudioId(String id, int surahNumber) {
 
 AudioModel _ayahAudio(int surah, int ayah, AyahReciter reciter) => AudioModel(
       id: _audioId(surah, ayah, reciter),
-      title: '${surahTitle(surah)} - آية $ayah',
+      title: S.current.ayahRef(surahTitle(surah), ayah),
       subtitle: reciter.name,
       url: reciter.ayahUrl(surah, ayah),
     );
@@ -84,7 +85,8 @@ class _AyahActionsState extends State<_AyahActions> {
     if (!mounted) return;
     setState(() => _bookmarked = added);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(added ? 'تمت إضافة العلامة' : 'تمت إزالة العلامة'),
+      content: Text(
+          added ? S.of(context).bookmarkAdded : S.of(context).bookmarkRemoved),
       duration: const Duration(seconds: 2),
     ));
   }
@@ -106,12 +108,12 @@ class _AyahActionsState extends State<_AyahActions> {
 
   Future<void> _copy() async {
     final text =
-        '${cleanAyahText(widget.ayah.text)} [${surahTitle(widget.surahNumber)}: ${widget.ayah.id}]';
+        '${cleanAyahText(widget.ayah.text)} [${surahTitleArabic(widget.surahNumber)}: ${widget.ayah.id}]';
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('تم نسخ الآية')),
+      SnackBar(content: Text(S.of(context).ayahCopied)),
     );
   }
 
@@ -150,7 +152,7 @@ class _AyahActionsState extends State<_AyahActions> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '${surahTitle(widget.surahNumber)} • آية ${widget.ayah.id}',
+              S.of(context).ayahRefDot(surahTitle(widget.surahNumber), widget.ayah.id),
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white54, fontSize: 13.sp),
             ),
@@ -167,22 +169,24 @@ class _AyahActionsState extends State<_AyahActions> {
             const Divider(color: Colors.white12),
             _ActionTile(
               icon: Icons.record_voice_over_rounded,
-              title: 'القارئ: ${_reciter.name}',
+              title: S.of(context).reciterLabel(_reciter.name),
               onTap: _pickReciter,
             ),
             _ActionTile(
               icon: Icons.play_circle_outline_rounded,
-              title: 'استماع للآية',
+              title: S.of(context).listenToAyah,
               onTap: _playAyah,
             ),
             _ActionTile(
               icon: Icons.playlist_play_rounded,
-              title: 'تشغيل من هنا لآخر السورة',
+              title: S.of(context).playFromHere,
               onTap: _playFromHere,
             ),
             _ActionTile(
               icon: Icons.menu_book_rounded,
-              title: _showTafsir ? 'إخفاء التفسير' : 'التفسير الميسر',
+              title: _showTafsir
+                  ? S.of(context).hideTafsir
+                  : S.of(context).tafsirMuyassar,
               onTap: () => setState(() => _showTafsir = !_showTafsir),
             ),
             if (_showTafsir)
@@ -196,7 +200,7 @@ class _AyahActionsState extends State<_AyahActions> {
                       color: AppColors.primaryColor.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  tafsir ?? 'التفسير غير متاح لهذه الآية',
+                  tafsir ?? S.of(context).tafsirUnavailable,
                   style: TextStyle(
                       color: Colors.white, fontSize: 15.sp, height: 1.7),
                 ),
@@ -205,12 +209,14 @@ class _AyahActionsState extends State<_AyahActions> {
               icon: _bookmarked
                   ? Icons.bookmark_remove_rounded
                   : Icons.bookmark_add_rounded,
-              title: _bookmarked ? 'إزالة العلامة' : 'إضافة علامة',
+              title: _bookmarked
+                  ? S.of(context).removeBookmark
+                  : S.of(context).addBookmark,
               onTap: _toggleBookmark,
             ),
             _ActionTile(
               icon: Icons.copy_rounded,
-              title: 'نسخ الآية',
+              title: S.of(context).copyAyah,
               onTap: _copy,
             ),
           ],

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_card.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:prayers_times/prayers_times.dart';
 import 'package:intl/intl.dart';
 
@@ -16,12 +17,8 @@ class PrayerTimer extends StatefulWidget {
 }
 
 class _PrayerTimerState extends State<PrayerTimer> {
-  List<List<dynamic>> prayerTimesList = [];
-  String currentDay = DateFormat('EEEE', 'ar').format(DateTime.now());
-  String currentDate = DateFormat.MMMEd('ar').format(DateTime.now());
-  
-  String nextPrayerName = '';
-  String nextPrayerTimeFormatted = '';
+  // الأسماء والتواريخ بتتعمل format في build عشان تتغير مع لغة التطبيق
+  PrayerTimes? _prayerTimes;
   bool adhanEnabled = PrayerNotifications.isEnabled;
 
   @override
@@ -46,18 +43,15 @@ class _PrayerTimerState extends State<PrayerTimer> {
     setState(() {});
     messenger.showSnackBar(SnackBar(
       content: Text(updated
-          ? 'تم تحديث المواقيت حسب موقعك'
-          : 'فعّل الموقع واسمح للتطبيق بالوصول إليه لتحديث المواقيت'),
+          ? S.of(context).timesUpdatedForLocation
+          : S.of(context).enableLocationForTimes),
       duration: const Duration(seconds: 3),
     ));
   }
 
   void _initializePrayerTimes() {
     // جدولة الأذان بقت في main عشان تشتغل حتى لو الشاشة دي متفتحتش
-    PrayerTimes prayerTimes = PrayerTimesService.forDate(DateTime.now());
-
-    _addTimesToList(prayerTimes);
-    _calculateNextPrayer(prayerTimes);
+    setState(() => _prayerTimes = PrayerTimesService.forDate(DateTime.now()));
   }
 
   Future<void> _toggleAdhan() async {
@@ -65,53 +59,55 @@ class _PrayerTimerState extends State<PrayerTimer> {
     await PrayerNotifications.setEnabled(adhanEnabled);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(adhanEnabled ? 'تم تفعيل الأذان' : 'تم إيقاف الأذان'),
+      content: Text(adhanEnabled
+          ? S.of(context).adhanTurnedOn
+          : S.of(context).adhanTurnedOff),
       duration: const Duration(seconds: 2),
     ));
   }
 
-  void _addTimesToList(PrayerTimes prayerTimes) {
-    prayerTimesList = [
-      ['فجر', _formatDate(prayerTimes.fajrStartTime!), DateFormat('a', 'ar').format(prayerTimes.fajrStartTime!)],
-      ['شروق', _formatDate(prayerTimes.sunrise!), DateFormat('a', 'ar').format(prayerTimes.sunrise!)],
-      ['ظهر', _formatDate(prayerTimes.dhuhrStartTime!), DateFormat('a', 'ar').format(prayerTimes.dhuhrStartTime!)],
-      ['عصر', _formatDate(prayerTimes.asrStartTime!), DateFormat('a', 'ar').format(prayerTimes.asrStartTime!)],
-      ['مغرب', _formatDate(prayerTimes.maghribStartTime!), DateFormat('a', 'ar').format(prayerTimes.maghribStartTime!)],
-      ['عشاء', _formatDate(prayerTimes.ishaStartTime!), DateFormat('a', 'ar').format(prayerTimes.ishaStartTime!)]
-    ];
-    setState(() {}); 
-  }
-
-  
-  void _calculateNextPrayer(PrayerTimes prayerTimes) {
-    String next = prayerTimes. nextPrayer(); 
-    DateTime? nextTime = prayerTimes.timeForPrayer(next);
-    
-    
-    Map<String, String> prayerNamesAr = {
-      'fajr': 'الفجر', 'sunrise': 'الشروق', 'dhuhr': 'الظهر',
-      'asr': 'العصر', 'maghrib': 'المغرب', 'isha': 'العشاء', 'none': 'الفجر'
+  String _prayerName(String prayer) {
+    final s = S.of(context);
+    return switch (prayer) {
+      'sunrise' => s.sunrise,
+      'dhuhr' => s.dhuhr,
+      'asr' => s.asr,
+      'maghrib' => s.maghrib,
+      'isha' => s.isha,
+      // بعد العشاء الصلاة الجاية فجر بكرة
+      _ => s.fajr,
     };
-
-    if (nextTime != null) {
-      setState(() {
-        nextPrayerName = prayerNamesAr[next] ?? '';
-        nextPrayerTimeFormatted = DateFormat('hh:mm a', 'en').format(nextTime);
-      });
-    }
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('hh:mm').format(date); 
+    return DateFormat('hh:mm').format(date);
   }
 
   @override
   Widget build(BuildContext context) {
-    
-    if (prayerTimesList.isEmpty) {
-      return const Center(child: CircularProgressIndicator()); 
+    final prayerTimes = _prayerTimes;
+    if (prayerTimes == null) {
+      return const Center(child: CircularProgressIndicator());
     }
 
+    final language = Localizations.localeOf(context).languageCode;
+    final now = DateTime.now();
+    final currentDay = DateFormat('EEEE', language).format(now);
+    final currentDate = DateFormat.MMMEd(language).format(now);
+    final prayerTimesList = [
+      for (final (name, time) in [
+        ('fajr', prayerTimes.fajrStartTime!),
+        ('sunrise', prayerTimes.sunrise!),
+        ('dhuhr', prayerTimes.dhuhrStartTime!),
+        ('asr', prayerTimes.asrStartTime!),
+        ('maghrib', prayerTimes.maghribStartTime!),
+        ('isha', prayerTimes.ishaStartTime!),
+      ])
+        (_prayerName(name), _formatDate(time), DateFormat('a', language).format(time)),
+    ];
+    final next = prayerTimes.nextPrayer();
+    final nextTime = prayerTimes.timeForPrayer(next);
+    final city = PrayerTimesService.manualCity;
     return Container(
       margin: EdgeInsetsDirectional.symmetric(horizontal: 20.sp),
       padding: const EdgeInsets.all(16),
@@ -139,7 +135,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
               Expanded(
                 flex: 2,
                 child: Text(
-                  "مواقيت الصلاة\n$currentDay",
+                  "${S.of(context).prayerTimes}\n$currentDay",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.amiri(fontSize: 18.sp, color: Colors.black, fontWeight: FontWeight.bold),
                 ),
@@ -158,10 +154,10 @@ class _PrayerTimerState extends State<PrayerTimer> {
           // Prayer Times Carousel
           CarouselSlider.builder(
             itemBuilder: (context, index, realIndex) => PrayerTimerCard(
-              prayerName: prayerTimesList[index][0],
-              time: prayerTimesList[index][1],
+              prayerName: prayerTimesList[index].$1,
+              time: prayerTimesList[index].$2,
               isHighlighted: true, // يفضل مستقبلاً وضع شرط لمعرفة الصلاة الحالية لتحديد الـ true/false
-              pm: prayerTimesList[index][2],
+              pm: prayerTimesList[index].$3,
             ),
             itemCount: prayerTimesList.length,
             options: CarouselOptions(
@@ -181,8 +177,9 @@ class _PrayerTimerState extends State<PrayerTimer> {
               IconButton(
                 onPressed: _updateLocation,
                 tooltip: PrayerTimesService.usesDeviceLocation
-                    ? 'المواقيت حسب موقعك - اضغط للتحديث'
-                    : 'المواقيت حسب المنوفية - اضغط لاستخدام موقعك',
+                    ? S.of(context).timesForMyLocation
+                    : S.of(context).timesForCity(
+                        city?.name ?? S.of(context).defaultCityName),
                 icon: Icon(
                   PrayerTimesService.usesDeviceLocation
                       ? Icons.location_on
@@ -192,14 +189,21 @@ class _PrayerTimerState extends State<PrayerTimer> {
               ),
               Expanded(
                 child: Text(
-                  "Next: $nextPrayerName - $nextPrayerTimeFormatted", 
+                  nextTime == null
+                      ? ''
+                      : S.of(context).nextPrayer(
+                          _prayerName(next),
+                          DateFormat('hh:mm a', language).format(nextTime),
+                        ), 
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
               IconButton(
                 onPressed: _toggleAdhan,
-                tooltip: adhanEnabled ? 'إيقاف الأذان' : 'تفعيل الأذان',
+                tooltip: adhanEnabled
+                    ? S.of(context).disableAdhan
+                    : S.of(context).enableAdhan,
                 icon: Icon(
                   adhanEnabled ? Icons.volume_up : Icons.volume_off,
                   color: Colors.black,

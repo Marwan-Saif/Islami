@@ -1,7 +1,11 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:islami/features/Hadith/data/hadith_books.dart';
+import 'package:islami/generated/l10n.dart';
 
 void main() {
+  setUpAll(() => S.load(const Locale('ar')));
+
   test('the nine books are in the index', () {
     expect(kHadithBooks.map((b) => b.key), [
       'bukhari', 'muslim', 'abudawud', 'tirmidhi', 'nasai', 'ibnmajah',

@@ -9,6 +9,7 @@ import 'package:islami/features/Timer/data/azkar_notifications.dart';
 import 'package:islami/features/Timer/data/hive/zekr_localdata.dart';
 import 'package:islami/features/Timer/domain/zekr_repo.dart';
 import 'package:islami/features/Timer/presentation/manager/Azkar/azkar_cubit.dart';
+import 'package:islami/generated/l10n.dart';
 
 class NotificationCard extends StatefulWidget {
   const NotificationCard(
@@ -54,7 +55,7 @@ class _NotificationCardState extends State<NotificationCard> {
                       children: [
                         Expanded(
                           child: Text(
-                            "تفعيل الاشعارات",
+                            S.of(context).enableNotifications,
                             maxLines: 2,
                             style: TextStyle(
                                 color: AppColors.backgroundColor,
@@ -85,7 +86,7 @@ class _NotificationCardState extends State<NotificationCard> {
                       children: [
                         Expanded(
                           child: Text(
-                            "الوقت المحدد لارسال الاشعارات : ${context.read<AzkarCubit>().azkarLocalDataList[widget.index].zekrtime}",
+                            S.of(context).notificationTime(context.read<AzkarCubit>().azkarLocalDataList[widget.index].zekrtime),
                             maxLines: 2,
                             style: TextStyle(
                                 color: AppColors.backgroundColor,

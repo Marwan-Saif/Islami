@@ -54,7 +54,7 @@ class _QuranViewState extends State<QuranView> {
                 const ReadingTrackerCard(),
                 Builder(
                   builder: (context) => SearchTextField(
-                    hintText: 'ابحث عن سورة أو آية',
+                    hintText: S.of(context).searchSurahOrAyah,
                     onChanged: (query) {
                       setState(() => _query = query);
                       context.read<QuranCubit>().search(query);
@@ -100,7 +100,7 @@ class _AyahSearchTile extends StatelessWidget {
       leading: const Icon(Icons.manage_search_rounded,
           color: AppColors.primaryColor),
       title: Text(
-        'ابحث في الآيات عن «${query.trim()}»',
+        S.of(context).searchAyahsFor(query.trim()),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(color: AppColors.primaryColor, fontSize: 15.sp),

@@ -2,31 +2,48 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart' as http;
+import 'package:islami/core/services/app_settings.dart';
 import 'package:islami/core/services/shared_prefs.dart';
 import 'package:islami/features/Radio/data/models/reciter_model.dart';
 import 'package:islami/features/Radio/domain/recitations_repo.dart';
 
 class RecitationsRepoImpl implements RecitationsRepo {
-  static const String _recitersUrl =
-      'https://www.mp3quran.net/api/v3/reciters?language=ar';
-  static const String _cacheKey = 'reciters_cache';
   static const String _lastSelectionKey = 'last_recitation';
 
+  // الـ API بيرجع أسماء القراء والروايات باللغة المطلوبة
+  static String get _language => AppSettings.instance.isArabic ? 'ar' : 'eng';
+  static String get _recitersUrl =>
+      'https://www.mp3quran.net/api/v3/reciters?language=$_language';
+  static String get _cacheKey =>
+      _language == 'ar' ? 'reciters_cache' : 'reciters_cache_$_language';
+
   // القارئ الافتراضي قبل ما المستخدم يختار، عشان "اختيار التلاوة" يشتغل من غير نت
-  static final _defaultReciter = ReciterModel(id: 123, name: 'مشاري العفاسي', moshaf: [
-    MoshafModel(
+  static ReciterModel get _defaultReciter {
+    final arabic = AppSettings.instance.isArabic;
+    return ReciterModel(
       id: 123,
-      name: 'حفص عن عاصم - مرتل',
-      server: 'https://server8.mp3quran.net/afs/',
-      surahList: List.generate(114, (index) => index + 1),
-    ),
-  ]);
+      name: arabic ? 'مشاري العفاسي' : 'Mishary Alafasy',
+      moshaf: [
+        MoshafModel(
+          id: 123,
+          name: arabic
+              ? 'حفص عن عاصم - مرتل'
+              : 'Rewayat Hafs A\'n Assem - Murattal',
+          server: 'https://server8.mp3quran.net/afs/',
+          surahList: List.generate(114, (index) => index + 1),
+        ),
+      ],
+    );
+  }
 
   List<ReciterModel>? _reciters;
+  String? _recitersLanguage;
 
   @override
   Future<List<ReciterModel>> getReciters() async {
-    if (_reciters != null) return _reciters!;
+    // القائمة المتخزنة في الذاكرة بتتبني من جديد لو اللغة اتغيرت
+    final language = _language;
+    if (_reciters != null && _recitersLanguage == language) return _reciters!;
     try {
       final response = await http
           .get(Uri.parse(_recitersUrl))
@@ -40,10 +57,13 @@ class RecitationsRepoImpl implements RecitationsRepo {
       await Prefs.saveData(key: _cacheKey, value: body);
     } catch (e) {
       log('failed to load reciters, using cache: $e');
-      final String? cached = Prefs.getData(key: _cacheKey);
+      // من غير نت ومفيش نسخة باللغة دي، القائمة العربية أحسن من مفيش
+      final String? cached = Prefs.getData(key: _cacheKey) ??
+          Prefs.getData(key: 'reciters_cache');
       if (cached == null) rethrow;
       _reciters = _parse(cached);
     }
+    _recitersLanguage = language;
     return _reciters!;
   }
 

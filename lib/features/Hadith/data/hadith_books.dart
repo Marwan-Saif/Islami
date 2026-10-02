@@ -3,7 +3,7 @@
 import 'package:islami/features/Hadith/data/hadith_models.dart';
 
 const List<HadithBook> kHadithBooks = [
-  HadithBook(key: 'bukhari', name: 'صحيح البخاري', sections: [
+  HadithBook(key: 'bukhari', nameAr: 'صحيح البخاري', nameEn: 'Sahih al-Bukhari', sections: [
     HadithSection(1, 'Revelation', 1, 7),
     HadithSection(2, 'Belief', 8, 58),
     HadithSection(3, 'Knowledge', 59, 134),
@@ -102,7 +102,7 @@ const List<HadithBook> kHadithBooks = [
     HadithSection(96, 'Holding Fast to the Qur\'an and Sunnah', 7268, 7370),
     HadithSection(97, 'Oneness, Uniqueness of Allah (Tawheed)', 7371, 7563),
   ]),
-  HadithBook(key: 'muslim', name: 'صحيح مسلم', sections: [
+  HadithBook(key: 'muslim', nameAr: 'صحيح مسلم', nameEn: 'Sahih Muslim', sections: [
     HadithSection(1, 'The Book of Faith', 93, 533),
     HadithSection(2, 'The Book of Purification', 534, 678),
     HadithSection(3, 'The Book of Menstruation', 679, 836),
@@ -160,7 +160,7 @@ const List<HadithBook> kHadithBooks = [
     HadithSection(55, 'The Book of Zuhd and Softening of Hearts ', 7417, 7522),
     HadithSection(56, 'The Book of Commentary on the Qur\'an', 7523, 7563),
   ]),
-  HadithBook(key: 'abudawud', name: 'سنن أبي داود', sections: [
+  HadithBook(key: 'abudawud', nameAr: 'سنن أبي داود', nameEn: 'Sunan Abi Dawud', sections: [
     HadithSection(1, 'Purification (Kitab Al-Taharah)', 1, 390),
     HadithSection(2, 'Prayer (Kitab Al-Salat)', 391, 1160),
     HadithSection(3, 'The Book Of The Prayer For Rain (Kitab al-Istisqa\')', 1161, 1197),
@@ -205,7 +205,7 @@ const List<HadithBook> kHadithBooks = [
     HadithSection(42, 'Model Behavior of the Prophet (Kitab Al-Sunnah)', 4596, 4772),
     HadithSection(43, 'General Behavior (Kitab Al-Adab)', 4773, 5274),
   ]),
-  HadithBook(key: 'tirmidhi', name: 'جامع الترمذي', sections: [
+  HadithBook(key: 'tirmidhi', nameAr: 'جامع الترمذي', nameEn: 'Jami` at-Tirmidhi', sections: [
     HadithSection(1, 'The Book on Purification', 1, 148),
     HadithSection(2, 'The Book on Salat (Prayer)', 149, 451),
     HadithSection(3, 'The Book on Al-Witr', 452, 487),
@@ -256,7 +256,7 @@ const List<HadithBook> kHadithBooks = [
     HadithSection(48, 'Chapters on Supplication', 3370, 3604),
     HadithSection(49, 'Chapters on Virtues', 3605, 3956),
   ]),
-  HadithBook(key: 'nasai', name: 'سنن النسائي', sections: [
+  HadithBook(key: 'nasai', nameAr: 'سنن النسائي', nameEn: 'Sunan an-Nasa\'i', sections: [
     HadithSection(1, 'The Book of Purification', 1, 324),
     HadithSection(2, 'The Book of Water', 325, 347),
     HadithSection(3, 'The Book of Menstruation and Istihadah', 348, 395),
@@ -309,7 +309,7 @@ const List<HadithBook> kHadithBooks = [
     HadithSection(50, 'The Book of Seeking Refuge with Allah', 5428, 5539),
     HadithSection(51, 'The Book of Drinks', 5540, 5758),
   ]),
-  HadithBook(key: 'ibnmajah', name: 'سنن ابن ماجه', sections: [
+  HadithBook(key: 'ibnmajah', nameAr: 'سنن ابن ماجه', nameEn: 'Sunan Ibn Majah', sections: [
     HadithSection(1, 'The Book of Purification and its Sunnah', 267, 666),
     HadithSection(2, 'The Book of the Prayer', 667, 705),
     HadithSection(3, 'The Book of the Adhan and the Sunnah Regarding It', 706, 734),
@@ -348,7 +348,7 @@ const List<HadithBook> kHadithBooks = [
     HadithSection(36, 'Tribulations', 3927, 4099),
     HadithSection(37, 'Zuhd', 4100, 4341),
   ]),
-  HadithBook(key: 'malik', name: 'موطأ مالك', sections: [
+  HadithBook(key: 'malik', nameAr: 'موطأ مالك', nameEn: 'Muwatta Malik', sections: [
     HadithSection(1, 'The Times of Prayer', 1, 31),
     HadithSection(2, 'Purity', 32, 145),
     HadithSection(3, 'Prayer', 146, 221),
@@ -411,10 +411,10 @@ const List<HadithBook> kHadithBooks = [
     HadithSection(60, 'The Supplication of the Unjustly Wronged', 1857, 1857),
     HadithSection(61, 'The Names of the Prophet, may Allah Bless Him and Grant Him Peace', 1858, 1858),
   ]),
-  HadithBook(key: 'nawawi', name: 'الأربعون النووية', sections: [
+  HadithBook(key: 'nawawi', nameAr: 'الأربعون النووية', nameEn: 'Forty Hadith of an-Nawawi', sections: [
     HadithSection(1, 'Forty Hadith of an-Nawawi', 1, 42),
   ]),
-  HadithBook(key: 'qudsi', name: 'الأحاديث القدسية', sections: [
+  HadithBook(key: 'qudsi', nameAr: 'الأحاديث القدسية', nameEn: 'Forty Hadith Qudsi', sections: [
     HadithSection(1, 'Forty Hadith Qudsi', 1, 40),
   ]),
 ];

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/services/audio_services.dart';
 import 'package:islami/core/utils/app_colors.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
@@ -61,13 +62,13 @@ class MiniPlayer extends StatelessWidget {
                   _ControlButton(
                     // في الـ RTL "السابق" على اليمين، فبنستخدم سهم التالي في شكله
                     icon: Icons.skip_next_rounded,
-                    tooltip: 'السابق',
+                    tooltip: S.of(context).previous,
                     onTap: player.hasPrevious ? player.seekToPrevious : null,
                   ),
                   const _PlayPauseButton(),
                   _ControlButton(
                     icon: Icons.skip_previous_rounded,
-                    tooltip: 'التالي',
+                    tooltip: S.of(context).next,
                     onTap: player.hasNext ? player.seekToNext : null,
                   ),
                 ],
@@ -113,7 +114,7 @@ class _PlayPauseButton extends StatelessWidget {
                 )
               : IconButton(
                   padding: EdgeInsets.zero,
-                  tooltip: playing ? 'إيقاف مؤقت' : 'تشغيل',
+                  tooltip: playing ? S.of(context).pause : S.of(context).play,
                   onPressed: playing ? player.pause : player.play,
                   icon: Icon(
                     playing ? Icons.pause_rounded : Icons.play_arrow_rounded,

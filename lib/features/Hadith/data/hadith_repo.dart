@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:islami/core/services/app_settings.dart';
 import 'package:islami/features/Hadith/data/hadith_books.dart';
 import 'package:islami/features/Hadith/data/hadith_models.dart';
 
@@ -29,7 +30,23 @@ class HadithRepo {
       kHadithBooks.firstWhere((book) => book.key == key);
 
   Future<List<Hadith>> getSection(HadithBook book, HadithSection section) async {
-    final url = '$_baseUrl/ara-${book.key}/sections/${section.number}.min.json';
+    // الترجمة الإنجليزية من نفس المصدر وبنفس ترقيم الأحاديث،
+    // ولو الباب مش متاح بالإنجليزي (أو مفيش نت ومش متخزن) بنرجع للعربي
+    if (!AppSettings.instance.isArabic) {
+      try {
+        return await _loadSection('eng', book, section);
+      } catch (_) {}
+    }
+    return _loadSection('ara', book, section);
+  }
+
+  Future<List<Hadith>> _loadSection(
+    String language,
+    HadithBook book,
+    HadithSection section,
+  ) async {
+    final url =
+        '$_baseUrl/$language-${book.key}/sections/${section.number}.min.json';
     final cache = _cache ??= await Hive.openLazyBox<String>(_cacheBoxName);
     var body = await cache.get(url);
     if (body == null) {

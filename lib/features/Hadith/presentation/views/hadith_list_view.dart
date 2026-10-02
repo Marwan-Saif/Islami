@@ -5,6 +5,7 @@ import 'package:islami/core/widgets/appbar.dart';
 import 'package:islami/features/Hadith/data/hadith_models.dart';
 import 'package:islami/features/Hadith/data/hadith_repo.dart';
 import 'package:islami/features/Hadith/presentation/views/widgets/hadith_card.dart';
+import 'package:islami/generated/l10n.dart';
 
 /// أحاديث باب واحد (بتتنزل أول مرة وبعدين بتفتح من غير نت)
 class HadithListView extends StatefulWidget {
@@ -42,7 +43,7 @@ class _HadithListViewState extends State<HadithListView> {
                   Icon(Icons.wifi_off_rounded,
                       color: AppColors.primaryColor, size: 48.r),
                   SizedBox(height: 12.h),
-                  Text('تعذر تحميل الأحاديث، تأكد من الاتصال بالإنترنت',
+                  Text(S.of(context).hadithLoadError,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white70, fontSize: 15.sp)),
                   SizedBox(height: 12.h),
@@ -52,7 +53,7 @@ class _HadithListViewState extends State<HadithListView> {
                       foregroundColor: AppColors.primaryColor,
                       side: const BorderSide(color: AppColors.primaryColor),
                     ),
-                    child: const Text('إعادة المحاولة'),
+                    child: Text(S.of(context).retry),
                   ),
                 ],
               ),
@@ -84,7 +85,7 @@ class HadithFavoritesView extends StatelessWidget {
     final repo = HadithRepo.instance;
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: customAppBar(context, 'الأحاديث المفضلة'),
+      appBar: customAppBar(context, S.of(context).favoriteHadiths),
       body: ValueListenableBuilder<int>(
         valueListenable: repo.favoritesChanges,
         builder: (context, _, _) => FutureBuilder<List<Hadith>>(
@@ -98,7 +99,7 @@ class HadithFavoritesView extends StatelessWidget {
             }
             if (favorites.isEmpty) {
               return Center(
-                child: Text('اضغط على ♡ في أي حديث لإضافته هنا',
+                child: Text(S.of(context).favoritesEmpty,
                     style: TextStyle(color: Colors.white70, fontSize: 15.sp)),
               );
             }

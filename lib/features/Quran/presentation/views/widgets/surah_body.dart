@@ -13,6 +13,7 @@ import 'package:islami/core/widgets/ayah_number.dart';
 import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/ayah_actions_sheet.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:quran_with_tafsir/quran_with_tafsir.dart';
@@ -86,9 +87,7 @@ class _SurahBodyState extends State<SurahBody> {
         ReadingTracker.instance.markPageRead(page).then((completedKhatma) {
           if (completedKhatma && mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('مبارك! أتممت ختمة كاملة للقرآن الكريم'),
-              ),
+              SnackBar(content: Text(S.of(context).khatmaCompletedMessage)),
             );
           }
         });
@@ -180,7 +179,9 @@ class _SurahHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final meta = QuranService.instance.getSurahMetadata(surahNumber);
-    final place = meta.revelationType == 'Medinan' ? 'مدنية' : 'مكية';
+    final place = meta.revelationType == 'Medinan'
+        ? S.of(context).medinan
+        : S.of(context).meccan;
     // الفاتحة البسملة آية منها، والتوبة من غير بسملة
     final showBasmala = surahNumber != 1 && surahNumber != 9;
     return Padding(
@@ -334,7 +335,7 @@ class _PageFooter extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Text(
-              'صفحة $page • الجزء $juz',
+              S.of(context).pageAndJuz(page, juz),
               style: TextStyle(
                 color: AppColors.primaryColor.withValues(alpha: 0.8),
                 fontSize: 12.sp,

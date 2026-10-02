@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'dart:math' as math;
+import 'package:islami/generated/l10n.dart';
 
 // import 'package:flutter_qibla/flutter_qibla.dart'; // باكدج القبلة
 
@@ -134,7 +135,7 @@ class _QiblaScreenState extends State<QiblaScreen>
           
           // العنوان
           Text(
-            'اتجاه القبلة',
+            S.of(context).qiblaDirection,
             style: GoogleFonts.amiri(
               color: Colors.white,
               fontSize: 28.sp,
@@ -157,7 +158,7 @@ class _QiblaScreenState extends State<QiblaScreen>
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return _buildStatusMessage(compassSize,
-                    message: 'تعذر تحديد موقعك، حاول مرة أخرى');
+                    message: S.of(context).locationFailed);
               }
               // لو لسه بيحمل أو مفيش بيانات
               if (snapshot.connectionState == ConnectionState.waiting ||
@@ -270,7 +271,7 @@ class _QiblaScreenState extends State<QiblaScreen>
               border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.4)),
             ),
             child: Text(
-              'أدر الجهاز لتحديد اتجاه القبلة',
+              S.of(context).rotateDeviceForQibla,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.sp,
@@ -286,13 +287,12 @@ class _QiblaScreenState extends State<QiblaScreen>
   }
 
   Widget _buildStatusMessage(double compassSize, {String? message}) {
+    final s = S.of(context);
     final (String text, String? action) = switch (_status) {
-      _QiblaStatus.noSensor => ('جهازك لا يحتوي على حساس البوصلة', null),
-      _QiblaStatus.serviceDisabled =>
-        ('شغّل خدمة الموقع (GPS) لتحديد اتجاه القبلة', 'فتح الإعدادات'),
-      _QiblaStatus.deniedForever =>
-        ('إذن الموقع مرفوض، فعّله من إعدادات التطبيق', 'فتح الإعدادات'),
-      _ => ('نحتاج إذن الموقع لحساب اتجاه القبلة من مكانك', 'السماح بالموقع'),
+      _QiblaStatus.noSensor => (s.noCompassSensor, null),
+      _QiblaStatus.serviceDisabled => (s.turnOnGpsForQibla, s.openSettings),
+      _QiblaStatus.deniedForever => (s.locationDeniedForever, s.openSettings),
+      _ => (s.locationNeededForQibla, s.allowLocation),
     };
     return SizedBox(
       height: compassSize,
@@ -318,7 +318,7 @@ class _QiblaScreenState extends State<QiblaScreen>
                     foregroundColor: AppColors.primaryColor,
                     side: const BorderSide(color: AppColors.primaryColor),
                   ),
-                  child: Text(message != null ? 'إعادة المحاولة' : action!),
+                  child: Text(message != null ? s.retry : action!),
                 ),
               ],
             ],

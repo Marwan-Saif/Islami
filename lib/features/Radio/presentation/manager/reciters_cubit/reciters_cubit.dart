@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islami/features/Radio/data/models/reciter_model.dart';
 import 'package:islami/features/Radio/domain/recitations_repo.dart';
+import 'package:islami/generated/l10n.dart';
 
 part 'reciters_state.dart';
 
@@ -17,8 +18,7 @@ class RecitersCubit extends Cubit<RecitersState> {
       _allReciters = await recitationsRepo.getReciters();
       emit(RecitersSuccess(reciters: _allReciters));
     } catch (e) {
-      emit(RecitersFailure(
-          errorMessage: 'تعذر تحميل قائمة القراء، تأكد من الاتصال بالإنترنت'));
+      emit(RecitersFailure(errorMessage: S.current.recitersLoadError));
     }
   }
 
@@ -35,7 +35,9 @@ class RecitersCubit extends Cubit<RecitersState> {
   }
 
   // عشان "عبد الباسط" تلاقي "عبدالباسط" و "احمد" تلاقي "أحمد"
+  // (والأسماء الإنجليزية من غير فرق بين الحروف الكبيرة والصغيرة)
   String _normalize(String text) => text
+      .toLowerCase()
       .replaceAll(RegExp('[أإآ]'), 'ا')
       .replaceAll('ة', 'ه')
       .replaceAll('ى', 'ي')
