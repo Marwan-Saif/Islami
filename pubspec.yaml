@@ -47,6 +47,10 @@ dev_dependencies:
     sdk: flutter
   hive_generator: ^2.0.1
   flutter_native_splash: ^2.4.6
+  integration_test:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
   
   
 
