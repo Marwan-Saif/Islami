@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#212121</color>
+    <!-- same color as flutter_native_splash in pubspec.yaml -->
+    <color name="splash_background">#2D2C2C</color>
 </resources>

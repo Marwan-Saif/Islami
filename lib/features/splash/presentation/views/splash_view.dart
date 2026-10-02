@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:islami/constants.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
+import 'package:islami/core/services/shared_prefs.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 
@@ -15,22 +16,24 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 2), () {
-      context.go(AppRouter.homeView);
-      // if (Prefs.getData(key: kIsOnBoardingViewSeen) == true) {
-      //   // print(
-      //   //     "ابقي عدل النفجيشن للهوم لما تحط الشيرد بريفرنس بتاع تسجيل الدخول ");
-      //   if (getit.get<FirebaseAuthServices>().isUserSignedIn()) {
-      //     GoRouter.of(context).pushReplacement(AppRouter.homeView);
-      //   } else {
-      //     GoRouter.of(context).pushReplacement(AppRouter.signinView);
-      //   }
-      // } else {
-      //   GoRouter.of(context).pushReplacement(AppRouter.onBoarding);
-      // }
-    });
-
     super.initState();
+    // بعد أول frame بنفك صور الشاشة الرئيسية وإحنا لسه على الـ splash،
+    // عشان أول ما الرئيسية تظهر متقفش وهي بتفك الصور
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.wait([
+        Future.delayed(const Duration(milliseconds: 1200)),
+        for (final image in const [
+          Assets.imagesTajMahalAgraIndia,
+          Assets.imagesMosque001,
+          Assets.imagesTimerBackground,
+        ])
+          precacheImage(AssetImage(image), context),
+      ]);
+      if (!mounted) return;
+      // الـ onboarding أول مرة بس، وبعد كده على الرئيسية على طول
+      final seen = Prefs.getData(key: kOnboardingSeenKey) == true;
+      context.go(seen ? AppRouter.homeView : AppRouter.onBoardingView);
+    });
   }
 
   @override

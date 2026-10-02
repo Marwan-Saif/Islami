@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/audio_services.dart';
+import 'package:islami/core/services/get_it.dart';
+import 'package:islami/features/Radio/domain/recitations_repo.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/features/Radio/data/models/audio_model.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
@@ -17,6 +22,7 @@ class RadioView extends StatefulWidget {
 class _RadioViewState extends State<RadioView> {
   @override
   Widget build(BuildContext context) {
+    final lastSelection = getit.get<RecitationsRepo>().getLastSelection();
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
@@ -35,7 +41,7 @@ class _RadioViewState extends State<RadioView> {
                     size: 45.sp,
                   ),
                   Text(
-                    'الراديو والتلاوات',
+                    S.of(context).radioAndRecitations,
                     style: GoogleFonts.amiri(
                       color: Colors.white,
                       fontSize: 28.sp,
@@ -53,7 +59,7 @@ class _RadioViewState extends State<RadioView> {
             SizedBox(height: 30.h),
 
             Text(
-              'المكتبة الصوتية',
+              S.of(context).audioLibrary,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.sp,
@@ -64,22 +70,28 @@ class _RadioViewState extends State<RadioView> {
             SizedBox(height: 16.h),
 
             _buildSelectionCard(
-              title: 'اختيار القارئ',
-              subtitle: 'اختر شيخك المفضل للاستماع',
+              title: S.of(context).chooseReciter,
+              subtitle: S.of(context).chooseReciterSubtitle,
               icon: Icons.person_search_rounded,
-              onTap: () {
-                print("تم الضغط على اختيار القارئ");
+              onTap: () async {
+                await context.push(AppRouter.recitersView);
+                // عشان اسم القارئ في الكارت التاني يتحدث
+                if (mounted) setState(() {});
               },
             ),
 
             SizedBox(height: 16.h),
 
             _buildSelectionCard(
-              title: 'اختيار التلاوة',
-              subtitle: 'اختر السورة أو الجزء المطلوب',
+              title: S.of(context).chooseRecitation,
+              subtitle: S.of(context).surahsByReciter(lastSelection.reciter.name),
               icon: Icons.menu_book_rounded,
-              onTap: () {
-                print("تم الضغط على اختيار التلاوة");
+              onTap: () async {
+                await context.push(
+                  AppRouter.reciterSurahsView,
+                  extra: lastSelection,
+                );
+                if (mounted) setState(() {});
               },
             ),
 
@@ -99,14 +111,14 @@ class _RadioViewState extends State<RadioView> {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20.r),
-      splashColor: AppColors.primaryColor.withOpacity(0.2),
+      splashColor: AppColors.primaryColor.withValues(alpha: 0.2),
       child: Container(
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
+          color: Colors.black.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: AppColors.primaryColor.withOpacity(0.3),
+            color: AppColors.primaryColor.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),
@@ -115,7 +127,7 @@ class _RadioViewState extends State<RadioView> {
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.15),
+                color: AppColors.primaryColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(15.r),
               ),
               child: Icon(icon, color: AppColors.primaryColor, size: 30.sp),
@@ -172,23 +184,25 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
   final AudioService _audioService = AudioService();
 
   // تجهيز الـ Playlist كمتغير عشان نقدر نقارن بيه في الـ UI
-  final List<AudioModel> playlist = [
+  // getter عشان الأسماء تتبني بلغة التطبيق الحالية
+  List<AudioModel> get playlist => [
+    // دي إذاعات بث مباشر لكل قارئ مش سور معينة
     AudioModel(
-      id: 'surah_1',
-      title: 'سورة الفاتحة',
-      subtitle: 'عبد الباري محمد',
+      id: 'radio_abdulbari_mohammad',
+      title: S.of(context).radioAbdulbari,
+      subtitle: S.of(context).liveBroadcast,
       url: "https://backup.qurango.net/radio/abdulbari_mohammad",
     ),
     AudioModel(
-      id: 'surah_2',
-      title: 'سورة البقرة',
-      subtitle: 'عبد الله بصفر',
+      id: 'radio_abdullah_basfer',
+      title: S.of(context).radioBasfar,
+      subtitle: S.of(context).liveBroadcast,
       url: "https://backup.qurango.net/radio/abdullah_basfer",
     ),
     AudioModel(
-      id: 'surah_3',
-      title: 'سورة آل عمران',
-      subtitle: 'عبد الله خياط',
+      id: 'radio_abdullah_khayyat',
+      title: S.of(context).radioKhayat,
+      subtitle: S.of(context).liveBroadcast,
       url: "https://backup.qurango.net/radio/abdullah_khayyat",
     ),
   ];
@@ -203,13 +217,13 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryColor.withOpacity(0.9),
-            AppColors.primaryColor.withOpacity(0.5),
+            AppColors.primaryColor.withValues(alpha: 0.9),
+            AppColors.primaryColor.withValues(alpha: 0.5),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.2),
+            color: AppColors.primaryColor.withValues(alpha: 0.2),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -223,17 +237,25 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
             child: Icon(
               Icons.mosque_rounded,
               size: 150.sp,
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
             ),
           ),
           Padding(
             padding: EdgeInsets.all(24.w),
-            child: StreamBuilder<SequenceState?>(
+            // الحالة بتتراقب هنا كمان عشان الكارت يرجع للإذاعة لما المشغل يقف خالص
+            child: StreamBuilder<PlayerState>(
+              stream: _audioService.audioPlayer.playerStateStream,
+              builder: (context, _) => StreamBuilder<SequenceState?>(
               // 1. هنا بنراقب إيه اللي شغال دلوقتي في المشغل بالكامل
               stream: _audioService.audioPlayer.sequenceStateStream,
               builder: (context, sequenceSnapshot) {
                 final currentTag = sequenceSnapshot.data?.currentSource?.tag;
-                final MediaItem? currentMediaItem = currentTag is MediaItem ? currentTag : null;
+                // بعد stop المشغل بيفضل شايل آخر حاجة اتشغلت (آية أو سورة)،
+                // فكان الكارت بيعرضها وزرار التشغيل بيرجعها بدل الإذاعة
+                final idle = _audioService.audioPlayer.processingState ==
+                    ProcessingState.idle;
+                final MediaItem? currentMediaItem =
+                    currentTag is MediaItem && !idle ? currentTag : null;
 
                 // 2. بنحدد النصوص: لو في حاجة شغالة نعرضها، لو مفيش نعرض أول عنصر في الـ Playlist
                 final String displayTitle = currentMediaItem?.title ?? playlist.first.title;
@@ -255,6 +277,8 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        // أسماء سور التلاوات متشكلة فالتشكيل بيطلع لفوق
+                        SizedBox(height: 6.h),
                         Text(
                           displayTitle, // اسم السورة أو الإذاعة (مثل: سورة الفاتحة)
                           style: GoogleFonts.amiri(
@@ -318,6 +342,7 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
                   ],
                 );
               },
+            ),
             ),
           ),
         ],

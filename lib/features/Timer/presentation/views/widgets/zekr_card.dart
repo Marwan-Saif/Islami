@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,6 +40,9 @@ class ZekrCard extends StatelessWidget {
             Expanded(
               child: Image.asset(
                 Assets.imagesIllustration,
+                // الصورة 1024px وبتظهر في كارت عرضه 160 بس
+                cacheWidth:
+                    (160.sp * MediaQuery.devicePixelRatioOf(context)).ceil(),
                 // width: 120.sp,
               ),
             ),

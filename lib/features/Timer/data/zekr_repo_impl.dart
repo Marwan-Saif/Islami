@@ -7,7 +7,7 @@ import 'package:islami/features/Timer/domain/zekr_entity.dart';
 import 'package:islami/features/Timer/domain/zekr_repo.dart';
 
 class ZekrRepoImpl extends ZekrRepo {
-  List<List<ZekrEntity>> AzkarList = [];
+  List<List<ZekrEntity>> azkarList = [];
   @override
   Future<List<List<ZekrEntity>>> getZekrList() async {
     log('Getting Zekr List');
@@ -17,11 +17,11 @@ class ZekrRepoImpl extends ZekrRepo {
         List<dynamic> jsonData = json.decode(jsonString);
 
         // log(jsonData.toString());
-        AzkarList.add([for (var item in jsonData) ZekrEntity.fromJson(item)]);
+        azkarList.add([for (var item in jsonData) ZekrEntity.fromJson(item)]);
       }
-      return AzkarList;
+      return azkarList;
     } catch (e) {
-      print("Error reading JSON file: $e");
+      log("Error reading JSON file: $e");
     }
     return [];
   }

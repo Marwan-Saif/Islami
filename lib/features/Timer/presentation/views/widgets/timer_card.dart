@@ -22,7 +22,7 @@ class PrayerTimerCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             const Color(0xFF202020),
-            const Color(0xFFB19768).withOpacity(0.7),
+            const Color(0xFFB19768).withValues(alpha: 0.7),
           ],
         ),
         borderRadius: BorderRadius.circular(20),

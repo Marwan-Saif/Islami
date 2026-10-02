@@ -1,9 +1,9 @@
-import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:islami/constants.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
+import 'package:islami/core/services/shared_prefs.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/generated/l10n.dart';
@@ -39,9 +39,6 @@ class OnBoardingBody extends StatelessWidget {
         ),
         showSkipButton: true,
         skipSemantic: 'Skip',
-        // onSkip: () {
-          
-        // },
         // skipStyle: ,
         skip: Text(
           S.of(context).skip,
@@ -65,10 +62,8 @@ class OnBoardingBody extends StatelessWidget {
               color: AppColors.primaryColor,
               fontSize: 16),
         ),
-        onDone: () {
-          context.go(AppRouter.homeView);
-          // On button pressed
-        },
+        onDone: () => _finish(context),
+        onSkip: () => _finish(context),
         pages: [
           customPageViewModel(
               title: S.of(context).onboarding1_title,
@@ -87,6 +82,12 @@ class OnBoardingBody extends StatelessWidget {
               image: Assets.imagesRadio,
               child: S.of(context).onboarding4_body),
         ]);
+  }
+
+  // الـ onboarding بيظهر أول مرة بس
+  Future<void> _finish(BuildContext context) async {
+    await Prefs.saveData(key: kOnboardingSeenKey, value: true);
+    if (context.mounted) context.go(AppRouter.homeView);
   }
 
   PageViewModel customPageViewModel(
@@ -113,32 +114,30 @@ class OnBoardingBody extends StatelessWidget {
       ),
       decoration: const PageDecoration(
           imageFlex: 3, pageColor: AppColors.backgroundColor),
+      // الصور كانت بأحجام ثابتة (حوالي 500 بكسل) فكانت بتعمل overflow في
+      // الشاشات الصغيرة، دلوقتي بتتقسم على المساحة المتاحة وبتصغر لو محتاجة
       image: Column(
         children: [
-          const SizedBox(
-            height: 15,
-          ),
-          Stack(
-            alignment: AlignmentDirectional.bottomCenter,
-            children: [
-              Image.asset(
-                Assets.imagesMosque01,
-                width: 270,
+          const SizedBox(height: 15),
+          Flexible(
+            flex: 2,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Stack(
+                alignment: AlignmentDirectional.bottomCenter,
+                children: [
+                  Image.asset(Assets.imagesMosque01, width: 270),
+                  Positioned(
+                    bottom: 20,
+                    child: Image.asset(Assets.imagesIslami1, width: 270),
+                  ),
+                ],
               ),
-              Positioned(
-                bottom: 20,
-                child: Image.asset(
-                  Assets.imagesIslami1,
-                  width: 270,
-                ),
-              ),
-            ],
+            ),
           ),
-          Image.asset(
-            image,
-            width: 270,
-            height: 300,
-            fit: BoxFit.fitHeight,
+          Flexible(
+            flex: 3,
+            child: Image.asset(image, width: 270, fit: BoxFit.contain),
           ),
         ],
       ),

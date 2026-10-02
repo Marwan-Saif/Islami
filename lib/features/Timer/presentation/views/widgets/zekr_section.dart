@@ -9,6 +9,7 @@ import 'package:islami/features/Timer/domain/zekr_entity.dart';
 import 'package:islami/features/Timer/domain/zekr_repo.dart';
 import 'package:islami/features/Timer/presentation/manager/Azkar/azkar_cubit.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/zekr_card.dart';
+import 'package:islami/generated/l10n.dart';
 
 class ZekrListView extends StatelessWidget {
   const ZekrListView({
@@ -55,17 +56,20 @@ class AzkarListViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // لازم تتقرا هنا مش جوه itemBuilder عشان الكروت تتبني تاني لما اللغة تتغير
+    final names = azkarNames(S.of(context));
     return SizedBox(
       height: 200.h,
         child: ListView.separated(
       padding:
           EdgeInsetsDirectional.symmetric(vertical: 20.sp, horizontal: 20.sp),
       itemBuilder: (context, index) => ZekrCard(
-        name: kFileNames[index],
+        name: names[index],
         zekrList: azkar[index],
       ),
       separatorBuilder: (context, index) => SizedBox(width: 20.sp),
-      itemCount: 7,
+      // كان مكتوب 7 ثابت فـ "أذكار النوم" (الملف التامن) مكنتش بتظهر
+      itemCount: azkar.length,
       scrollDirection: Axis.horizontal,
     ));
   }

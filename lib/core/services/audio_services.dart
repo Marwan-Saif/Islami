@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:islami/features/Radio/data/models/audio_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -13,7 +15,7 @@ class AudioService {
 
   // جلب الـ ID الخاص بالملف الصوتي اللي شغال دلوقتي (من المشغل مباشرة)
   String? get currentPlayingId {
-    final currentTag = audioPlayer.sequenceState?.currentSource?.tag;
+    final currentTag = audioPlayer.sequenceState.currentSource?.tag;
     if (currentTag is MediaItem) {
       return currentTag.id;
     }
@@ -39,7 +41,7 @@ class AudioService {
       tag: mediaItem,
     );
 
-    await audioPlayer.setAudioSource(audioSource);
+    if (!await _load(() => audioPlayer.setAudioSource(audioSource))) return;
     await audioPlayer.play();
   }
 
@@ -57,17 +59,29 @@ class AudioService {
       );
     }).toList();
 
-    final concatenatingAudioSource = ConcatenatingAudioSource(
-      useLazyPreparation: true,
-      children: audioSources,
+    final loaded = await _load(
+      () => audioPlayer.setAudioSources(
+        audioSources,
+        initialIndex: initialIndex,
+        initialPosition: Duration.zero,
+      ),
     );
-
-    await audioPlayer.setAudioSource(
-      concatenatingAudioSource,
-      initialIndex: initialIndex,
-      initialPosition: Duration.zero,
-    );
+    if (!loaded) return;
     await audioPlayer.play();
+  }
+
+  // التحميل بيفشل لو النت فاصل، أو بيتقطع لو المستخدم شغّل حاجة تانية أو وقّف
+  // قبل ما يخلص. الخطأ ده كان بيطلع من غير ما حد يمسكه
+  Future<bool> _load(Future<Object?> Function() load) async {
+    try {
+      await load();
+      return true;
+    } on PlayerInterruptedException {
+      return false;
+    } catch (e) {
+      log('failed to load audio: $e');
+      return false;
+    }
   }
 
   // دوال التحكم

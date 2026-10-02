@@ -15,8 +15,9 @@ class BottomNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+    // scaleDown keeps the item at its natural size unless the bar is too narrow
+    return FittedBox(
+      fit: BoxFit.scaleDown,
       child: Column(
         children: [
           CircleAvatar(
@@ -28,6 +29,8 @@ class BottomNavItem extends StatelessWidget {
               padding: const EdgeInsets.all(5.0),
               child: Image.asset(
                 icon,
+                // الأيقونات ملفات كبيرة (البوصلة 1295px)، فبتتفك بحجم ظهورها بس
+                cacheWidth: (50 * MediaQuery.devicePixelRatioOf(context)).ceil(),
                 fit: BoxFit.fill,
                 color: isSelected
                     ? AppColors.primaryColor
@@ -48,7 +51,7 @@ class BottomNavItem extends StatelessWidget {
                     fontSize: 15,
                   ),
                 )
-              : SizedBox()
+              : const SizedBox()
         ],
       ),
     );

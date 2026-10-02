@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_card.dart';
-import 'package:prayers_times/prayers_times.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 class PrayerTimer extends StatefulWidget {
@@ -16,88 +18,99 @@ class PrayerTimer extends StatefulWidget {
 }
 
 class _PrayerTimerState extends State<PrayerTimer> {
-  List<List<dynamic>> prayerTimesList = [];
-  String currentDay = DateFormat('EEEE', 'ar').format(DateTime.now());
-  String currentDate = DateFormat.MMMEd('ar').format(DateTime.now());
-  
-  String nextPrayerName = '';
-  String nextPrayerTimeFormatted = '';
+  // الأسماء والتواريخ بتتعمل format في build عشان تتغير مع لغة التطبيق
+  DayPrayerTimes? _today;
 
   @override
   void initState() {
     super.initState();
     _initializePrayerTimes();
+    // الموقع بيتحدث مع فتح الأبلكيشن بعد ما الكارت يكون اتبنى
+    PrayerTimesService.locationRevision.addListener(_initializePrayerTimes);
   }
 
-  void _initializePrayerTimes() {
-    Coordinates coordinates = Coordinates(30.5657224, 31.0168763);
-
-    PrayerCalculationParameters params = PrayerCalculationMethod.karachi();
-    params.madhab = PrayerMadhab.hanafi;
-
-    PrayerTimes prayerTimes = PrayerTimes(
-      coordinates: coordinates,
-      calculationParameters: params,
-      precision: true,
-      locationName: "Africa/Cairo",
-    );
-
-    _addTimesToList(prayerTimes);
-    _calculateNextPrayer(prayerTimes);
-    _createNotification(prayerTimes);
+  @override
+  void dispose() {
+    PrayerTimesService.locationRevision.removeListener(_initializePrayerTimes);
+    super.dispose();
   }
 
-  void _addTimesToList(PrayerTimes prayerTimes) {
-    prayerTimesList = [
-      ['فجر', _formatDate(prayerTimes.fajrStartTime!), DateFormat('a', 'ar').format(prayerTimes.fajrStartTime!)],
-      ['شروق', _formatDate(prayerTimes.sunrise!), DateFormat('a', 'ar').format(prayerTimes.sunrise!)],
-      ['ظهر', _formatDate(prayerTimes.dhuhrStartTime!), DateFormat('a', 'ar').format(prayerTimes.dhuhrStartTime!)],
-      ['عصر', _formatDate(prayerTimes.asrStartTime!), DateFormat('a', 'ar').format(prayerTimes.asrStartTime!)],
-      ['مغرب', _formatDate(prayerTimes.maghribStartTime!), DateFormat('a', 'ar').format(prayerTimes.maghribStartTime!)],
-      ['عشاء', _formatDate(prayerTimes.ishaStartTime!), DateFormat('a', 'ar').format(prayerTimes.ishaStartTime!)]
-    ];
-    setState(() {}); 
+  Future<void> _updateLocation() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final updated = await PrayerTimesService.updateLocation(request: true);
+    if (updated) unawaited(PrayerNotifications.scheduleUpcoming());
+    if (!mounted) return;
+    setState(() {});
+    messenger.showSnackBar(SnackBar(
+      content: Text(updated
+          ? S.of(context).timesUpdatedForLocation
+          : S.of(context).enableLocationForTimes),
+      duration: const Duration(seconds: 3),
+    ));
   }
 
-  
-  void _calculateNextPrayer(PrayerTimes prayerTimes) {
-    String next = prayerTimes. nextPrayer(); 
-    DateTime? nextTime = prayerTimes.timeForPrayer(next);
-    
-    
-    Map<String, String> prayerNamesAr = {
-      'fajr': 'الفجر', 'sunrise': 'الشروق', 'dhuhr': 'الظهر',
-      'asr': 'العصر', 'maghrib': 'المغرب', 'isha': 'العشاء', 'none': 'الفجر'
+  Future<void> _initializePrayerTimes() async {
+    // جدولة الأذان بقت في main عشان تشتغل حتى لو الشاشة دي متفتحتش
+    final days = await PrayerTimesService.forDays(DateTime.now());
+    if (mounted) setState(() => _today = days.first);
+  }
+
+  Future<void> _toggleAdhan() async {
+    // بيتقرا من الإعدادات مش من متغير، عشان يفضل متزامن مع صفحة الإعدادات
+    final adhanEnabled = !PrayerNotifications.isEnabled;
+    await PrayerNotifications.setEnabled(adhanEnabled);
+    setState(() {});
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(adhanEnabled
+          ? S.of(context).adhanTurnedOn
+          : S.of(context).adhanTurnedOff),
+      duration: const Duration(seconds: 2),
+    ));
+  }
+
+  String _prayerName(String prayer) {
+    final s = S.of(context);
+    return switch (prayer) {
+      'sunrise' => s.sunrise,
+      'dhuhr' => s.dhuhr,
+      'asr' => s.asr,
+      'maghrib' => s.maghrib,
+      'isha' => s.isha,
+      // بعد العشاء الصلاة الجاية فجر بكرة
+      _ => s.fajr,
     };
-
-    if (nextTime != null) {
-      setState(() {
-        nextPrayerName = prayerNamesAr[next] ?? '';
-        nextPrayerTimeFormatted = DateFormat('hh:mm a', 'en').format(nextTime);
-      });
-    }
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('hh:mm').format(date); 
-  }
-
-  void _createNotification(PrayerTimes prayerTimes) {
-    
-    NotificationHelper.scheduleNotification('صلاة الفجر', 'حان الآن موعد صلاة الفجر', TimeOfDay.fromDateTime(prayerTimes.fajrStartTime!), 1);
-    NotificationHelper.scheduleNotification('صلاة الظهر', 'حان الآن موعد صلاة الظهر', TimeOfDay.fromDateTime(prayerTimes.dhuhrStartTime!), 2);
-    NotificationHelper.scheduleNotification('صلاة العصر', 'حان الآن موعد صلاة العصر', TimeOfDay.fromDateTime(prayerTimes.asrStartTime!), 3);
-    NotificationHelper.scheduleNotification('صلاة المغرب', 'حان الآن موعد صلاة المغرب', TimeOfDay.fromDateTime(prayerTimes.maghribStartTime!), 4);
-    NotificationHelper.scheduleNotification('صلاة العشاء', 'حان الآن موعد صلاة العشاء', TimeOfDay.fromDateTime(prayerTimes.ishaStartTime!), 5);
+    return DateFormat('hh:mm').format(date);
   }
 
   @override
   Widget build(BuildContext context) {
-    
-    if (prayerTimesList.isEmpty) {
-      return const Center(child: CircularProgressIndicator()); 
+    final today = _today;
+    if (today == null) {
+      return const Center(child: CircularProgressIndicator());
     }
 
+    final language = Localizations.localeOf(context).languageCode;
+    final now = DateTime.now();
+    final currentDay = DateFormat('EEEE', language).format(now);
+    final currentDate = DateFormat.MMMEd(language).format(now);
+    final prayerTimesList = [
+      for (int i = 0; i < DayPrayerTimes.names.length; i++)
+        (
+          _prayerName(DayPrayerTimes.names[i]),
+          _formatDate(today.wallTime(i)),
+          DateFormat('a', language).format(today.wallTime(i)),
+        ),
+    ];
+    // بعد العشاء الصلاة الجاية فجر بكرة (تقريباً نفس وقت فجر النهارده)
+    final nextIndex = today.nextIndex(now) ?? 0;
+    final next = DayPrayerTimes.names[nextIndex];
+    final nextTime = today.wallTime(nextIndex);
+    final city = PrayerTimesService.manualCity;
+    final adhanEnabled = PrayerNotifications.isEnabled;
     return Container(
       margin: EdgeInsetsDirectional.symmetric(horizontal: 20.sp),
       padding: const EdgeInsets.all(16),
@@ -125,7 +138,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
               Expanded(
                 flex: 2,
                 child: Text(
-                  "مواقيت الصلاه\n$currentDay",
+                  "${S.of(context).prayerTimes}\n$currentDay",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.amiri(fontSize: 18.sp, color: Colors.black, fontWeight: FontWeight.bold),
                 ),
@@ -144,10 +157,10 @@ class _PrayerTimerState extends State<PrayerTimer> {
           // Prayer Times Carousel
           CarouselSlider.builder(
             itemBuilder: (context, index, realIndex) => PrayerTimerCard(
-              prayerName: prayerTimesList[index][0],
-              time: prayerTimesList[index][1],
+              prayerName: prayerTimesList[index].$1,
+              time: prayerTimesList[index].$2,
               isHighlighted: true, // يفضل مستقبلاً وضع شرط لمعرفة الصلاة الحالية لتحديد الـ true/false
-              pm: prayerTimesList[index][2],
+              pm: prayerTimesList[index].$3,
             ),
             itemCount: prayerTimesList.length,
             options: CarouselOptions(
@@ -164,17 +177,38 @@ class _PrayerTimerState extends State<PrayerTimer> {
           
           Row(
             children: [
-              const SizedBox(width: 48), 
+              IconButton(
+                onPressed: _updateLocation,
+                tooltip: PrayerTimesService.usesDeviceLocation
+                    ? S.of(context).timesForMyLocation
+                    : S.of(context).timesForCity(
+                        city?.name ?? S.of(context).defaultCityName),
+                icon: Icon(
+                  PrayerTimesService.usesDeviceLocation
+                      ? Icons.location_on
+                      : Icons.location_off,
+                  color: Colors.black,
+                ),
+              ),
               Expanded(
                 child: Text(
-                  "Next: $nextPrayerName - $nextPrayerTimeFormatted", 
+                  S.of(context).nextPrayer(
+                    _prayerName(next),
+                    DateFormat('hh:mm a', language).format(nextTime),
+                  ), 
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.volume_off, color: Colors.black),
+                onPressed: _toggleAdhan,
+                tooltip: adhanEnabled
+                    ? S.of(context).disableAdhan
+                    : S.of(context).enableAdhan,
+                icon: Icon(
+                  adhanEnabled ? Icons.volume_up : Icons.volume_off,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),

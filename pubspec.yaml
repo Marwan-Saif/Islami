@@ -1,5 +1,5 @@
 name: islami
-description: "A new Flutter project."
+description: "Islami: the Holy Quran with tafsir and recitations, prayer times and adhan, azkar, hadith, tasbih and qibla."
 publish_to: 'none'
 version: 0.1.0
 
@@ -10,14 +10,11 @@ dependencies:
   carousel_slider: ^5.0.0
   flutter:
     sdk: flutter
-  flutter_animate: ^4.5.2
   flutter_bloc: ^9.0.0
-  flutter_launcher_icons: ^0.14.3
   flutter_local_notifications: ^18.0.1
   flutter_localizations:
     sdk: flutter
   flutter_screenutil: ^5.9.3
-  flutter_svg_provider: ^1.0.7
   get_it: ^8.0.3
   go_router: ^14.6.3
   google_fonts: ^6.2.1
@@ -28,21 +25,33 @@ dependencies:
   shared_preferences: ^2.3.3
   intl: any
 
-  cupertino_icons: ^1.0.8
   flutter_qiblah: ^3.1.0+1
   geolocator: ^13.0.4
-  permission_handler: ^12.0.1
   audioplayers: ^6.6.0
   just_audio: ^0.10.5
   just_audio_background: ^0.0.1-beta.17
+  timezone: ^0.9.4
+  flutter_timezone: ^5.1.0
+  http: ^1.6.0
+  quran_with_tafsir: ^1.0.1
+  scrollable_positioned_list: ^0.3.8
+  package_info_plus: ^10.2.2
+  share_plus: ^13.3.1
+  url_launcher: ^6.3.2
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.3
   intl_utils: ^2.8.6
   build_runner: ^2.4.11
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
   hive_generator: ^2.0.1
+  flutter_native_splash: ^2.4.6
+  integration_test:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
   
   
 
@@ -56,7 +65,9 @@ flutter:
     - assets/images/
     - assets/data/
     - assets/sound/azan.mp3
+    - assets/sound/azan_short.wav
     - assets/sound/notification.wav
+    - assets/google_fonts/
 
 flutter_assets:
   assets_path: assets/images/
@@ -76,3 +87,13 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/images/app_icon.png"
   image_path: "assets/images/app_icon.png"
   min_sdk_android: 21
+
+# run `dart run flutter_native_splash:create` after changing this section
+flutter_native_splash:
+  # matches the tone of assets/images/background.png used by the Flutter splash
+  color: "#2D2C2C"
+  image: assets/splash/splash_logo.png
+  android_12:
+    color: "#2D2C2C"
+    image: assets/splash/splash_icon_android12.png
+  web: false

@@ -5,9 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/utils/app_colors.dart';
+import 'package:islami/features/Timer/data/azkar_notifications.dart';
 import 'package:islami/features/Timer/data/hive/zekr_localdata.dart';
 import 'package:islami/features/Timer/domain/zekr_repo.dart';
 import 'package:islami/features/Timer/presentation/manager/Azkar/azkar_cubit.dart';
+import 'package:islami/generated/l10n.dart';
 
 class NotificationCard extends StatefulWidget {
   const NotificationCard(
@@ -37,7 +39,7 @@ class _NotificationCardState extends State<NotificationCard> {
       child: BlocConsumer<AzkarCubit, AzkarState>(
         listener: (context, state) {},
         builder: (context, state) {
-          return state is getlocalDataloading
+          return state is GetLocalDataLoading
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
@@ -51,10 +53,9 @@ class _NotificationCardState extends State<NotificationCard> {
                   child: Column(children: [
                     Row(
                       children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 200,
+                        Expanded(
                           child: Text(
-                            "تفعيل الاشعارات",
+                            S.of(context).enableNotifications,
                             maxLines: 2,
                             style: TextStyle(
                                 color: AppColors.backgroundColor,
@@ -62,7 +63,6 @@ class _NotificationCardState extends State<NotificationCard> {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const Spacer(),
                         Switch(
                           value: context
                               .read<AzkarCubit>()
@@ -75,7 +75,7 @@ class _NotificationCardState extends State<NotificationCard> {
                               selected = value;
                             });
                           },
-                          activeColor: AppColors.primaryColor,
+                          activeThumbColor: AppColors.primaryColor,
                           activeTrackColor: AppColors.secondaryColor,
                           inactiveThumbColor: AppColors.primaryColor,
                           inactiveTrackColor: AppColors.backgroundColor,
@@ -84,10 +84,16 @@ class _NotificationCardState extends State<NotificationCard> {
                     ),
                     Row(
                       children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 150,
+                        Expanded(
                           child: Text(
-                            "الوقت المحدد لارسال الاشعارات : ${context.read<AzkarCubit>().azkarLocalDataList[widget.index].zekrtime}",
+                            S.of(context).notificationTime(
+                              // بيتعرض بنظام الساعة بتاع الموبايل (7:00 ص) بدل 07:00
+                              AzkarNotifications.parseTimeOfDay(context
+                                      .read<AzkarCubit>()
+                                      .azkarLocalDataList[widget.index]
+                                      .zekrtime)
+                                  .format(context),
+                            ),
                             maxLines: 2,
                             style: TextStyle(
                                 color: AppColors.backgroundColor,
@@ -95,21 +101,25 @@ class _NotificationCardState extends State<NotificationCard> {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const Spacer(),
+                        SizedBox(width: 8.w),
                         GestureDetector(
                             onTap: () {
                               showTimePicker(
                                 context: context,
-                                initialTime: TimeOfDay.now(),
+                                initialTime: AzkarNotifications.parseTimeOfDay(
+                                    context
+                                        .read<AzkarCubit>()
+                                        .azkarLocalDataList[widget.index]
+                                        .zekrtime),
                               ).then((value) {
+                                // value بيرجع null لو المستخدم داس إلغاء
+                                if (value == null || !context.mounted) return;
                                 log(
                                   value.toString(),
                                 );
-                                //في فرق ساعتين
-                                timeOfDay = value ?? TimeOfDay.now();
-                                timePicked = value!.hour.toString() +
-                                    ":" +
-                                    value.minute.toString();
+                                timeOfDay = value;
+                                timePicked =
+                                    "${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}";
                                 log(timePicked);
                                 context.read<AzkarCubit>().updatelocalData(
                                     index: widget.index,

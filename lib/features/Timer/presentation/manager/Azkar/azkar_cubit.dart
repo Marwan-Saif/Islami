@@ -1,14 +1,13 @@
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:islami/constants.dart';
-import 'package:islami/core/services/local_scheduled_notification.dart';
+import 'package:islami/features/Timer/data/azkar_notifications.dart';
 import 'package:islami/features/Timer/data/hive/zekr_localdata.dart';
 import 'package:islami/features/Timer/domain/zekr_entity.dart';
 import 'package:islami/features/Timer/domain/zekr_repo.dart';
-import 'package:meta/meta.dart';
 
 part 'azkar_state.dart';
 
@@ -38,19 +37,23 @@ class AzkarCubit extends Cubit<AzkarState> {
 
       azkarBox.put(1, kAzkarData[1]);
     }
-    azkarLocalDataList.addAll(azkarBox.values);
-    addNotifications();
+    azkarLocalDataList
+      ..clear()
+      ..addAll(azkarBox.values);
+    // الجدولة بتحصل مع فتح الأبلكيشن (main) ومع أي تعديل في updatelocalData
     emit(LocalAzkarDataLoaded());
     log("data adeed");
     printt();
   }
 
   void getlocalData() async {
-    emit(getlocalDataloading());
+    emit(GetLocalDataLoading());
     azkarBox = await Hive.openBox<ZekrLocalDataMoel>(kZekrBox);
-    azkarLocalDataList.addAll(azkarBox.values);
+    azkarLocalDataList
+      ..clear()
+      ..addAll(azkarBox.values);
 
-    emit(getlocalDatasuccess());
+    emit(GetLocalDataSuccess());
     printt();
   }
 
@@ -78,23 +81,6 @@ class AzkarCubit extends Cubit<AzkarState> {
   }
 
   void addNotifications() {
-    azkarLocalDataList.forEach(
-      (element) {
-        int id = azkarLocalDataList.indexOf(element);
-        if (element.zekrAllawed) {
-          NotificationHelper.cancelNotifications(id);
-          NotificationHelper.scheduleNotification(element.zekrName,
-              element.zekrBody, parseTimeOfDay(element.zekrtime), id);
-        }
-      },
-    );
-    // NotificationHelper.scheduleNotification(, body, timeOfDay, id)
-  }
-
-  TimeOfDay parseTimeOfDay(String timeString) {
-    final parts = timeString.split(':');
-    final hour = int.parse(parts[0]);
-    final minute = int.parse(parts[1]);
-    return TimeOfDay(hour: hour, minute: minute);
+    AzkarNotifications.schedule(azkarLocalDataList);
   }
 }

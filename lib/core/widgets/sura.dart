@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
@@ -26,7 +25,7 @@ class SuraSCreen extends StatelessWidget {
               child: Image.asset(
                 Assets.imagesMosque02,
                 fit: BoxFit.cover,
-                color: AppColors.primaryColor.withOpacity(0.4),
+                color: AppColors.primaryColor.withValues(alpha: 0.4),
               ),
             ),
             Positioned(
@@ -59,21 +58,26 @@ class SuraSCreen extends StatelessWidget {
                 right: 30,
                 top: 90,
                 bottom: 90,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SingleChildScrollView(
-                      child: Text(
-                        txt[1],
-                        textAlign: TextAlign
-                            .center, // Align the text to the right for Arabic
-                        style: GoogleFonts.amiri(
-                          fontSize: 20.sp,
-                          color: AppColors.primaryColor,
+                // الأذكار الطويلة لازم تعمل scroll، والقصيرة تفضل في النص
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints:
+                          BoxConstraints(minHeight: constraints.maxHeight),
+                      child: Center(
+                        child: Text(
+                          txt[1],
+                          textAlign: TextAlign
+                              .center, // Align the text to the right for Arabic
+                          style: GoogleFonts.amiri(
+                            fontSize: 20.sp,
+                            color: AppColors.primaryColor,
+                          ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ))
           ],
         ));

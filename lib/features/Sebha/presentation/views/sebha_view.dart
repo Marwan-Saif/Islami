@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Sebha/data/sebha_services.dart';
 import 'package:islami/features/Sebha/presentation/views/local_sypha.dart';
+import 'package:islami/generated/l10n.dart';
 
 class SebhaView extends StatefulWidget {
   const SebhaView({super.key});
@@ -139,7 +140,7 @@ class _SebhaViewState extends State<SebhaView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'الاجمالي :',
+                S.of(context).totalLabel,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.sp,
@@ -253,7 +254,7 @@ class _SebhaViewState extends State<SebhaView> {
                 borderRadius: BorderRadius.circular(20.r),
               ),
               title: Text(
-                "السجل السابق",
+                S.of(context).history,
                 style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
               ),
               content: ConstrainedBox(
@@ -292,7 +293,7 @@ class _SebhaViewState extends State<SebhaView> {
                         height: 20.h,
                       ),
                       Text(
-                        'الاجمالي : ${_sebhaService.getTotalHistory()}',
+                        S.of(context).total(_sebhaService.getTotalHistory()),
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18.sp,
@@ -309,16 +310,16 @@ class _SebhaViewState extends State<SebhaView> {
                   onPressed: () {
                     _sebhaService.clearHistoryData();
                     setStateDialog(() {}); 
-                    this.setState(() {}); 
+                    setState(() {}); 
                   },
                   child: Text(
-                    "تنظيف",
+                    S.of(context).clear,
                     style: TextStyle(color: Colors.red, fontSize: 16.sp),
                   ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text("إغلاق", style: TextStyle(fontSize: 16.sp)),
+                  child: Text(S.of(context).close, style: TextStyle(fontSize: 16.sp)),
                 ),
               ],
             );
