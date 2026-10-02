@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'dart:math' as math;
@@ -14,17 +15,26 @@ class QiblaScreen extends StatefulWidget {
   State<QiblaScreen> createState() => _QiblaScreenState();
 }
 
-class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStateMixin {
+enum _QiblaStatus { checking, ready, noSensor, serviceDisabled, denied, deniedForever }
+
+class _QiblaScreenState extends State<QiblaScreen>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   // final Color AppColors.primaryColor = const Color(0xFFC9A063);
-  
+
   // الأنيميشن الخاص بالنبض (Glow)
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
+  // من غير إذن الموقع الـ stream بيرجع error والبوصلة كانت بتتعرض على زاوية 0
+  _QiblaStatus _status = _QiblaStatus.checking;
+
   @override
   void initState() {
     super.initState();
-    
+    WidgetsBinding.instance.addObserver(this);
+    // بنشيك بس من غير ما نطلب الإذن، لأن الشاشة دي بتتبني مع فتح الأبلكيشن (IndexedStack)
+    _checkStatus();
+
     // تشغيل الأنيميشن وتكراره
     _pulseController = AnimationController(
       vsync: this,
@@ -38,8 +48,59 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pulseController.dispose();
     super.dispose();
+  }
+
+  // لما المستخدم يرجع من الإعدادات (فتح الـ GPS أو اداها الإذن)
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _status != _QiblaStatus.ready) {
+      _checkStatus();
+    }
+  }
+
+  Future<void> _checkStatus() async {
+    _QiblaStatus status;
+    try {
+      final hasSensor = await FlutterQiblah.androidDeviceSensorSupport() ?? true;
+      final location = await FlutterQiblah.checkLocationStatus();
+      if (!hasSensor) {
+        status = _QiblaStatus.noSensor;
+      } else if (!location.enabled) {
+        status = _QiblaStatus.serviceDisabled;
+      } else if (location.status == LocationPermission.deniedForever) {
+        status = _QiblaStatus.deniedForever;
+      } else if (location.status == LocationPermission.always ||
+          location.status == LocationPermission.whileInUse) {
+        status = _QiblaStatus.ready;
+      } else {
+        status = _QiblaStatus.denied;
+      }
+    } catch (e) {
+      status = _QiblaStatus.denied;
+    }
+    if (!mounted) return;
+    // الـ stream بتاع المكتبة singleton، فلو كان خلص بـ error لازم يتعمل من جديد
+    if (status == _QiblaStatus.ready && _status != _QiblaStatus.ready) {
+      FlutterQiblah().dispose();
+    }
+    setState(() => _status = status);
+  }
+
+  Future<void> _onStatusAction() async {
+    switch (_status) {
+      case _QiblaStatus.denied:
+        await FlutterQiblah.requestPermissions();
+        await _checkStatus();
+      case _QiblaStatus.deniedForever:
+        await Geolocator.openAppSettings();
+      case _QiblaStatus.serviceDisabled:
+        await Geolocator.openLocationSettings();
+      default:
+        await _checkStatus();
+    }
   }
 
   @override
@@ -84,22 +145,30 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
           const Spacer(),
 
           // بناء البوصلة واستقبال البيانات من الحساس
+          if (_status == _QiblaStatus.checking)
+            const Center(
+              child: CircularProgressIndicator(color: AppColors.primaryColor),
+            )
+          else if (_status != _QiblaStatus.ready)
+            _buildStatusMessage(compassSize)
+          else
           StreamBuilder<QiblahDirection>(
             stream: FlutterQiblah.qiblahStream,
             builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return _buildStatusMessage(compassSize,
+                    message: 'تعذر تحديد موقعك، حاول مرة أخرى');
+              }
               // لو لسه بيحمل أو مفيش بيانات
-              if (snapshot.connectionState == ConnectionState.waiting) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.data == null) {
                 return Center(
                   child: CircularProgressIndicator(color: AppColors.primaryColor),
                 );
               }
 
               // زاوية القبلة (بنجيبها من الباكدج وبنحولها لـ Radians)
-              // لو مفيش بيانات هنخليها 0 مؤقتاً
-              final qiblaDirection = snapshot.data;
-              final double qiblaAngle = (qiblaDirection != null) 
-                  ? (qiblaDirection.qiblah * (math.pi / 180)) 
-                  : 0.0;
+              final double qiblaAngle = snapshot.data!.qiblah * (math.pi / 180);
 
               return Center(
                 child: Stack(
@@ -213,6 +282,49 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
           const Spacer(),
           SizedBox(height: 100.h),
         ],
+    );
+  }
+
+  Widget _buildStatusMessage(double compassSize, {String? message}) {
+    final (String text, String? action) = switch (_status) {
+      _QiblaStatus.noSensor => ('جهازك لا يحتوي على حساس البوصلة', null),
+      _QiblaStatus.serviceDisabled =>
+        ('شغّل خدمة الموقع (GPS) لتحديد اتجاه القبلة', 'فتح الإعدادات'),
+      _QiblaStatus.deniedForever =>
+        ('إذن الموقع مرفوض، فعّله من إعدادات التطبيق', 'فتح الإعدادات'),
+      _ => ('نحتاج إذن الموقع لحساب اتجاه القبلة من مكانك', 'السماح بالموقع'),
+    };
+    return SizedBox(
+      height: compassSize,
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.location_off_rounded,
+                  color: AppColors.primaryColor, size: 56.r),
+              SizedBox(height: 16.h),
+              Text(
+                message ?? text,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 16.sp),
+              ),
+              if (message != null || action != null) ...[
+                SizedBox(height: 16.h),
+                OutlinedButton(
+                  onPressed: message != null ? _checkStatus : _onStatusAction,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primaryColor,
+                    side: const BorderSide(color: AppColors.primaryColor),
+                  ),
+                  child: Text(message != null ? 'إعادة المحاولة' : action!),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 
