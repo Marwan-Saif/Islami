@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/utils/app_colors.dart';
@@ -11,12 +12,24 @@ class AboutSection extends StatelessWidget {
   const AboutSection({super.key});
 
   // بيشتغل بعد ما التطبيق يتنشر على Google Play بالـ ID ده
-  static const String _storeUrl =
+  static const String _playStoreUrl =
       'https://play.google.com/store/apps/details?id=com.marwansaif.islami';
+
+  // رقم التطبيق على App Store (بيظهر بعد إنشائه على App Store Connect)،
+  // ولحد ما يتحط زرار التقييم مش بيظهر على الآيفون
+  static const String _appStoreId = '';
+
+  static bool get _isIOS => defaultTargetPlatform == TargetPlatform.iOS;
+
+  static String? get _storeUrl {
+    if (!_isIOS) return _playStoreUrl;
+    if (_appStoreId.isEmpty) return null;
+    return 'https://apps.apple.com/app/id$_appStoreId';
+  }
 
   Future<void> _rate(BuildContext context) async {
     final opened = await launchUrl(
-      Uri.parse(_storeUrl),
+      Uri.parse(_storeUrl!),
       mode: LaunchMode.externalApplication,
     );
     if (!opened && context.mounted) {
@@ -38,26 +51,29 @@ class AboutSection extends StatelessWidget {
           icon: Icons.share_rounded,
           onTap: () => SharePlus.instance.share(
             ShareParams(
-              text: S.of(context).shareAppText(_storeUrl),
+              text: S.of(context).shareAppText(_storeUrl ?? _playStoreUrl),
             ),
           ),
         ),
-        SettingsTile(
-          title: S.of(context).rateApp,
-          value: null,
-          icon: Icons.star_rate_rounded,
-          onTap: () => _rate(context),
-        ),
+        if (_storeUrl != null)
+          SettingsTile(
+            title: S.of(context).rateApp,
+            value: null,
+            icon: Icons.star_rate_rounded,
+            onTap: () => _rate(context),
+          ),
         FutureBuilder<PackageInfo>(
           future: PackageInfo.fromPlatform(),
           builder: (context, snapshot) => Padding(
             padding: EdgeInsets.only(top: 8.h),
             child: Text(
               snapshot.hasData
-                  ? S.of(context).appVersion(
-                      snapshot.data!.version,
-                      snapshot.data!.buildNumber,
-                    )
+                  ? S
+                        .of(context)
+                        .appVersion(
+                          snapshot.data!.version,
+                          snapshot.data!.buildNumber,
+                        )
                   : '',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.primaryColor, fontSize: 13.sp),
