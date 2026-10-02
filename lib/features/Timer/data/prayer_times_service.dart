@@ -1,24 +1,93 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/services/shared_prefs.dart';
 import 'package:prayers_times/prayers_times.dart';
 
 /// مصدر واحد لمواقيت الصلاة عشان الكارت وإشعارات الأذان يطلعوا نفس الوقت
 class PrayerTimesService {
-  // الإحداثيات ثابتة على مصر، فالـ timezone لازم تبقى بتاعة نفس المكان
-  // عشان المواقيت تتعرض بتوقيت المكان ده (الإشعارات بتستخدم الوقت المطلق فمش بتتأثر)
-  static final Coordinates _coordinates = Coordinates(30.5657224, 31.0168763);
-  static const String _timeZone = 'Africa/Cairo';
+  static const String _latitudeKey = 'prayer_latitude';
+  static const String _longitudeKey = 'prayer_longitude';
+
+  // الافتراضي (المنوفية) لحد ما المستخدم يسمح بالموقع
+  static final Coordinates _defaultCoordinates =
+      Coordinates(30.5657224, 31.0168763);
+  static const String _defaultTimeZone = 'Africa/Cairo';
+
+  /// بيزيد كل ما الموقع يتغير عشان كارت المواقيت يعيد الحساب
+  static final ValueNotifier<int> locationRevision = ValueNotifier(0);
+
+  static bool get usesDeviceLocation =>
+      Prefs.getData(key: _latitudeKey) != null;
+
+  static Coordinates get _coordinates {
+    final double? latitude = Prefs.getData(key: _latitudeKey);
+    final double? longitude = Prefs.getData(key: _longitudeKey);
+    if (latitude == null || longitude == null) return _defaultCoordinates;
+    return Coordinates(latitude, longitude);
+  }
+
+  // مواقيت موقع الجهاز بتتعرض بتوقيت الجهاز، والافتراضي بتوقيت القاهرة
+  // (الإشعارات بتستخدم الوقت المطلق فمش بتتأثر بده)
+  static String get _timeZone =>
+      usesDeviceLocation ? NotificationHelper.location.name : _defaultTimeZone;
+
+  /// طريقة الهيئة المصرية العامة للمساحة، والعصر على المذهب الشافعي
+  /// (المكتبة بتخلي الحنفي هو الافتراضي فلازم نحدده)
+  static PrayerCalculationParameters calculationParameters() {
+    final params = PrayerCalculationMethod.egyptian();
+    params.madhab = PrayerMadhab.shafi;
+    return params;
+  }
 
   static PrayerTimes forDate(DateTime date) {
-    final params = PrayerCalculationMethod.karachi();
-    params.madhab = PrayerMadhab.hanafi;
     return PrayerTimes(
       coordinates: _coordinates,
-      calculationParameters: params,
+      calculationParameters: calculationParameters(),
       precision: true,
       locationName: _timeZone,
       dateTime: date,
     );
+  }
+
+  /// بيحدث الموقع المتخزن من الـ GPS. من غير [request] مش بيطلب إذن
+  /// (بيتنادى مع فتح الأبلكيشن)، ومعاه بيطلب الإذن (زرار الموقع في الكارت)
+  static Future<bool> updateLocation({bool request = false}) async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) return false;
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied && request) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        return false;
+      }
+
+      Position? position;
+      try {
+        // دقة المدينة كفاية للمواقيت
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.low,
+            timeLimit: Duration(seconds: 15),
+          ),
+        );
+      } catch (e) {
+        position = await Geolocator.getLastKnownPosition();
+      }
+      if (position == null) return false;
+
+      await Prefs.saveData(key: _latitudeKey, value: position.latitude);
+      await Prefs.saveData(key: _longitudeKey, value: position.longitude);
+      locationRevision.value++;
+      return true;
+    } catch (e) {
+      log('failed to update prayer location: $e');
+      return false;
+    }
   }
 }
 

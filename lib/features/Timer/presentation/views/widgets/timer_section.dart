@@ -28,6 +28,28 @@ class _PrayerTimerState extends State<PrayerTimer> {
   void initState() {
     super.initState();
     _initializePrayerTimes();
+    // الموقع بيتحدث مع فتح الأبلكيشن بعد ما الكارت يكون اتبنى
+    PrayerTimesService.locationRevision.addListener(_initializePrayerTimes);
+  }
+
+  @override
+  void dispose() {
+    PrayerTimesService.locationRevision.removeListener(_initializePrayerTimes);
+    super.dispose();
+  }
+
+  Future<void> _updateLocation() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final updated = await PrayerTimesService.updateLocation(request: true);
+    if (updated) await PrayerNotifications.scheduleUpcoming();
+    if (!mounted) return;
+    setState(() {});
+    messenger.showSnackBar(SnackBar(
+      content: Text(updated
+          ? 'تم تحديث المواقيت حسب موقعك'
+          : 'فعّل الموقع واسمح للتطبيق بالوصول إليه لتحديث المواقيت'),
+      duration: const Duration(seconds: 3),
+    ));
   }
 
   void _initializePrayerTimes() {
@@ -156,7 +178,18 @@ class _PrayerTimerState extends State<PrayerTimer> {
           
           Row(
             children: [
-              const SizedBox(width: 48), 
+              IconButton(
+                onPressed: _updateLocation,
+                tooltip: PrayerTimesService.usesDeviceLocation
+                    ? 'المواقيت حسب موقعك - اضغط للتحديث'
+                    : 'المواقيت حسب المنوفية - اضغط لاستخدام موقعك',
+                icon: Icon(
+                  PrayerTimesService.usesDeviceLocation
+                      ? Icons.location_on
+                      : Icons.location_off,
+                  color: Colors.black,
+                ),
+              ),
               Expanded(
                 child: Text(
                   "Next: $nextPrayerName - $nextPrayerTimeFormatted", 
