@@ -309,7 +309,7 @@ class _SebhaViewState extends State<SebhaView> {
                   onPressed: () {
                     _sebhaService.clearHistoryData();
                     setStateDialog(() {}); 
-                    this.setState(() {}); 
+                    setState(() {}); 
                   },
                   child: Text(
                     "تنظيف",

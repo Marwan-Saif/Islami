@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -8,7 +9,9 @@ import 'package:timezone/data/latest_all.dart' as tz;
 class NotificationHelper {
   static final _notification = FlutterLocalNotificationsPlugin();
 
-  static init() async {
+  static Future<void> init() async {
+    // flutter_local_notifications مش بتدعم الويب
+    if (kIsWeb) return;
     await _notification.initialize(const InitializationSettings(
       android: AndroidInitializationSettings("@mipmap/launcher_icon"),
     ));
@@ -23,6 +26,7 @@ class NotificationHelper {
     TimeOfDay timeOfDay,
     int? id,
   ) async {
+    if (kIsWeb) return;
     // Get current time
     id = id ?? 1;
     final now = tz.TZDateTime.now(tz.local);
@@ -73,11 +77,13 @@ class NotificationHelper {
     );
   }
 
-  static cancelAllNotifications() {
+  static void cancelAllNotifications() {
+    if (kIsWeb) return;
     _notification.cancelAll();
   }
 
-  static cancelNotifications(int id) {
+  static void cancelNotifications(int id) {
+    if (kIsWeb) return;
     _notification.cancel(id);
   }
 }

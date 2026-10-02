@@ -7,7 +7,7 @@ class QuranModel {
     if (json['data'] != null) {
       data = <SurahModel>[];
       json['data'].forEach((v) {
-        data!.add(new SurahModel.fromJson(v));
+        data!.add(SurahModel.fromJson(v));
       });
     }
   }
@@ -38,7 +38,7 @@ class SurahModel {
     if (json['ayahs'] != null) {
       ayahs = <Ayahs>[];
       json['ayahs'].forEach((v) {
-        ayahs!.add(new Ayahs.fromJson(v));
+        ayahs!.add(Ayahs.fromJson(v));
       });
     }
   }

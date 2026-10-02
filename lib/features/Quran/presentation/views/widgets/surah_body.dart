@@ -29,7 +29,7 @@ class SurahBody extends StatelessWidget {
                   text: ' ${ayah.text!} ',
                   recognizer: LongPressGestureRecognizer()
                     ..onLongPress = () {
-                      print(
+                      debugPrint(
                         "لقد ضغطت مطولاً على آية رقم: ${ayah.numberInSurah}",
                       );
                       _showLongPressDialog(context: context, ayahs: ayah);

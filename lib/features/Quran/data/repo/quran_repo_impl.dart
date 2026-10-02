@@ -15,7 +15,7 @@ class QuranRepoImpl implements QuranRepo {
         dynamic jsonData = json.decode(jsonString);
       return QuranModel.fromJson(jsonData);
     } catch (e) {
-      print("Error reading JSON file: $e");
+      log("Error reading JSON file: $e");
     }
     return QuranModel.fromJson({});
   }

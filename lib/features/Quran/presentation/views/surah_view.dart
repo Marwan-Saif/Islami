@@ -25,7 +25,7 @@ class SurahScreen extends StatelessWidget {
             child: Image.asset(
               Assets.imagesMosque02,
               fit: BoxFit.cover,
-              color: AppColors.primaryColor.withOpacity(0.4),
+              color: AppColors.primaryColor.withValues(alpha: 0.4),
             ),
           ),
           Positioned(

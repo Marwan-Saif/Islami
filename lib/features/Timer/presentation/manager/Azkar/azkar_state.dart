@@ -21,8 +21,8 @@ final class LocalAzkarDataLoaded extends AzkarState {}
 
 final class LocalAzkarDataLoading extends AzkarState {}
 
-final class getlocalDataloading extends AzkarState {}
-final class getlocalDatasuccess extends AzkarState {}
+final class GetLocalDataLoading extends AzkarState {}
+final class GetLocalDataSuccess extends AzkarState {}
 final class UpDateLocalData extends AzkarState {}
 final class LocalDataUpdated extends AzkarState {}
 

@@ -18,7 +18,7 @@ class HomeView extends StatelessWidget {
 }
 
 class DefaultScreen extends StatefulWidget {
-  DefaultScreen({
+  const DefaultScreen({
     super.key,
   });
 

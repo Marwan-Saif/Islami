@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islami/features/Quran/data/models/surah_model.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
-import 'package:meta/meta.dart';
 
 part 'quran_state.dart';
 

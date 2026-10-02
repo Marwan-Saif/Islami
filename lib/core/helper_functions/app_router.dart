@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:islami/features/Quran/data/models/surah_model.dart';
 import 'package:islami/features/Quran/presentation/views/surah_view.dart';

@@ -4,11 +4,11 @@ import 'package:islami/features/home/presentation/views/widgets/bottom_nav_item.
 // import 'package:planets/views/widgets/bottom_nav_item.dart';
 
 class CustomBottomNaBar extends StatefulWidget {
-   CustomBottomNaBar({
+  const CustomBottomNaBar({
     super.key,
     required this.currentIndex,
   });
-  void Function(int index) currentIndex;
+  final void Function(int index) currentIndex;
 
   @override
   State<CustomBottomNaBar> createState() => _CustomBottomNaBarState();

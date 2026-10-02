@@ -6,7 +6,6 @@ import 'package:islami/core/utils/app_colors.dart';
 import 'dart:math' as math;
 
 // import 'package:flutter_qibla/flutter_qibla.dart'; // باكدج القبلة
-import 'package:islami/core/utils/app_images.dart';
 
 class QiblaScreen extends StatefulWidget {
   const QiblaScreen({super.key});
@@ -97,7 +96,7 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
                             color:  Color(0xFF1A1512), 
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primaryColor.withOpacity(0.8 * _pulseAnimation.value),
+                                color: AppColors.primaryColor.withValues(alpha: 0.8 * _pulseAnimation.value),
                                 blurRadius: 60 * _pulseAnimation.value, // تكبير الانتشار
                                 spreadRadius: 15 * _pulseAnimation.value,
                               ),
@@ -114,7 +113,7 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppColors.primaryColor.withOpacity(0.4),
+                          color: AppColors.primaryColor.withValues(alpha: 0.4),
                           width: 2,
                         ),
                       ),
@@ -153,7 +152,7 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
                     //     shape: BoxShape.circle,
                     //     border: Border.all(color: AppColors.primaryColor, width: 2),
                     //     boxShadow: [
-                    //       BoxShadow(color: Colors.black.withOpacity(0.8), blurRadius: 10),
+                    //       BoxShadow(color: Colors.black.withValues(alpha: 0.8), blurRadius: 10),
                     //     ],
                     //   ),
                     //   child: Center(
@@ -175,9 +174,9 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
           Container(
             padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(color: AppColors.primaryColor.withOpacity(0.4)),
+              border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.4)),
             ),
             child: Text(
               'أدر الجهاز لتحديد اتجاه القبلة',
@@ -204,7 +203,7 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
         child: Text(
           label,
           style: TextStyle(
-            color: AppColors.primaryColor.withOpacity(0.6),
+            color: AppColors.primaryColor.withValues(alpha: 0.6),
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),

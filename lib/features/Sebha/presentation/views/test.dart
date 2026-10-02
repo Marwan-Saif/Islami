@@ -5,8 +5,10 @@ import 'package:hive/hive.dart';
 import 'local_sypha.dart'; // Import the LocalSypha class
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -57,10 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void deleteData() async {
     if (syphaBox.isNotEmpty) {
       await syphaBox.deleteAt(0); // Delete data at index 0
-    } else
+    } else {
       setState(() {
         message = 'Data deleted from box';
       });
+    }
   }
 
   @override

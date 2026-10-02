@@ -37,7 +37,7 @@ class _NotificationCardState extends State<NotificationCard> {
       child: BlocConsumer<AzkarCubit, AzkarState>(
         listener: (context, state) {},
         builder: (context, state) {
-          return state is getlocalDataloading
+          return state is GetLocalDataLoading
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
@@ -75,7 +75,7 @@ class _NotificationCardState extends State<NotificationCard> {
                               selected = value;
                             });
                           },
-                          activeColor: AppColors.primaryColor,
+                          activeThumbColor: AppColors.primaryColor,
                           activeTrackColor: AppColors.secondaryColor,
                           inactiveThumbColor: AppColors.primaryColor,
                           inactiveTrackColor: AppColors.backgroundColor,
@@ -102,14 +102,13 @@ class _NotificationCardState extends State<NotificationCard> {
                                 context: context,
                                 initialTime: TimeOfDay.now(),
                               ).then((value) {
+                                if (!context.mounted) return;
                                 log(
                                   value.toString(),
                                 );
                                 //في فرق ساعتين
                                 timeOfDay = value ?? TimeOfDay.now();
-                                timePicked = value!.hour.toString() +
-                                    ":" +
-                                    value.minute.toString();
+                                timePicked = "${value!.hour}:${value.minute}";
                                 log(timePicked);
                                 context.read<AzkarCubit>().updatelocalData(
                                     index: widget.index,

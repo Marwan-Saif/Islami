@@ -1,11 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/constants.dart';
-import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/core/widgets/appbar.dart';
@@ -14,7 +9,7 @@ import 'package:islami/features/Timer/presentation/views/widgets/azkar_card.dart
 import 'package:islami/features/Timer/presentation/views/widgets/zekr_notification_card.dart';
 
 class ZekrView extends StatefulWidget {
-  ZekrView({super.key, required this.azkarList, required this.title});
+  const ZekrView({super.key, required this.azkarList, required this.title});
   final List<ZekrEntity> azkarList;
   final String title;
 
@@ -82,7 +77,7 @@ class _ZekrViewState extends State<ZekrView> {
               child: Image.asset(
                 Assets.imagesMosque02,
                 fit: BoxFit.cover,
-                color: AppColors.primaryColor.withOpacity(0.4),
+                color: AppColors.primaryColor.withValues(alpha: 0.4),
               ),
             ),
           ],

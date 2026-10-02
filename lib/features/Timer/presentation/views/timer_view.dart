@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/utils/app_images.dart';
-import 'package:islami/features/Timer/data/zekr_repo_impl.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_section.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/zekr_section.dart';
 

@@ -13,7 +13,7 @@ class AudioService {
 
   // جلب الـ ID الخاص بالملف الصوتي اللي شغال دلوقتي (من المشغل مباشرة)
   String? get currentPlayingId {
-    final currentTag = audioPlayer.sequenceState?.currentSource?.tag;
+    final currentTag = audioPlayer.sequenceState.currentSource?.tag;
     if (currentTag is MediaItem) {
       return currentTag.id;
     }
@@ -57,13 +57,8 @@ class AudioService {
       );
     }).toList();
 
-    final concatenatingAudioSource = ConcatenatingAudioSource(
-      useLazyPreparation: true,
-      children: audioSources,
-    );
-
-    await audioPlayer.setAudioSource(
-      concatenatingAudioSource,
+    await audioPlayer.setAudioSources(
+      audioSources,
       initialIndex: initialIndex,
       initialPosition: Duration.zero,
     );

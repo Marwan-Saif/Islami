@@ -68,7 +68,7 @@ class _RadioViewState extends State<RadioView> {
               subtitle: 'اختر شيخك المفضل للاستماع',
               icon: Icons.person_search_rounded,
               onTap: () {
-                print("تم الضغط على اختيار القارئ");
+                debugPrint("تم الضغط على اختيار القارئ");
               },
             ),
 
@@ -79,7 +79,7 @@ class _RadioViewState extends State<RadioView> {
               subtitle: 'اختر السورة أو الجزء المطلوب',
               icon: Icons.menu_book_rounded,
               onTap: () {
-                print("تم الضغط على اختيار التلاوة");
+                debugPrint("تم الضغط على اختيار التلاوة");
               },
             ),
 
@@ -99,14 +99,14 @@ class _RadioViewState extends State<RadioView> {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20.r),
-      splashColor: AppColors.primaryColor.withOpacity(0.2),
+      splashColor: AppColors.primaryColor.withValues(alpha: 0.2),
       child: Container(
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
+          color: Colors.black.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: AppColors.primaryColor.withOpacity(0.3),
+            color: AppColors.primaryColor.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),
@@ -115,7 +115,7 @@ class _RadioViewState extends State<RadioView> {
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.15),
+                color: AppColors.primaryColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(15.r),
               ),
               child: Icon(icon, color: AppColors.primaryColor, size: 30.sp),
@@ -203,13 +203,13 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryColor.withOpacity(0.9),
-            AppColors.primaryColor.withOpacity(0.5),
+            AppColors.primaryColor.withValues(alpha: 0.9),
+            AppColors.primaryColor.withValues(alpha: 0.5),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.2),
+            color: AppColors.primaryColor.withValues(alpha: 0.2),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -223,7 +223,7 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
             child: Icon(
               Icons.mosque_rounded,
               size: 150.sp,
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
             ),
           ),
           Padding(

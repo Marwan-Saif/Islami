@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/utils/app_colors.dart';
@@ -16,6 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
       context.go(AppRouter.homeView);
       // if (Prefs.getData(key: kIsOnBoardingViewSeen) == true) {
       //   // print(
