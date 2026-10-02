@@ -8,6 +8,9 @@ abstract class QuranRepo {
   /// التفسير الميسر لكل آيات السورة (رقم الآية -> التفسير)
   Map<int, String> getTafsir(int surahNumber);
 
+  /// ترجمة Saheeh International (رقم الآية -> الترجمة)
+  Map<int, String> getTranslation(int surahNumber);
+
   /// بحث في نص الآيات (بيتعامل مع التشكيل والهمزات)
   Future<List<Ayah>> searchAyahs(String query, {int limit = 50});
 }

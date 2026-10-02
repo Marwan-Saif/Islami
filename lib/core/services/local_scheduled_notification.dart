@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:islami/core/services/app_settings.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -11,14 +12,44 @@ class NotificationHelper {
   static final _notification = FlutterLocalNotificationsPlugin();
 
   // من أندرويد 8 الصوت بيتثبت على الـ channel مش على الإشعار نفسه،
-  // فعشان الأذان يبقى ليه صوت غير الأذكار لازم كل واحد ليه channel لوحده
-  static const AndroidNotificationChannel _adhanChannel =
+  // فكل صوت أذان (وصوت الأذكار) ليه channel لوحده
+  static const Map<AdhanSound, AndroidNotificationChannel> _adhanChannels = {
+    AdhanSound.full: AndroidNotificationChannel(
+      'adhan_channel',
+      'الأذان',
+      description: 'إشعار دخول وقت الصلاة بصوت الأذان كاملاً',
+      importance: Importance.max,
+      sound: RawResourceAndroidNotificationSound('azan'),
+    ),
+    AdhanSound.short: AndroidNotificationChannel(
+      'adhan_short_channel',
+      'الأذان (مختصر)',
+      description: 'إشعار دخول وقت الصلاة بأول الأذان',
+      importance: Importance.max,
+      sound: RawResourceAndroidNotificationSound('azan_short'),
+    ),
+    AdhanSound.tone: AndroidNotificationChannel(
+      'adhan_tone_channel',
+      'الأذان (تنبيه قصير)',
+      description: 'إشعار دخول وقت الصلاة بصوت تنبيه قصير',
+      importance: Importance.max,
+      sound: RawResourceAndroidNotificationSound('notification'),
+    ),
+    AdhanSound.silent: AndroidNotificationChannel(
+      'adhan_silent_channel',
+      'الأذان (صامت)',
+      description: 'إشعار دخول وقت الصلاة من غير صوت',
+      importance: Importance.high,
+      playSound: false,
+    ),
+  };
+  static const AndroidNotificationChannel _reminderChannel =
       AndroidNotificationChannel(
-    'adhan_channel',
-    'الأذان',
-    description: 'إشعار دخول وقت الصلاة بصوت الأذان',
-    importance: Importance.max,
-    sound: RawResourceAndroidNotificationSound('azan'),
+    'prayer_reminder_channel',
+    'التذكير قبل الصلاة',
+    description: 'تذكير قبل دخول وقت الصلاة',
+    importance: Importance.high,
+    sound: RawResourceAndroidNotificationSound('notification'),
   );
   static const AndroidNotificationChannel _azkarChannel =
       AndroidNotificationChannel(
@@ -56,7 +87,10 @@ class NotificationHelper {
     final android = _androidPlugin;
     if (android != null) {
       await android.deleteNotificationChannel(_legacyChannelId);
-      await android.createNotificationChannel(_adhanChannel);
+      for (final channel in _adhanChannels.values) {
+        await android.createNotificationChannel(channel);
+      }
+      await android.createNotificationChannel(_reminderChannel);
       await android.createNotificationChannel(_azkarChannel);
     }
   }
@@ -94,39 +128,90 @@ class NotificationHelper {
         : AndroidScheduleMode.inexactAllowWhileIdle;
   }
 
-  /// إشعار الأذان في وقت الصلاة بالظبط (مرة واحدة)
+  /// إشعار الأذان في وقت الصلاة بالظبط (مرة واحدة) بالصوت المختار في الإعدادات
   static Future<void> scheduleAdhan({
     required int id,
     required String title,
     required String body,
     required DateTime time,
   }) async {
+    final sound = AppSettings.instance.adhanSound;
+    final channel = _adhanChannels[sound]!;
+    await _scheduleOnce(
+      id: id,
+      title: title,
+      body: body,
+      time: time,
+      details: NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channelDescription: channel.description,
+          importance: channel.importance,
+          priority: Priority.high,
+          playSound: channel.playSound,
+          sound: channel.sound,
+          category: AndroidNotificationCategory.alarm,
+        ),
+        // iOS مش بيشغل mp3 ولا أصوات أطول من 30 ثانية، فـ ios/Runner/azan.wav
+        // نسخة wav من أول 29 ثانية من الأذان (للكامل والمختصر)
+        iOS: DarwinNotificationDetails(
+          presentSound: sound != AdhanSound.silent,
+          sound: switch (sound) {
+            AdhanSound.full || AdhanSound.short => 'azan.wav',
+            AdhanSound.tone => 'notification.wav',
+            AdhanSound.silent => null,
+          },
+        ),
+      ),
+    );
+  }
+
+  /// تذكير قبل الصلاة بعدد دقائق (بصوت تنبيه قصير)
+  static Future<void> schedulePrayerReminder({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime time,
+  }) {
+    return _scheduleOnce(
+      id: id,
+      title: title,
+      body: body,
+      time: time,
+      details: NotificationDetails(
+        android: AndroidNotificationDetails(
+          _reminderChannel.id,
+          _reminderChannel.name,
+          channelDescription: _reminderChannel.description,
+          importance: Importance.high,
+          priority: Priority.high,
+          sound: _reminderChannel.sound,
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentSound: true,
+          sound: 'notification.wav',
+        ),
+      ),
+    );
+  }
+
+  static Future<void> _scheduleOnce({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime time,
+    required NotificationDetails details,
+  }) async {
     if (kIsWeb) return;
     final scheduledDate = tz.TZDateTime.from(time, location);
     if (!scheduledDate.isAfter(tz.TZDateTime.now(location))) return;
-
     await _notification.zonedSchedule(
       id,
       title,
       body,
       scheduledDate,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _adhanChannel.id,
-          _adhanChannel.name,
-          channelDescription: _adhanChannel.description,
-          importance: Importance.max,
-          priority: Priority.high,
-          sound: _adhanChannel.sound,
-          category: AndroidNotificationCategory.alarm,
-        ),
-        // iOS مش بيشغل mp3 ولا أصوات أطول من 30 ثانية، فـ ios/Runner/azan.wav
-        // نسخة wav من أول 29 ثانية من الأذان
-        iOS: const DarwinNotificationDetails(
-          presentSound: true,
-          sound: 'azan.wav',
-        ),
-      ),
+      details,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       androidScheduleMode: await _scheduleMode(),

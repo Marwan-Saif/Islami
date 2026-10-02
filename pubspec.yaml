@@ -40,6 +40,9 @@ dependencies:
   http: ^1.6.0
   quran_with_tafsir: ^1.0.1
   scrollable_positioned_list: ^0.3.8
+  package_info_plus: ^10.2.2
+  share_plus: ^13.3.1
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   intl_utils: ^2.8.6
@@ -66,6 +69,7 @@ flutter:
     - assets/images/
     - assets/data/
     - assets/sound/azan.mp3
+    - assets/sound/azan_short.wav
     - assets/sound/notification.wav
 
 flutter_assets:

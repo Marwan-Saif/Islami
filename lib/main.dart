@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:islami/constants.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
+import 'package:islami/core/services/app_settings.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/services/shared_prefs.dart';
@@ -34,7 +35,7 @@ void main() async {
     androidNotificationChannelName: 'تشغيل الراديو والتلاوات',
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true,
-  ); 
+  );
   //  JustAudioBackground.init();
   await Hive.openBox<LocalSypha>('SyphaBox');
   await Hive.openBox<ZekrLocalDataMoel>(kZekrBox);
@@ -73,29 +74,35 @@ class MainApp extends StatelessWidget {
     return ScreenUtilInit(
       minTextAdapt: true,
       designSize: const Size(395, 825),
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        // حجم خط النظام بيتضرب في .sp، فبنحطله حد أقصى عشان الكروت متتكسرش
-        builder: (context, child) {
-          final mediaQuery = MediaQuery.of(context);
-          return MediaQuery(
-            data: mediaQuery.copyWith(
-              textScaler: mediaQuery.textScaler
-                  .clamp(minScaleFactor: 0.85, maxScaleFactor: 1.3),
-            ),
-            child: child!,
-          );
-        },
-        localizationsDelegates: const [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        locale: const Locale('ar'),
-        theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
-        routerConfig: AppRouter.router,
+      // تغيير اللغة من الإعدادات بيعيد بناء التطبيق كله بالـ locale الجديدة
+      child: ValueListenableBuilder<Locale>(
+        valueListenable: AppSettings.instance.locale,
+        builder: (context, locale, _) => MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          // حجم خط النظام بيتضرب في .sp، فبنحطله حد أقصى عشان الكروت متتكسرش
+          builder: (context, child) {
+            final mediaQuery = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQuery.copyWith(
+                textScaler: mediaQuery.textScaler.clamp(
+                  minScaleFactor: 0.85,
+                  maxScaleFactor: 1.3,
+                ),
+              ),
+              child: child!,
+            );
+          },
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          locale: locale,
+          theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
+          routerConfig: AppRouter.router,
+        ),
       ),
     );
   }

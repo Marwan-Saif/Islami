@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:islami/core/services/app_settings.dart';
 import 'package:islami/core/services/audio_services.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/utils/app_colors.dart';
@@ -47,7 +48,9 @@ class _SurahBodyState extends State<SurahBody> {
     _positions.itemPositions.addListener(_checkReadPages);
     // لو المستخدم واقف على صفحة من غير scroll الـ listener مش هيتنده
     _readTimer = Timer.periodic(
-        const Duration(seconds: 2), (_) => _checkReadPages());
+      const Duration(seconds: 2),
+      (_) => _checkReadPages(),
+    );
     final ayahs = getit.get<QuranRepo>().getAyahs(widget.surahNumber);
     _pages = [];
     for (final ayah in ayahs) {
@@ -60,7 +63,9 @@ class _SurahBodyState extends State<SurahBody> {
     final targetAyah = widget.initialAyah;
     final pageIndex = targetAyah == null
         ? -1
-        : _pages.indexWhere((page) => page.any((ayah) => ayah.id == targetAyah));
+        : _pages.indexWhere(
+            (page) => page.any((ayah) => ayah.id == targetAyah),
+          );
     // عنصر 0 هو رأس السورة
     _initialIndex = pageIndex < 0 ? 0 : pageIndex + 1;
   }
@@ -80,9 +85,11 @@ class _SurahBodyState extends State<SurahBody> {
           _markedPages.add(page)) {
         ReadingTracker.instance.markPageRead(page).then((completedKhatma) {
           if (completedKhatma && mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('مبارك! أتممت ختمة كاملة للقرآن الكريم'),
-            ));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('مبارك! أتممت ختمة كاملة للقرآن الكريم'),
+              ),
+            );
           }
         });
       }
@@ -91,14 +98,18 @@ class _SurahBodyState extends State<SurahBody> {
 
   // أول آية في أعلى صفحة ظاهرة
   ReadingPosition? get _currentPosition {
-    final visible = _positions.itemPositions.value
-        .where((p) => p.index > 0 && p.itemTrailingEdge > 0)
-        .toList()
-      ..sort((a, b) => a.index.compareTo(b.index));
+    final visible =
+        _positions.itemPositions.value
+            .where((p) => p.index > 0 && p.itemTrailingEdge > 0)
+            .toList()
+          ..sort((a, b) => a.index.compareTo(b.index));
     if (visible.isEmpty) return null;
     final ayah = _pages[visible.first.index - 1].first;
     return ReadingPosition(
-        surah: widget.surahNumber, ayah: ayah.id, page: ayah.page);
+      surah: widget.surahNumber,
+      ayah: ayah.id,
+      page: ayah.page,
+    );
   }
 
   @override
@@ -123,18 +134,33 @@ class _SurahBodyState extends State<SurahBody> {
         final playingAyah = tag is MediaItem
             ? ayahFromAudioId(tag.id, widget.surahNumber)
             : null;
-        return ScrollablePositionedList.builder(
-          initialScrollIndex: _initialIndex,
-          itemPositionsListener: _positions,
-          itemCount: _pages.length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) return _SurahHeader(surahNumber: widget.surahNumber);
-            final page = _pages[index - 1];
-            return _QuranPage(
-              ayahs: page,
-              highlightedAyah:
-                  page.any((ayah) => ayah.id == playingAyah) ? playingAyah : null,
-              onAyahLongPress: _showAyahActions,
+        return ValueListenableBuilder<int>(
+          // حجم الخط والترجمة من الإعدادات
+          valueListenable: AppSettings.instance.readingChanges,
+          builder: (context, _, _) {
+            final settings = AppSettings.instance;
+            final translation = settings.showTranslation
+                ? getit.get<QuranRepo>().getTranslation(widget.surahNumber)
+                : null;
+            return ScrollablePositionedList.builder(
+              initialScrollIndex: _initialIndex,
+              itemPositionsListener: _positions,
+              itemCount: _pages.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return _SurahHeader(surahNumber: widget.surahNumber);
+                }
+                final page = _pages[index - 1];
+                return _QuranPage(
+                  ayahs: page,
+                  fontSize: settings.quranFontSize,
+                  translation: translation,
+                  highlightedAyah: page.any((ayah) => ayah.id == playingAyah)
+                      ? playingAyah
+                      : null,
+                  onAyahLongPress: _showAyahActions,
+                );
+              },
             );
           },
         );
@@ -147,8 +173,9 @@ class _SurahHeader extends StatelessWidget {
   const _SurahHeader({required this.surahNumber});
   final int surahNumber;
 
-  static final String _basmala =
-      cleanAyahText(QuranService.instance.getAyah(1, 1).text);
+  static final String _basmala = cleanAyahText(
+    QuranService.instance.getAyah(1, 1).text,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -185,11 +212,17 @@ class _SurahHeader extends StatelessWidget {
 class _QuranPage extends StatefulWidget {
   const _QuranPage({
     required this.ayahs,
+    required this.fontSize,
+    required this.translation,
     required this.highlightedAyah,
     required this.onAyahLongPress,
   });
 
   final List<Ayah> ayahs;
+  final double fontSize;
+
+  /// null لو الترجمة مقفولة من الإعدادات
+  final Map<int, String>? translation;
   final int? highlightedAyah;
   final void Function(Ayah ayah) onAyahLongPress;
 
@@ -204,8 +237,9 @@ class _QuranPageState extends State<_QuranPage> {
   LongPressGestureRecognizer _recognizerFor(Ayah ayah) =>
       _recognizers.putIfAbsent(
         ayah.id,
-        () => LongPressGestureRecognizer()
-          ..onLongPress = () => widget.onAyahLongPress(ayah),
+        () =>
+            LongPressGestureRecognizer()
+              ..onLongPress = () => widget.onAyahLongPress(ayah),
       );
 
   @override
@@ -220,7 +254,7 @@ class _QuranPageState extends State<_QuranPage> {
   Widget build(BuildContext context) {
     final first = widget.ayahs.first;
     final textStyle = GoogleFonts.amiri(
-      fontSize: 22.sp,
+      fontSize: widget.fontSize.sp,
       fontWeight: FontWeight.w500,
       color: AppColors.primaryColor,
       height: 1.9,
@@ -236,13 +270,13 @@ class _QuranPageState extends State<_QuranPage> {
                   recognizer: _recognizerFor(ayah),
                   style: ayah.id == widget.highlightedAyah
                       ? textStyle.copyWith(
-                          backgroundColor:
-                              AppColors.primaryColor.withValues(alpha: 0.18),
+                          backgroundColor: AppColors.primaryColor.withValues(
+                            alpha: 0.18,
+                          ),
                         )
                       : textStyle,
                 ),
-                if (ayah.isSajda)
-                  TextSpan(text: '۩ ', style: textStyle),
+                if (ayah.isSajda) TextSpan(text: '۩ ', style: textStyle),
                 WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
                   child: AyahNumber(number: ayah.id),
@@ -254,6 +288,28 @@ class _QuranPageState extends State<_QuranPage> {
           textAlign: TextAlign.justify,
           textDirection: TextDirection.rtl,
         ),
+        if (widget.translation != null)
+          Padding(
+            padding: EdgeInsets.only(top: 10.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final ayah in widget.ayahs)
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 6.h),
+                    child: Text(
+                      '(${ayah.id}) ${widget.translation![ayah.id] ?? ''}',
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13.sp,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         _PageFooter(page: first.page, juz: first.juz),
       ],
     );

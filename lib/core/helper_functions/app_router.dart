@@ -13,6 +13,7 @@ import 'package:islami/features/Timer/presentation/views/zekr_view.dart';
 import 'package:islami/features/home/presentation/views/home_view.dart';
 import 'package:islami/core/widgets/sura.dart';
 import 'package:islami/features/onboarding/presentation/views/onboarding_view.dart';
+import 'package:islami/features/settings/presentation/views/settings_view.dart';
 import 'package:islami/features/splash/presentation/views/splash_view.dart';
 
 abstract class AppRouter {
@@ -26,6 +27,7 @@ abstract class AppRouter {
   static const String surahScreen = '/surahScreen';
   static const String ayahSearchView = '/ayahSearchView';
   static const String readingTrackerView = '/readingTrackerView';
+  static const String settingsView = '/settingsView';
   static const String hadithSectionsView = '/hadithSectionsView';
   static const String hadithListView = '/hadithListView';
   static const String hadithFavoritesView = '/hadithFavoritesView';
@@ -70,6 +72,10 @@ abstract class AppRouter {
       path: surahScreen,
       builder: (context, state) =>
           SurahScreen(args: state.extra as SurahScreenArgs),
+    ),
+    GoRoute(
+      path: settingsView,
+      builder: (context, state) => const SettingsView(),
     ),
     GoRoute(
       path: hadithSectionsView,

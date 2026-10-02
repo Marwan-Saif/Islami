@@ -2,4 +2,4 @@
 <!-- these are referenced by name from Dart (flutter_local_notifications),
      so resource shrinking in release builds must not remove them -->
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@drawable/ic_notification,@raw/azan,@raw/notification" />
+    tools:keep="@drawable/ic_notification,@raw/azan,@raw/azan_short,@raw/notification" />
