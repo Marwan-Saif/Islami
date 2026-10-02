@@ -3,6 +3,7 @@ import 'package:islami/generated/l10n.dart';
 
 String kLanguage = 'ar';
 String kZekrBox = "zekr_box";
+const String kOnboardingSeenKey = 'onboarding_seen';
 const List<String> kFiles = [
   'assets/data/أذكار_الصباح.json',
   'assets/data/أذكار_المساء.json',

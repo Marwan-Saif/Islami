@@ -1744,10 +1744,12 @@ class S {
     );
   }
 
-  /// `{count} min`
-  String minutesCount(Object count) {
-    return Intl.message(
-      '$count min',
+  /// `{count, plural, one{1 min} other{{count} min}}`
+  String minutesCount(num count) {
+    return Intl.plural(
+      count,
+      one: '1 min',
+      other: '$count min',
       name: 'minutesCount',
       desc: '',
       args: [count],
@@ -1879,6 +1881,26 @@ class S {
     return Intl.message(
       'Total:',
       name: 'totalLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Adhan notifications`
+  String get adhanMasterSwitch {
+    return Intl.message(
+      'Adhan notifications',
+      name: 'adhanMasterSwitch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A notification before every prayer, even when the adhan is off`
+  String get reminderHint {
+    return Intl.message(
+      'A notification before every prayer, even when the adhan is off',
+      name: 'reminderHint',
       desc: '',
       args: [],
     );

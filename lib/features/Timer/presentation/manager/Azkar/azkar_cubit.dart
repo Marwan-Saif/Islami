@@ -37,7 +37,9 @@ class AzkarCubit extends Cubit<AzkarState> {
 
       azkarBox.put(1, kAzkarData[1]);
     }
-    azkarLocalDataList.addAll(azkarBox.values);
+    azkarLocalDataList
+      ..clear()
+      ..addAll(azkarBox.values);
     // الجدولة بتحصل مع فتح الأبلكيشن (main) ومع أي تعديل في updatelocalData
     emit(LocalAzkarDataLoaded());
     log("data adeed");
@@ -47,7 +49,9 @@ class AzkarCubit extends Cubit<AzkarState> {
   void getlocalData() async {
     emit(GetLocalDataLoading());
     azkarBox = await Hive.openBox<ZekrLocalDataMoel>(kZekrBox);
-    azkarLocalDataList.addAll(azkarBox.values);
+    azkarLocalDataList
+      ..clear()
+      ..addAll(azkarBox.values);
 
     emit(GetLocalDataSuccess());
     printt();

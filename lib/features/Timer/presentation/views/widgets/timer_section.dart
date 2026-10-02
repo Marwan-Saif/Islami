@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +20,6 @@ class PrayerTimer extends StatefulWidget {
 class _PrayerTimerState extends State<PrayerTimer> {
   // الأسماء والتواريخ بتتعمل format في build عشان تتغير مع لغة التطبيق
   DayPrayerTimes? _today;
-  bool adhanEnabled = PrayerNotifications.isEnabled;
 
   @override
   void initState() {
@@ -37,7 +38,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
   Future<void> _updateLocation() async {
     final messenger = ScaffoldMessenger.of(context);
     final updated = await PrayerTimesService.updateLocation(request: true);
-    if (updated) await PrayerNotifications.scheduleUpcoming();
+    if (updated) unawaited(PrayerNotifications.scheduleUpcoming());
     if (!mounted) return;
     setState(() {});
     messenger.showSnackBar(SnackBar(
@@ -55,8 +56,10 @@ class _PrayerTimerState extends State<PrayerTimer> {
   }
 
   Future<void> _toggleAdhan() async {
-    setState(() => adhanEnabled = !adhanEnabled);
+    // بيتقرا من الإعدادات مش من متغير، عشان يفضل متزامن مع صفحة الإعدادات
+    final adhanEnabled = !PrayerNotifications.isEnabled;
     await PrayerNotifications.setEnabled(adhanEnabled);
+    setState(() {});
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(adhanEnabled
@@ -107,6 +110,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
     final next = DayPrayerTimes.names[nextIndex];
     final nextTime = today.wallTime(nextIndex);
     final city = PrayerTimesService.manualCity;
+    final adhanEnabled = PrayerNotifications.isEnabled;
     return Container(
       margin: EdgeInsetsDirectional.symmetric(horizontal: 20.sp),
       padding: const EdgeInsets.all(16),

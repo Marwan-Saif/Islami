@@ -7,9 +7,11 @@
 // and the number of frames that missed the 16ms budget.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/sura_card.dart';
 import 'package:islami/features/home/presentation/views/widgets/bottom_nav_item.dart';
+import 'package:islami/constants.dart';
 import 'package:islami/main.dart' as app;
 
 void main() {
@@ -43,6 +45,8 @@ void main() {
   testWidgets('startup, navigation and scrolling', (tester) async {
     final stopwatch = Stopwatch()..start();
     await binding.traceAction(() async {
+      // أول تشغيل بيفتح الـ onboarding، والتيست بيبدأ من الرئيسية
+      await (await SharedPreferences.getInstance()).setBool(kOnboardingSeenKey, true);
       app.main();
       await waitFor(tester, find.byType(BottomNavItem));
       binding.reportData = {

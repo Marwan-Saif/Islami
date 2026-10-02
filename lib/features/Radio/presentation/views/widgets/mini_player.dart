@@ -14,6 +14,7 @@ class MiniPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final player = AudioService().audioPlayer;
+    final rtl = Directionality.of(context) == TextDirection.rtl;
     return StreamBuilder<SequenceState?>(
       stream: player.sequenceStateStream,
       builder: (context, snapshot) {
@@ -60,14 +61,19 @@ class MiniPlayer extends StatelessWidget {
                     ),
                   ),
                   _ControlButton(
-                    // في الـ RTL "السابق" على اليمين، فبنستخدم سهم التالي في شكله
-                    icon: Icons.skip_next_rounded,
+                    // أيقونات التالي/السابق مش بتتعكس لوحدها، فـ "السابق" في
+                    // العربي (على اليمين) بيبان بسهم التالي والعكس في الإنجليزي
+                    icon: rtl
+                        ? Icons.skip_next_rounded
+                        : Icons.skip_previous_rounded,
                     tooltip: S.of(context).previous,
                     onTap: player.hasPrevious ? player.seekToPrevious : null,
                   ),
                   const _PlayPauseButton(),
                   _ControlButton(
-                    icon: Icons.skip_previous_rounded,
+                    icon: rtl
+                        ? Icons.skip_previous_rounded
+                        : Icons.skip_next_rounded,
                     tooltip: S.of(context).next,
                     onTap: player.hasNext ? player.seekToNext : null,
                   ),

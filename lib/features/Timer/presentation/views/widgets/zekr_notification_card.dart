@@ -86,7 +86,14 @@ class _NotificationCardState extends State<NotificationCard> {
                       children: [
                         Expanded(
                           child: Text(
-                            S.of(context).notificationTime(context.read<AzkarCubit>().azkarLocalDataList[widget.index].zekrtime),
+                            S.of(context).notificationTime(
+                              // بيتعرض بنظام الساعة بتاع الموبايل (7:00 ص) بدل 07:00
+                              AzkarNotifications.parseTimeOfDay(context
+                                      .read<AzkarCubit>()
+                                      .azkarLocalDataList[widget.index]
+                                      .zekrtime)
+                                  .format(context),
+                            ),
                             maxLines: 2,
                             style: TextStyle(
                                 color: AppColors.backgroundColor,

@@ -168,7 +168,7 @@
   "prayerName": "{name}",
   "reminderBeforePrayer": "Reminder before prayer",
   "off": "Off",
-  "minutesCount": "{count} min",
+  "minutesCount": "{count, plural, one{1 min} other{{count} min}}",
   "reading": "Reading",
   "quranFontSize": "Quran font size",
   "defaultAyahReciter": "Default ayah reciter",
@@ -181,5 +181,7 @@
   "appVersion": "Version {version} ({build})",
   "defaultCityName": "Menofia",
   "nextPrayer": "Next: {name} - {time}",
-  "totalLabel": "Total:"
+  "totalLabel": "Total:",
+  "adhanMasterSwitch": "Adhan notifications",
+  "reminderHint": "A notification before every prayer, even when the adhan is off"
 }

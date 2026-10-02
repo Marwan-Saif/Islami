@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -175,7 +177,7 @@ class _SettingsViewState extends State<SettingsView> {
     );
     if (useGps) {
       final updated = await PrayerTimesService.updateLocation(request: true);
-      if (updated) await PrayerNotifications.scheduleUpcoming();
+      if (updated) unawaited(PrayerNotifications.scheduleUpcoming());
       if (!mounted) return;
       setState(() {});
       if (!updated) {
@@ -308,28 +310,63 @@ class _SettingsViewState extends State<SettingsView> {
             title: S.of(context).adhanPerPrayer,
             icon: Icons.notifications_active_rounded,
             children: [
+              SwitchListTile(
+                value: PrayerNotifications.isEnabled,
+                onChanged: (enabled) async {
+                  await PrayerNotifications.setEnabled(enabled);
+                  setState(() {});
+                },
+                activeThumbColor: AppColors.primaryColor,
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  S.of(context).adhanMasterSwitch,
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const Divider(color: Colors.white12, height: 1),
               for (int prayer = 0; prayer < 5; prayer++)
                 SwitchListTile(
                   value: PrayerNotifications.isPrayerEnabled(prayer),
-                  onChanged: (enabled) async {
-                    await PrayerNotifications.setPrayerEnabled(prayer, enabled);
-                    setState(() {});
-                  },
+                  // لما الأذان كله مقفول المفاتيح دي ملهاش تأثير، فبتبان مقفولة
+                  onChanged: PrayerNotifications.isEnabled
+                      ? (enabled) async {
+                          await PrayerNotifications.setPrayerEnabled(
+                            prayer,
+                            enabled,
+                          );
+                          setState(() {});
+                        }
+                      : null,
                   activeThumbColor: AppColors.primaryColor,
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     S.of(context).prayerName(prayerDisplayName(prayer)),
-                    style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                    style: TextStyle(
+                      color: PrayerNotifications.isEnabled
+                          ? Colors.white
+                          : Colors.white38,
+                      fontSize: 15.sp,
+                    ),
                   ),
                 ),
-              SizedBox(height: 6.h),
+            ],
+          ),
+          SettingsSection(
+            title: S.of(context).reminderBeforePrayer,
+            icon: Icons.alarm_rounded,
+            children: [
               Text(
-                S.of(context).reminderBeforePrayer,
-                style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+                S.of(context).reminderHint,
+                style: TextStyle(color: Colors.white54, fontSize: 13.sp),
               ),
-              SizedBox(height: 6.h),
+              SizedBox(height: 8.h),
               Wrap(
                 spacing: 8.w,
+                runSpacing: 6.h,
                 children: [
                   for (final minutes in PrayerNotifications.reminderOptions)
                     ChoiceChip(

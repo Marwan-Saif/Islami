@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:isolate';
 
@@ -72,7 +73,7 @@ class PrayerTimesService {
         ? await Prefs.removeData(key: _cityKey)
         : await Prefs.saveData(key: _cityKey, value: city.key);
     locationRevision.value++;
-    await PrayerNotifications.scheduleUpcoming();
+    unawaited(PrayerNotifications.scheduleUpcoming());
   }
 
   static bool get usesDeviceLocation =>
@@ -125,7 +126,7 @@ class PrayerTimesService {
   static Future<void> _saveAndRefresh(String key, String value) async {
     await Prefs.saveData(key: key, value: value);
     locationRevision.value++;
-    await PrayerNotifications.scheduleUpcoming();
+    unawaited(PrayerNotifications.scheduleUpcoming());
   }
 
   /// بيحدث الموقع المتخزن من الـ GPS. من غير [request] مش بيطلب إذن
@@ -247,7 +248,7 @@ class PrayerNotifications {
 
   static Future<void> setEnabled(bool enabled) async {
     await Prefs.saveData(key: _enabledKey, value: enabled);
-    await scheduleUpcoming();
+    unawaited(scheduleUpcoming());
   }
 
   /// الفجر 0، الظهر 1، العصر 2، المغرب 3، العشاء 4
@@ -256,50 +257,67 @@ class PrayerNotifications {
 
   static Future<void> setPrayerEnabled(int prayer, bool enabled) async {
     await Prefs.saveData(key: _prayerKey(prayer), value: enabled);
-    await scheduleUpcoming();
+    unawaited(scheduleUpcoming());
   }
 
   static int get reminderMinutes => Prefs.getData(key: _reminderKey) ?? 0;
 
   static Future<void> setReminderMinutes(int minutes) async {
+    // الإعداد بيتحفظ على طول والجدولة بتكمل في الخلفية، عشان المفتاح
+    // ميستناش جدولة ~50 إشعار قبل ما يتحرك
     await Prefs.saveData(key: _reminderKey, value: minutes);
-    await scheduleUpcoming();
+    unawaited(scheduleUpcoming());
   }
 
-  static Future<void> scheduleUpcoming() async {
-    for (int day = 0; day < _maxDaysAhead; day++) {
-      for (int prayer = 0; prayer < 5; prayer++) {
-        await NotificationHelper.cancelNotifications(_idFor(day, prayer));
-        await NotificationHelper.cancelNotifications(
-          _reminderIdFor(day, prayer),
-        );
-      }
-    }
-    if (!isEnabled) return;
+  // الجدولة بتتنده من أكتر من مكان (فتح الأبلكيشن، الإعدادات، تحديث الموقع)،
+  // فلو اتندهت مرتين ورا بعض كان ممكن الأقدم يخلص بعد الأحدث ويسيب إشعارات
+  // بإعدادات قديمة. دلوقتي كل جدولة بتستنى اللي قبلها وبتقرا الإعدادات وقتها
+  static Future<void> _queue = Future.value();
+
+  static Future<void> scheduleUpcoming() {
+    _queue = _queue.then((_) => _schedule()).catchError((Object e) {
+      log('prayer notifications scheduling failed: $e');
+    });
+    return _queue;
+  }
+
+  static Future<void> _schedule() async {
+    await Future.wait([
+      for (int day = 0; day < _maxDaysAhead; day++)
+        for (int prayer = 0; prayer < 5; prayer++) ...[
+          NotificationHelper.cancelNotifications(_idFor(day, prayer)),
+          NotificationHelper.cancelNotifications(_reminderIdFor(day, prayer)),
+        ],
+    ]);
+
+    final reminder = reminderMinutes;
+    // التذكير مستقل عن الأذان: لو المستخدم كتم الأذان أو قفله لصلاة معينة
+    // التذكير بيفضل شغال (قبل كده كان بيقف معاه من غير ما يبان ليه)
+    if (!isEnabled && reminder == 0) return;
 
     final arabic = AppSettings.instance.isArabic;
-    final reminder = reminderMinutes;
     final now = DateTime.now();
     final days = await PrayerTimesService.forDays(now, days: _daysAhead);
     for (int day = 0; day < days.length; day++) {
       for (int i = 0; i < DayPrayerTimes.prayerIndexes.length; i++) {
         final time = days[day].instant(DayPrayerTimes.prayerIndexes[i]);
-        if (!isPrayerEnabled(i)) continue;
         final name = prayerDisplayName(i);
-        await NotificationHelper.scheduleAdhan(
-          id: _idFor(day, i),
-          title: arabic ? 'صلاة $name' : '$name prayer',
-          body: arabic
-              ? 'حان الآن موعد صلاة $name'
-              : 'It is time for $name prayer',
-          time: time,
-        );
+        if (isEnabled && isPrayerEnabled(i)) {
+          await NotificationHelper.scheduleAdhan(
+            id: _idFor(day, i),
+            title: arabic ? 'صلاة $name' : '$name prayer',
+            body: arabic
+                ? 'حان الآن موعد صلاة $name'
+                : 'It is time for $name prayer',
+            time: time,
+          );
+        }
         if (reminder > 0) {
           await NotificationHelper.schedulePrayerReminder(
             id: _reminderIdFor(day, i),
             title: arabic ? 'اقترب موعد صلاة $name' : '$name is coming up',
             body: arabic
-                ? 'باقي $reminder دقيقة على صلاة $name'
+                ? 'باقي ${_arabicMinutes(reminder)} على صلاة $name'
                 : '$reminder minutes left until $name prayer',
             time: time.subtract(Duration(minutes: reminder)),
           );
@@ -307,4 +325,8 @@ class PrayerNotifications {
       }
     }
   }
+
+  // 5 و 10 "دقائق"، 15 و 30 "دقيقة"
+  static String _arabicMinutes(int minutes) =>
+      minutes <= 10 ? '$minutes دقائق' : '$minutes دقيقة';
 }

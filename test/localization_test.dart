@@ -30,6 +30,8 @@ void main() {
     expect(s.ayahCount(286), '286 آية');
     expect(s.pagesCount(5), '5 صفحات');
     expect(s.pagesCount(20), '20 صفحة');
+    expect(s.minutesCount(5), '5 دقائق');
+    expect(s.minutesCount(15), '15 دقيقة');
   });
 
   test('english strings', () async {

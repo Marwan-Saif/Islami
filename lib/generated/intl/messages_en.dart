@@ -41,7 +41,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m9(position) => "Last read: ${position}";
 
-  static String m10(count) => "${count} min";
+  static String m10(count) =>
+      "${Intl.plural(count, one: '1 min', other: '${count} min')}";
 
   static String m11(name, time) => "Next: ${name} - ${time}";
 
@@ -100,6 +101,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "addedToFavorites":
             MessageLookupByLibrary.simpleMessage("Added to favorites"),
         "adhanFull": MessageLookupByLibrary.simpleMessage("Full adhan"),
+        "adhanMasterSwitch":
+            MessageLookupByLibrary.simpleMessage("Adhan notifications"),
         "adhanPerPrayer":
             MessageLookupByLibrary.simpleMessage("Adhan for each prayer"),
         "adhanShort": MessageLookupByLibrary.simpleMessage(
@@ -288,6 +291,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Couldn’t load the reciters, check your internet connection"),
         "reminderBeforePrayer":
             MessageLookupByLibrary.simpleMessage("Reminder before prayer"),
+        "reminderHint": MessageLookupByLibrary.simpleMessage(
+            "A notification before every prayer, even when the adhan is off"),
         "removeBookmark":
             MessageLookupByLibrary.simpleMessage("Remove bookmark"),
         "removeFromFavorites":

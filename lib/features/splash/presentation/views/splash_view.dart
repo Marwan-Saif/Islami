@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:islami/constants.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
+import 'package:islami/core/services/shared_prefs.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 
@@ -28,7 +30,9 @@ class _SplashScreenState extends State<SplashScreen> {
           precacheImage(AssetImage(image), context),
       ]);
       if (!mounted) return;
-      context.go(AppRouter.homeView);
+      // الـ onboarding أول مرة بس، وبعد كده على الرئيسية على طول
+      final seen = Prefs.getData(key: kOnboardingSeenKey) == true;
+      context.go(seen ? AppRouter.homeView : AppRouter.onBoardingView);
     });
   }
 

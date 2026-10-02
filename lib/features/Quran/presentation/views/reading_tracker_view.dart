@@ -29,36 +29,54 @@ class ReadingTrackerView extends StatelessWidget {
     final picked = await showModalBottomSheet<int>(
       context: context,
       backgroundColor: AppColors.backgroundColor,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 12.h),
-            Text(S.of(context).dailyWird,
-                style: GoogleFonts.amiri(
-                    color: AppColors.primaryColor,
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.bold)),
-            for (final pages in _goalOptions)
-              ListTile(
-                onTap: () => Navigator.of(context).pop(pages),
-                title: Text(
-                  pages == 20
-                      ? S.of(context).fullJuz
-                      : S.of(context).pagesCount(pages),
-                  style: TextStyle(color: Colors.white, fontSize: 15.sp),
+      // الاختيارات الست أطول من أقصى ارتفاع افتراضي للـ sheet (9/16 من الشاشة)
+      // فكانت بتعمل overflow، دلوقتي الـ sheet بياخد لحد 85% والقايمة بتعمل scroll
+      isScrollControlled: true,
+      builder: (context) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 12.h),
+              Text(S.of(context).dailyWird,
+                  style: GoogleFonts.amiri(
+                      color: AppColors.primaryColor,
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.bold)),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final pages in _goalOptions)
+                      ListTile(
+                        onTap: () => Navigator.of(context).pop(pages),
+                        title: Text(
+                          pages == 20
+                              ? S.of(context).fullJuz
+                              : S.of(context).pagesCount(pages),
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 15.sp),
+                        ),
+                        subtitle: Text(
+                          S.of(context).khatmaEveryDays(
+                            (ReadingTracker.totalPages / pages).ceil(),
+                          ),
+                          style: TextStyle(
+                              color: Colors.white54, fontSize: 12.sp),
+                        ),
+                        trailing: pages == tracker.dailyGoal
+                            ? const Icon(Icons.check,
+                                color: AppColors.primaryColor)
+                            : null,
+                      ),
+                  ],
                 ),
-                subtitle: Text(
-                  S.of(context).khatmaEveryDays(
-                    (ReadingTracker.totalPages / pages).ceil(),
-                  ),
-                  style: TextStyle(color: Colors.white54, fontSize: 12.sp),
-                ),
-                trailing: pages == tracker.dailyGoal
-                    ? const Icon(Icons.check, color: AppColors.primaryColor)
-                    : null,
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

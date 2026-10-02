@@ -41,7 +41,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m9(position) => "آخر قراءة: ${position}";
 
-  static String m10(count) => "${count} دقيقة";
+  static String m10(count) =>
+      "${Intl.plural(count, few: '${count} دقائق', other: '${count} دقيقة')}";
 
   static String m11(name, time) => "الصلاة القادمة: ${name} - ${time}";
 
@@ -99,6 +100,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "addedToFavorites":
             MessageLookupByLibrary.simpleMessage("تمت الإضافة للمفضلة"),
         "adhanFull": MessageLookupByLibrary.simpleMessage("الأذان كاملاً"),
+        "adhanMasterSwitch":
+            MessageLookupByLibrary.simpleMessage("تشغيل الأذان"),
         "adhanPerPrayer":
             MessageLookupByLibrary.simpleMessage("الأذان لكل صلاة"),
         "adhanShort":
@@ -280,6 +283,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "تعذر تحميل قائمة القراء، تأكد من الاتصال بالإنترنت"),
         "reminderBeforePrayer":
             MessageLookupByLibrary.simpleMessage("تذكير قبل الصلاة"),
+        "reminderHint": MessageLookupByLibrary.simpleMessage(
+            "إشعار قبل كل صلاة، وبيشتغل حتى لو الأذان مقفول"),
         "removeBookmark": MessageLookupByLibrary.simpleMessage("إزالة العلامة"),
         "removeFromFavorites":
             MessageLookupByLibrary.simpleMessage("إزالة من المفضلة"),

@@ -168,7 +168,7 @@
   "prayerName": "صلاة {name}",
   "reminderBeforePrayer": "تذكير قبل الصلاة",
   "off": "بدون",
-  "minutesCount": "{count} دقيقة",
+  "minutesCount": "{count, plural, few{{count} دقائق} other{{count} دقيقة}}",
   "reading": "القراءة",
   "quranFontSize": "حجم خط المصحف",
   "defaultAyahReciter": "القارئ الافتراضي للآيات",
@@ -181,5 +181,7 @@
   "appVersion": "الإصدار {version} ({build})",
   "defaultCityName": "المنوفية",
   "nextPrayer": "الصلاة القادمة: {name} - {time}",
-  "totalLabel": "الإجمالي:"
+  "totalLabel": "الإجمالي:",
+  "adhanMasterSwitch": "تشغيل الأذان",
+  "reminderHint": "إشعار قبل كل صلاة، وبيشتغل حتى لو الأذان مقفول"
 }
