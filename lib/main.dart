@@ -74,7 +74,6 @@ void _registerFontLicenses() {
 /// الأذان بيتجدول لأيام قدام بس، والأذكار بتتقرا من الإعدادات المتخزنة
 Future<void> _scheduleNotifications() async {
   try {
-    await NotificationHelper.requestPermissions();
     // بيشيل أي إشعارات قديمة بالـ IDs والـ channel القديمة قبل الجدولة
     await NotificationHelper.cancelAllNotifications();
     await AzkarNotifications.scheduleFromStorage();

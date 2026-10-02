@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Qibla/presentation/views/qibla_view.dart';
@@ -35,6 +36,8 @@ class _DefaultScreenState extends State<DefaultScreen> {
   @override
   void initState() {
     super.initState();
+    // إذن الإشعارات بيتطلب لما الرئيسية تظهر، مش فوق الـ splash أو الـ onboarding
+    NotificationHelper.requestPermissions();
     _prebuildTabs();
   }
 
