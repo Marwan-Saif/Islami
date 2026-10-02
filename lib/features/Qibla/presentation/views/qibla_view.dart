@@ -45,7 +45,29 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // نفس نسب التصميم الأصلي (300 / 240 / 220) بس محسوبة من المساحة المتاحة
+          final double compassSize = math.min(
+            constraints.maxWidth * 0.8,
+            constraints.maxHeight * 0.45,
+          );
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: _buildContent(compassSize),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildContent(double compassSize) {
+    return Column(
         children: [
           SizedBox(height: 20.h),
           
@@ -88,8 +110,8 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
                       animation: _pulseAnimation,
                       builder: (context, child) {
                         return Container(
-                          width: 220.w,
-                          height: 220.w,
+                          width: compassSize * 0.73,
+                          height: compassSize * 0.73,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             // وضعنا لون داكن متطابق مع الخلفية حتى ينعكس الظل
@@ -108,8 +130,8 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
 
                     // 2. الإطار الخارجي للبوصلة (ثابت)
                     Container(
-                      width: 300.w,
-                      height: 300.w,
+                      width: compassSize,
+                      height: compassSize,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
@@ -131,8 +153,8 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
                     Transform.rotate(
                       angle: qiblaAngle, // الزاوية الحقيقية للقبلة من الحساس
                       child: Container(
-                        width: 240.w,
-                        height: 240.w,
+                        width: compassSize * 0.8,
+                        height: compassSize * 0.8,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: const DecorationImage(
@@ -191,7 +213,6 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
           const Spacer(),
           SizedBox(height: 100.h),
         ],
-      ),
     );
   }
 

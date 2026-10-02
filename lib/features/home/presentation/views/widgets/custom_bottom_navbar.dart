@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/home/presentation/views/widgets/bottom_nav_item.dart';
-// import 'package:planets/views/widgets/bottom_nav_item.dart';
 
 class CustomBottomNaBar extends StatefulWidget {
   const CustomBottomNaBar({
@@ -17,6 +17,14 @@ class CustomBottomNaBar extends StatefulWidget {
 class _CustomBottomNaBarState extends State<CustomBottomNaBar> {
   var currentIndex = 2;
 
+  static const List<({String icon, String label})> _items = [
+    (icon: Assets.imagesRadio, label: 'Radio'),
+    (icon: Assets.imagesQuranIcon, label: 'Quran'),
+    (icon: Assets.imagesTime, label: 'Home'),
+    (icon: Assets.imagesTasbih, label: 'Tasbih'),
+    (icon: Assets.imagesCompass, label: 'Qiblah'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -25,84 +33,35 @@ class _CustomBottomNaBarState extends State<CustomBottomNaBar> {
       children: [
         // Black Horizontal Container
         Container(
-          margin: const EdgeInsetsDirectional.symmetric(
-              horizontal: 20, vertical: 10),
+          margin: EdgeInsetsDirectional.symmetric(horizontal: 20.w, vertical: 10),
           height: 56,
           decoration: BoxDecoration(
               color: Colors.black, borderRadius: BorderRadius.circular(30)),
         ),
         Positioned(
-          left: 30,
-          right: 30,
+          left: 30.w,
+          right: 30.w,
           top: -25,
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // First Icon
-              GestureDetector(
-                onTap: () {
-                  widget.currentIndex(0);
-                  currentIndex = 0;
-                  setState(() {});
-                },
-                child: BottomNavItem(
-                  icon: Assets.imagesRadio,
-                  isSelected: currentIndex == 0,
-                  label: 'Radio',
+              // Flexible lets the items shrink on narrow screens instead of overflowing
+              for (int i = 0; i < _items.length; i++)
+                Flexible(
+                  child: GestureDetector(
+                    onTap: () {
+                      currentIndex = i;
+                      widget.currentIndex(i);
+                      setState(() {});
+                    },
+                    child: BottomNavItem(
+                      icon: _items[i].icon,
+                      isSelected: currentIndex == i,
+                      label: _items[i].label,
+                    ),
+                  ),
                 ),
-              ),
-              // Second Icon
-              GestureDetector(
-                onTap: () {
-                  currentIndex = 1;widget.currentIndex(1);
-                  setState(() {});
-                },
-                child: BottomNavItem(
-                  icon: Assets.imagesQuranIcon,
-                  isSelected: currentIndex == 1,
-                  label: 'Quran',
-                ),
-              ),
-              // Third Icon
-              GestureDetector(
-                onTap: () {
-                  currentIndex = 2;
-                  widget.currentIndex(2);
-                  setState(() {});
-                },
-                child: BottomNavItem(
-                  icon: Assets.imagesTime,
-                  isSelected: currentIndex == 2,
-                  label: 'Home',
-                ),
-              ),
-              // fourth Icon
-              GestureDetector(
-                onTap: () {
-                  currentIndex = 3;
-                  widget.currentIndex(3);
-                  setState(() {});
-                },
-                child: BottomNavItem(
-                  icon: Assets.imagesTasbih,
-                  isSelected: currentIndex == 3,
-                  label: 'Tasbih',
-                ),
-              ),
-              // fifth Icon
-              GestureDetector(
-                onTap: () {
-                  currentIndex = 4;
-                  widget.currentIndex(4);
-                  setState(() {});
-                },
-                child: BottomNavItem(
-                  icon: Assets.imagesCompass,
-                  isSelected: currentIndex == 4,
-                  label: 'Qiplah',
-                ),
-              ),
             ],
           ),
         ),

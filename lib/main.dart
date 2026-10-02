@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +20,8 @@ import 'package:just_audio_background/just_audio_background.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // التصميم كله مبني على الوضع الطولي (designSize 395x825)
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   setUpServiceLocator();
   await Hive.initFlutter();
   registerAdapters();
@@ -52,6 +55,17 @@ class MainApp extends StatelessWidget {
       designSize: const Size(395, 825),
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
+        // حجم خط النظام بيتضرب في .sp، فبنحطله حد أقصى عشان الكروت متتكسرش
+        builder: (context, child) {
+          final mediaQuery = MediaQuery.of(context);
+          return MediaQuery(
+            data: mediaQuery.copyWith(
+              textScaler: mediaQuery.textScaler
+                  .clamp(minScaleFactor: 0.85, maxScaleFactor: 1.3),
+            ),
+            child: child!,
+          );
+        },
         localizationsDelegates: const [
           S.delegate,
           GlobalMaterialLocalizations.delegate,

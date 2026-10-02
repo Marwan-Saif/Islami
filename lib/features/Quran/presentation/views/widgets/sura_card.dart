@@ -24,37 +24,53 @@ class SuraCard extends StatelessWidget {
         textDirection: TextDirection.ltr,
         children: [
           AyahNumber(number: surahModel.number!),
-          const Spacer(flex: 1),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                surahModel.englishName!,
-                style: TextStyle(
+          SizedBox(width: 8.w),
+          // long names (e.g. Aal-i-Imraan) scale down instead of overflowing
+          Expanded(
+            flex: 5,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              // the row is forced LTR while the app is RTL, so align explicitly
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    surahModel.englishName!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '   ${S.of(context).Verse} ${surahModel.ayahs!.last.numberInSurah}',
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            flex: 4,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Text(
+                surahModel.name!,
+                style: GoogleFonts.amiri(
                   color: Colors.white,
-                  fontSize: 20.sp,
+                  fontSize: 26.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                '   ${S.of(context).Verse} ${surahModel.ayahs!.last.numberInSurah}',
-                textDirection: TextDirection.rtl,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(flex: 9),
-          Text(
-            surahModel.name!,
-            style: GoogleFonts.amiri(
-                color: Colors.white,
-                fontSize: 26.sp,
-                fontWeight: FontWeight.bold,
-              ),
+            ),
           ),
         ],
       ),

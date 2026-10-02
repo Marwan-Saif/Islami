@@ -169,7 +169,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
                 child: Text(
                   "Next: $nextPrayerName - $nextPrayerTimeFormatted", 
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
               IconButton(

@@ -51,8 +51,7 @@ class _NotificationCardState extends State<NotificationCard> {
                   child: Column(children: [
                     Row(
                       children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 200,
+                        Expanded(
                           child: Text(
                             "تفعيل الاشعارات",
                             maxLines: 2,
@@ -62,7 +61,6 @@ class _NotificationCardState extends State<NotificationCard> {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const Spacer(),
                         Switch(
                           value: context
                               .read<AzkarCubit>()
@@ -84,8 +82,7 @@ class _NotificationCardState extends State<NotificationCard> {
                     ),
                     Row(
                       children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 150,
+                        Expanded(
                           child: Text(
                             "الوقت المحدد لارسال الاشعارات : ${context.read<AzkarCubit>().azkarLocalDataList[widget.index].zekrtime}",
                             maxLines: 2,
@@ -95,7 +92,7 @@ class _NotificationCardState extends State<NotificationCard> {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const Spacer(),
+                        SizedBox(width: 8.w),
                         GestureDetector(
                             onTap: () {
                               showTimePicker(

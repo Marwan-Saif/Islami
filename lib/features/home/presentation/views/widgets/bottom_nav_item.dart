@@ -15,8 +15,9 @@ class BottomNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+    // scaleDown keeps the item at its natural size unless the bar is too narrow
+    return FittedBox(
+      fit: BoxFit.scaleDown,
       child: Column(
         children: [
           CircleAvatar(
@@ -48,7 +49,7 @@ class BottomNavItem extends StatelessWidget {
                     fontSize: 15,
                   ),
                 )
-              : SizedBox()
+              : const SizedBox()
         ],
       ),
     );
