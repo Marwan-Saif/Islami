@@ -7,7 +7,6 @@ import 'package:islami/features/Quran/presentation/views/surah_view.dart';
 import 'package:islami/features/Radio/data/models/reciter_model.dart';
 import 'package:islami/features/Radio/presentation/views/reciter_surahs_view.dart';
 import 'package:islami/features/Radio/presentation/views/reciters_view.dart';
-import 'package:islami/features/Sebha/presentation/views/test.dart';
 import 'package:islami/features/Timer/domain/zekr_entity.dart';
 import 'package:islami/features/Timer/presentation/views/zekr_view.dart';
 import 'package:islami/features/home/presentation/views/home_view.dart';
@@ -22,7 +21,6 @@ abstract class AppRouter {
   static const String homeView = '/homeView';
   static const String suoraSCreen = '/suoraSCreen';
   static const String zekrScreen = '/zekrScreen';
-  static const String test = '/test';
 
   static const String surahScreen = '/surahScreen';
   static const String ayahSearchView = '/ayahSearchView';
@@ -33,8 +31,6 @@ abstract class AppRouter {
   static const String hadithFavoritesView = '/hadithFavoritesView';
   static const String recitersView = '/recitersView';
   static const String reciterSurahsView = '/reciterSurahsView';
-
-  // static const String signupView = '/signupView';
 
   static final router = GoRouter(routes: [
     GoRoute(
@@ -64,10 +60,6 @@ abstract class AppRouter {
             title: args["title"],
           );
         }),
-    GoRoute(
-      path: test,
-      builder: (context, state) => HomeScreen(),
-    ),
     GoRoute(
       path: surahScreen,
       builder: (context, state) =>
@@ -117,7 +109,5 @@ abstract class AppRouter {
         );
       },
     ),
-    // GoRoute(
-    //   path: signupView,
   ]);
 }
