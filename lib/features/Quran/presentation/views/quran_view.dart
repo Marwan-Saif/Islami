@@ -35,7 +35,12 @@ class QuranView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Column(children: [
-                const SearchTextField(),
+                Builder(
+                  builder: (context) => SearchTextField(
+                    hintText: 'ابحث عن سورة بالاسم أو الرقم',
+                    onChanged: context.read<QuranCubit>().search,
+                  ),
+                ),
                 Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(

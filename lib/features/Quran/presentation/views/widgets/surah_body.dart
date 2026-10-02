@@ -69,14 +69,35 @@ void _showLongPressDialog({
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text(ayahs.text!),
-        content: SingleChildScrollView(child: Text("${ayahs.tafseer}")),
+        backgroundColor: AppColors.backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+          side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+        ),
+        title: Text(
+          ayahs.text!,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.amiri(
+            color: AppColors.primaryColor,
+            fontSize: 20.sp,
+            height: 1.8,
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            "${ayahs.tafseer}",
+            style: TextStyle(color: Colors.white, fontSize: 15.sp, height: 1.6),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('OK'),
+            child: Text(
+              'إغلاق',
+              style: TextStyle(color: AppColors.primaryColor, fontSize: 16.sp),
+            ),
           ),
         ],
       );

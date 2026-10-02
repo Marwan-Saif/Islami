@@ -7,13 +7,14 @@ import 'package:islami/features/Quran/data/models/surah_model.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/surah_body.dart';
 
 class SurahScreen extends StatelessWidget {
-  const SurahScreen({super.key, required this.ayahs});
+  const SurahScreen({super.key, required this.ayahs, this.title = ''});
   final List<Ayahs> ayahs;
+  final String title;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: customAppBar(context, ''),
+      appBar: customAppBar(context, title),
       body: Stack(
         alignment: Alignment.center,
         fit: StackFit.expand,

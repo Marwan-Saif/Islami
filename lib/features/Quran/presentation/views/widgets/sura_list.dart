@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/features/Quran/presentation/manager/quran_cubit/quran_cubit.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/sura_card.dart';
 
@@ -15,6 +16,15 @@ class SurasList extends StatelessWidget {
         // TODO: implement listener
       },
       builder: (context, state) {
+        if (state is GetQuranSuccess && state.quranModel.data!.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: Text(
+              'لا توجد سورة بهذا الاسم',
+              style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+            ),
+          );
+        }
         return state is !GetQuranSuccess
             ? const Center(
                 child: CircularProgressIndicator(),

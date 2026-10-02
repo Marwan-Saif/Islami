@@ -60,9 +60,10 @@ abstract class AppRouter {
     ),
     GoRoute(
       path: surahScreen,
-      builder: (context, state) => SurahScreen(
-        ayahs: state.extra as List<Ayahs>,
-      ),
+      builder: (context, state) {
+        final surah = state.extra as SurahModel;
+        return SurahScreen(ayahs: surah.ayahs!, title: surah.name ?? '');
+      },
     ),
     GoRoute(
       path: recitersView,
