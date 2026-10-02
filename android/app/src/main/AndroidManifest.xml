@@ -19,7 +19,7 @@ Retrieved 2025-12-04, License - CC BY-SA 4.0
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
     <application
-        android:label="islami"
+        android:label="Islami"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

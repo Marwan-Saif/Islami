@@ -29,8 +29,8 @@ void main() async {
   registerAdapters();
   // تهيئة مشغل الصوت للعمل في الخلفية وإظهار شريط الإشعارات
   await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
+    androidNotificationChannelId: 'com.marwansaif.islami.channel.audio',
+    androidNotificationChannelName: 'تشغيل الراديو والتلاوات',
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true,
   ); 
