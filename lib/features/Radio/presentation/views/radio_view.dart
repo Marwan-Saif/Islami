@@ -242,12 +242,20 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
           ),
           Padding(
             padding: EdgeInsets.all(24.w),
-            child: StreamBuilder<SequenceState?>(
+            // الحالة بتتراقب هنا كمان عشان الكارت يرجع للإذاعة لما المشغل يقف خالص
+            child: StreamBuilder<PlayerState>(
+              stream: _audioService.audioPlayer.playerStateStream,
+              builder: (context, _) => StreamBuilder<SequenceState?>(
               // 1. هنا بنراقب إيه اللي شغال دلوقتي في المشغل بالكامل
               stream: _audioService.audioPlayer.sequenceStateStream,
               builder: (context, sequenceSnapshot) {
                 final currentTag = sequenceSnapshot.data?.currentSource?.tag;
-                final MediaItem? currentMediaItem = currentTag is MediaItem ? currentTag : null;
+                // بعد stop المشغل بيفضل شايل آخر حاجة اتشغلت (آية أو سورة)،
+                // فكان الكارت بيعرضها وزرار التشغيل بيرجعها بدل الإذاعة
+                final idle = _audioService.audioPlayer.processingState ==
+                    ProcessingState.idle;
+                final MediaItem? currentMediaItem =
+                    currentTag is MediaItem && !idle ? currentTag : null;
 
                 // 2. بنحدد النصوص: لو في حاجة شغالة نعرضها، لو مفيش نعرض أول عنصر في الـ Playlist
                 final String displayTitle = currentMediaItem?.title ?? playlist.first.title;
@@ -334,6 +342,7 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
                   ],
                 );
               },
+            ),
             ),
           ),
         ],
