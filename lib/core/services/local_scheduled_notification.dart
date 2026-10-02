@@ -120,7 +120,12 @@ class NotificationHelper {
           sound: _adhanChannel.sound,
           category: AndroidNotificationCategory.alarm,
         ),
-        iOS: const DarwinNotificationDetails(presentSound: true),
+        // iOS مش بيشغل mp3 ولا أصوات أطول من 30 ثانية، فـ ios/Runner/azan.wav
+        // نسخة wav من أول 29 ثانية من الأذان
+        iOS: const DarwinNotificationDetails(
+          presentSound: true,
+          sound: 'azan.wav',
+        ),
       ),
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
@@ -158,7 +163,10 @@ class NotificationHelper {
           priority: Priority.high,
           sound: _azkarChannel.sound,
         ),
-        iOS: const DarwinNotificationDetails(presentSound: true),
+        iOS: const DarwinNotificationDetails(
+          presentSound: true,
+          sound: 'notification.wav',
+        ),
       ),
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
