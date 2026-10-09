@@ -57,8 +57,20 @@ class _PrayerTimerState extends State<PrayerTimer> {
     final next = _nextIndex(today, now);
     if (next != _centeredIndex) {
       _centeredIndex = next;
-      _carousel.animateToPage(next);
+      _centerOn(next);
       setState(() {});
+    }
+  }
+
+  // الـ controller مش بيشتغل غير بعد ما الكاروسيل يتبني، والمواقيت ممكن
+  // تتحسب تاني قبلها (الموقع بيتحدث مع فتح الأبلكيشن)، فبنستنى لحد ما يجهز
+  void _centerOn(int index) {
+    if (_carousel.ready) {
+      _carousel.animateToPage(index);
+    } else {
+      _carousel.onReady.then((_) {
+        if (mounted) _carousel.animateToPage(index);
+      });
     }
   }
 
@@ -94,7 +106,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
     // أول مرة الكاروسيل بيتبني على الصلاة الجاية (initialPage)، وبعد كده
     // (تغيير الموقع أو يوم جديد) بيتحرك عليها
     if (_centeredIndex != null && _centeredIndex != next) {
-      _carousel.animateToPage(next);
+      _centerOn(next);
     }
     _centeredIndex = next;
   }
