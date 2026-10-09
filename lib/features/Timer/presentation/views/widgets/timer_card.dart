@@ -16,16 +16,30 @@ class PrayerTimerCard extends StatelessWidget {
     return Container(
       // width: 60,
       padding: const EdgeInsets.symmetric(horizontal: 8),
+      // الصلاة الجاية بإطار أبيض وظل، والباقي باهت شوية
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             const Color(0xFF202020),
-            const Color(0xFFB19768).withValues(alpha: 0.7),
+            const Color(0xFFB19768).withValues(alpha: isHighlighted ? 0.85 : 0.5),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isHighlighted ? Colors.white : Colors.transparent,
+          width: 2,
+        ),
+        boxShadow: isHighlighted
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.35),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -37,30 +51,10 @@ class PrayerTimerCard extends StatelessWidget {
               style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
-                  color: isHighlighted ? Colors.white : Colors.black),
+                  color: isHighlighted ? Colors.white : Colors.white70),
             ),
           ),
           const SizedBox(height: 2),
-          // Text.rich(
-          //   TextSpan(
-
-          //     children: [
-          //       TextSpan(
-          //         text: time,
-          //         style: TextStyle(
-          //             fontSize: 14.sp,
-          //             fontWeight: FontWeight.bold,
-          //             color: isHighlighted ? Colors.white : Colors.black),
-          //       ),
-          //       TextSpan(
-          //         text: " AM",
-          //         style: TextStyle(
-          //             fontSize: 14.sp,
-          //             fontWeight: FontWeight.bold,
-          //             color: isHighlighted ? Colors.white : Colors.black),
-          //       ),
-          //     ],
-          // ))
           Padding(
             padding:  EdgeInsets.symmetric(horizontal: 12.0.sp),
             child: FittedBox(
@@ -71,7 +65,7 @@ class PrayerTimerCard extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
-                    color: isHighlighted ? Colors.white : Colors.black),
+                    color: isHighlighted ? Colors.white : Colors.white70),
               ),
             ),
           ),
@@ -81,7 +75,7 @@ class PrayerTimerCard extends StatelessWidget {
             style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
-                color: isHighlighted ? Colors.white : Colors.black),
+                color: isHighlighted ? Colors.white : Colors.white70),
           ),
         ],
       ),
