@@ -4,11 +4,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_card.dart';
 import 'package:islami/generated/l10n.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 
 class PrayerTimer extends StatefulWidget {
   const PrayerTimer({super.key});
@@ -20,6 +21,12 @@ class PrayerTimer extends StatefulWidget {
 class _PrayerTimerState extends State<PrayerTimer> {
   // الأسماء والتواريخ بتتعمل format في build عشان تتغير مع لغة التطبيق
   DayPrayerTimes? _today;
+  DateTime? _todayDate;
+
+  // الكارت اللي في النص هو الصلاة الجاية، وبيتحرك لوحده لما وقتها ييجي
+  final CarouselSliderController _carousel = CarouselSliderController();
+  int? _centeredIndex;
+  Timer? _clock;
 
   @override
   void initState() {
@@ -27,13 +34,37 @@ class _PrayerTimerState extends State<PrayerTimer> {
     _initializePrayerTimes();
     // الموقع بيتحدث مع فتح الأبلكيشن بعد ما الكارت يكون اتبنى
     PrayerTimesService.locationRevision.addListener(_initializePrayerTimes);
+    _clock = Timer.periodic(const Duration(seconds: 30), (_) => _tick());
   }
 
   @override
   void dispose() {
+    _clock?.cancel();
     PrayerTimesService.locationRevision.removeListener(_initializePrayerTimes);
     super.dispose();
   }
+
+  // كل 30 ثانية: لو اليوم اتغير بنحسب مواقيت اليوم الجديد، ولو الصلاة الجاية
+  // اتغيرت الكاروسيل بيتحرك عليها
+  void _tick() {
+    final today = _today;
+    if (today == null || !mounted) return;
+    final now = DateTime.now();
+    if (!DateUtils.isSameDay(now, _todayDate)) {
+      _initializePrayerTimes();
+      return;
+    }
+    final next = _nextIndex(today, now);
+    if (next != _centeredIndex) {
+      _centeredIndex = next;
+      _carousel.animateToPage(next);
+      setState(() {});
+    }
+  }
+
+  // بعد العشاء الصلاة الجاية فجر بكرة (تقريباً نفس وقت فجر النهارده)
+  int _nextIndex(DayPrayerTimes today, DateTime now) =>
+      today.nextIndex(now) ?? 0;
 
   Future<void> _updateLocation() async {
     final messenger = ScaffoldMessenger.of(context);
@@ -51,8 +82,21 @@ class _PrayerTimerState extends State<PrayerTimer> {
 
   Future<void> _initializePrayerTimes() async {
     // جدولة الأذان بقت في main عشان تشتغل حتى لو الشاشة دي متفتحتش
-    final days = await PrayerTimesService.forDays(DateTime.now());
-    if (mounted) setState(() => _today = days.first);
+    final now = DateTime.now();
+    final days = await PrayerTimesService.forDays(now);
+    if (!mounted) return;
+    final today = days.first;
+    final next = _nextIndex(today, now);
+    setState(() {
+      _today = today;
+      _todayDate = now;
+    });
+    // أول مرة الكاروسيل بيتبني على الصلاة الجاية (initialPage)، وبعد كده
+    // (تغيير الموقع أو يوم جديد) بيتحرك عليها
+    if (_centeredIndex != null && _centeredIndex != next) {
+      _carousel.animateToPage(next);
+    }
+    _centeredIndex = next;
   }
 
   Future<void> _toggleAdhan() async {
@@ -96,7 +140,6 @@ class _PrayerTimerState extends State<PrayerTimer> {
     final language = Localizations.localeOf(context).languageCode;
     final now = DateTime.now();
     final currentDay = DateFormat('EEEE', language).format(now);
-    final currentDate = DateFormat.MMMEd(language).format(now);
     final prayerTimesList = [
       for (int i = 0; i < DayPrayerTimes.names.length; i++)
         (
@@ -105,8 +148,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
           DateFormat('a', language).format(today.wallTime(i)),
         ),
     ];
-    // بعد العشاء الصلاة الجاية فجر بكرة (تقريباً نفس وقت فجر النهارده)
-    final nextIndex = today.nextIndex(now) ?? 0;
+    final nextIndex = _nextIndex(today, now);
     final next = DayPrayerTimes.names[nextIndex];
     final nextTime = today.wallTime(nextIndex);
     final city = PrayerTimesService.manualCity;
@@ -125,16 +167,12 @@ class _PrayerTimerState extends State<PrayerTimer> {
       child: Column(
         children: [
           
+          // الميلادي على الشمال والهجري على اليمين في اللغتين
           Row(
+            textDirection: TextDirection.ltr,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded( 
-                child: Text(
-                  currentDate,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.black),
-                ),
-              ),
+              Expanded(child: _DateText(_gregorianDate(now, language))),
               Expanded(
                 flex: 2,
                 child: Text(
@@ -143,23 +181,18 @@ class _PrayerTimerState extends State<PrayerTimer> {
                   style: GoogleFonts.amiri(fontSize: 18.sp, color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
-              Expanded(
-                child: Text(
-                  currentDate,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.black),
-                ),
-              ),
+              Expanded(child: _DateText(_hijriDate(now, language))),
             ],
           ),
           const SizedBox(height: 20),
           
           // Prayer Times Carousel
           CarouselSlider.builder(
+            carouselController: _carousel,
             itemBuilder: (context, index, realIndex) => PrayerTimerCard(
               prayerName: prayerTimesList[index].$1,
               time: prayerTimesList[index].$2,
-              isHighlighted: true, // يفضل مستقبلاً وضع شرط لمعرفة الصلاة الحالية لتحديد الـ true/false
+              isHighlighted: index == nextIndex,
               pm: prayerTimesList[index].$3,
             ),
             itemCount: prayerTimesList.length,
@@ -168,7 +201,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
               viewportFraction: 0.35,
               enlargeCenterPage: true,
               enlargeFactor: 0.22,
-              initialPage: 0,
+              initialPage: nextIndex,
               enableInfiniteScroll: true,
             ),
           ),
@@ -213,6 +246,46 @@ class _PrayerTimerState extends State<PrayerTimer> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  String _gregorianDate(DateTime now, String language) =>
+      '${DateFormat('d MMMM', language).format(now)}\n'
+      '${DateFormat('y', language).format(now)}';
+
+  // تقويم أم القرى، وبيتكتب بأرقام عربية لو اللغة عربي زي باقي الكارت
+  String _hijriDate(DateTime now, String language) {
+    HijriCalendar.setLocal(language);
+    final hijri = HijriCalendar.fromDate(now);
+    final text = '${hijri.hDay} ${hijri.longMonthName}\n'
+        '${hijri.hYear} ${language == 'ar' ? 'هـ' : 'AH'}';
+    return language == 'ar' ? _arabicDigits(text) : text;
+  }
+
+  static String _arabicDigits(String text) => text.replaceAllMapped(
+        RegExp('[0-9]'),
+        (m) => String.fromCharCode(0x0660 + int.parse(m[0]!)),
+      );
+}
+
+class _DateText extends StatelessWidget {
+  const _DateText(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+          height: 1.3,
+        ),
       ),
     );
   }

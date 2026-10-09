@@ -50,159 +50,178 @@ class _SebhaViewState extends State<SebhaView> {
       );
     }
 
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: 20.h), // استخدام .h للارتفاع
+    // الصفحة بتاخد ارتفاع التاب بالظبط من غير scroll: كل جزء ليه نسبة من
+    // المساحة، فبتظبط على الشاشات الصغيرة والكبيرة وأحجام الخط المختلفة
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        // مساحة لدواير الـ bottom nav اللي طالعة فوق الشريط
+        padding: EdgeInsets.only(top: 12.h, bottom: 28.h),
+        child: Column(
+          children: [
+            Flexible(
+              flex: 3,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 60.w),
+                child: Image.asset(Assets.imagesMosque001, fit: BoxFit.contain),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            carousalSliderSection(),
+            SizedBox(height: 8.h),
+            Expanded(flex: 9, child: _beads()),
+            SizedBox(height: 8.h),
+            _totalRow(),
+            SizedBox(height: 8.h),
+            _actionsRow(),
+          ],
+        ),
+      ),
+    );
+  }
 
-          Container(
-            width: double.infinity,
-            margin: EdgeInsetsDirectional.symmetric(
-              horizontal: 60.w,
-            ), 
-            child: Image.asset(
-              Assets.imagesMosque001,
-              height: 150.h,
-              fit: BoxFit.contain, 
+  void _increment() {
+    setState(() {
+      counter++;
+      total++;
+      _sebhaService.incrementCounter(currentIndex);
+      _sebhaService.incrementGlobalTotal();
+    });
+  }
+
+  // السبحة بتحافظ على نسبة الصورة وبتكبر وتصغر مع المساحة المتاحة،
+  // والذكر والعداد جواها مقاسهم نسبة من حجمها
+  Widget _beads() {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _increment,
+      child: Center(
+        child: AspectRatio(
+          aspectRatio: 379 / 460,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final height = constraints.maxHeight;
+              return DecoratedBox(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(Assets.imagesSebha),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                child: Padding(
+                  // الدايرة نفسها أوطى من نص الصورة بسبب الشرّابة اللي فوق
+                  padding: EdgeInsets.fromLTRB(
+                    height * 0.12,
+                    height * 0.2,
+                    height * 0.12,
+                    height * 0.08,
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          selectedValue,
+                          style: GoogleFonts.amiri(
+                            fontSize: height * 0.085,
+                            color: Colors.white,
+                          ),
+                        ),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (child, animation) =>
+                              ScaleTransition(scale: animation, child: child),
+                          child: Text(
+                            '$counter',
+                            key: ValueKey<int>(counter),
+                            style: GoogleFonts.amiri(
+                              fontSize: height * 0.11,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontFeatures: [const FontFeature('arab')],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _totalRow() {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            S.of(context).totalLabel,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          SizedBox(width: 8.w),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) =>
+                ScaleTransition(scale: animation, child: child),
+            child: Text(
+              '$total',
+              key: ValueKey<int>(total),
+              style: GoogleFonts.amiri(
+                fontSize: 30.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontFeatures: [const FontFeature('arab')],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-          SizedBox(height: 40.h),
-
-          carousalSliderSection(),
-
-          SizedBox(height: 20.h),
-
+  Widget _actionsRow() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 40.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
           GestureDetector(
             onTap: () {
+              log("Refresh/Save to History");
+              _sebhaService.moveCurrentToHistory();
               setState(() {
-                counter++;
-                total++;
-                _sebhaService.incrementCounter(currentIndex);
-                _sebhaService.incrementGlobalTotal();
+                counter = 0;
+                total = 0;
               });
             },
-            child: Container(
-              width: 300.w, 
-              height: 350.h, 
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(Assets.imagesSebha),
-                  fit: BoxFit.contain, 
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 50.h,
-                  ), 
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      selectedValue,
-                      style: GoogleFonts.amiri(
-                        fontSize: 32.sp,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-
-                  
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder:
-                        (Widget child, Animation<double> animation) {
-                          return ScaleTransition(
-                            scale: animation,
-                            child: child,
-                          );
-                        },
-                    child: Text(
-                      '$counter',
-                      key: ValueKey<int>(counter),
-                      style: GoogleFonts.amiri(
-                        fontSize: 40.sp,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontFeatures: [const FontFeature('arab')],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            child: Image.asset(
+              Assets.imagesRefresh,
+              width: 35.w,
+              color: Colors.white,
             ),
           ),
-          // الإجمالي
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                S.of(context).totalLabel,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(width: 8.w),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return ScaleTransition(scale: animation, child: child);
-                },
-                child: Text(
-                  '$total',
-                  key: ValueKey<int>(total),
-                  style: GoogleFonts.amiri(
-                    fontSize: 30.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontFeatures: [const FontFeature('arab')],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // أزرار التحكم
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    log("Refresh/Save to History");
-                    _sebhaService.moveCurrentToHistory();
-                    setState(() {
-                      counter = 0;
-                      total = 0;
-                    });
-                  },
-                  child: Image.asset(
-                    Assets.imagesRefresh,
-                    width: 35.w,
-                    color: Colors.white,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    log("Reset History");
-                    resetDialog(context);
-                  },
-                  child: Image.asset(
-                    Assets.imagesReset,
-                    width: 35.w,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+          GestureDetector(
+            onTap: () {
+              log("Reset History");
+              resetDialog(context);
+            },
+            child: Image.asset(
+              Assets.imagesReset,
+              width: 35.w,
+              color: Colors.white,
             ),
           ),
-
-          SizedBox(height: 100.h), 
         ],
       ),
     );
