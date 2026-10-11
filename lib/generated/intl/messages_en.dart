@@ -179,6 +179,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "Turn on location and allow the app to access it"),
         "enableNotifications":
             MessageLookupByLibrary.simpleMessage("Enable notifications"),
+        "exactAlarmAllow": MessageLookupByLibrary.simpleMessage("Allow"),
+        "exactAlarmLater": MessageLookupByLibrary.simpleMessage("Not now"),
+        "exactAlarmMessage": MessageLookupByLibrary.simpleMessage(
+            "To play the adhan exactly at prayer time, allow Islami to set alarms and reminders. Without this permission Android may delay the adhan by a few minutes."),
+        "exactAlarmTile": MessageLookupByLibrary.simpleMessage(
+            "The adhan may be a few minutes late. Tap to allow alarms"),
+        "exactAlarmTitle":
+            MessageLookupByLibrary.simpleMessage("Adhan right on time"),
         "fajr": MessageLookupByLibrary.simpleMessage("Fajr"),
         "favoriteHadiths":
             MessageLookupByLibrary.simpleMessage("Favorite hadiths"),
@@ -204,6 +212,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "lastRead": MessageLookupByLibrary.simpleMessage("Last read"),
         "lastReadAt": m9,
+        "licensesAndSources":
+            MessageLookupByLibrary.simpleMessage("Licenses and data sources"),
         "listen": MessageLookupByLibrary.simpleMessage("Listen"),
         "listenToAyah":
             MessageLookupByLibrary.simpleMessage("Listen to the ayah"),
@@ -268,6 +278,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "prayerName": m17,
         "prayerTimes": MessageLookupByLibrary.simpleMessage("Prayer times"),
         "previous": MessageLookupByLibrary.simpleMessage("Previous"),
+        "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy policy"),
         "qiblaDirection":
             MessageLookupByLibrary.simpleMessage("Qibla direction"),
         "quranFontSize":

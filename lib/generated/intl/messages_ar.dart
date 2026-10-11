@@ -175,6 +175,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "فعّل الموقع واسمح للتطبيق بالوصول إليه"),
         "enableNotifications":
             MessageLookupByLibrary.simpleMessage("تفعيل الإشعارات"),
+        "exactAlarmAllow": MessageLookupByLibrary.simpleMessage("اسمح"),
+        "exactAlarmLater": MessageLookupByLibrary.simpleMessage("مش دلوقتي"),
+        "exactAlarmMessage": MessageLookupByLibrary.simpleMessage(
+            "عشان الأذان يشتغل في وقت الصلاة بالظبط، اسمح لتطبيق إسلامي بضبط المنبّهات والتذكيرات. من غير الإذن ده أندرويد ممكن يأخر الأذان كام دقيقة."),
+        "exactAlarmTile": MessageLookupByLibrary.simpleMessage(
+            "الأذان ممكن يتأخر كام دقيقة، اضغط واسمح بالمنبّهات"),
+        "exactAlarmTitle":
+            MessageLookupByLibrary.simpleMessage("الأذان في وقته بالظبط"),
         "fajr": MessageLookupByLibrary.simpleMessage("الفجر"),
         "favoriteHadiths":
             MessageLookupByLibrary.simpleMessage("الأحاديث المفضلة"),
@@ -199,6 +207,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("اللغة"),
         "lastRead": MessageLookupByLibrary.simpleMessage("آخر قراءة"),
         "lastReadAt": m9,
+        "licensesAndSources":
+            MessageLookupByLibrary.simpleMessage("التراخيص ومصادر البيانات"),
         "listen": MessageLookupByLibrary.simpleMessage("استماع"),
         "listenToAyah": MessageLookupByLibrary.simpleMessage("استماع للآية"),
         "liveBroadcast": MessageLookupByLibrary.simpleMessage("بث مباشر"),
@@ -262,6 +272,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "prayerName": m17,
         "prayerTimes": MessageLookupByLibrary.simpleMessage("مواقيت الصلاة"),
         "previous": MessageLookupByLibrary.simpleMessage("السابق"),
+        "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
         "qiblaDirection": MessageLookupByLibrary.simpleMessage("اتجاه القبلة"),
         "quranFontSize": MessageLookupByLibrary.simpleMessage("حجم خط المصحف"),
         "radioAbdulbari":

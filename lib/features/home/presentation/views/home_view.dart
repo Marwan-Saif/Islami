@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:islami/core/services/local_scheduled_notification.dart';
+import 'package:islami/core/services/shared_prefs.dart';
+import 'package:islami/features/Timer/data/prayer_times_service.dart';
+import 'package:islami/generated/l10n.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Qibla/presentation/views/qibla_view.dart';
@@ -37,8 +40,63 @@ class _DefaultScreenState extends State<DefaultScreen> {
   void initState() {
     super.initState();
     // إذن الإشعارات بيتطلب لما الرئيسية تظهر، مش فوق الـ splash أو الـ onboarding
-    NotificationHelper.requestPermissions();
+    _requestPermissions();
     _prebuildTabs();
+  }
+
+  static const String _exactAlarmAskedKey = 'exact_alarm_asked';
+
+  Future<void> _requestPermissions() async {
+    await NotificationHelper.requestPermissions();
+    // بعد إذن الإشعارات، بنشرح مرة واحدة ليه محتاجين إذن المنبّهات
+    // (والإعدادات فيها زرار للإذن لو المستخدم قال مش دلوقتي)
+    if (!PrayerNotifications.isEnabled ||
+        Prefs.getData(key: _exactAlarmAskedKey) == true ||
+        await NotificationHelper.canScheduleExact() ||
+        !mounted) {
+      return;
+    }
+    await Prefs.saveData(key: _exactAlarmAskedKey, value: true);
+    if (!mounted) return;
+    final allow = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+        ),
+        icon: const Icon(Icons.alarm_on_rounded, color: AppColors.primaryColor),
+        title: Text(
+          S.of(context).exactAlarmTitle,
+          style: const TextStyle(color: AppColors.primaryColor),
+        ),
+        content: Text(
+          S.of(context).exactAlarmMessage,
+          style: const TextStyle(color: Colors.white),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              S.of(context).exactAlarmLater,
+              style: const TextStyle(color: Colors.white70),
+            ),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              foregroundColor: AppColors.backgroundColor,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(S.of(context).exactAlarmAllow),
+          ),
+        ],
+      ),
+    );
+    if (allow == true && await NotificationHelper.requestExactAlarms()) {
+      await NotificationHelper.rescheduleAfterExactAlarmGrant();
+    }
   }
 
   // تاب واحد كل frame بعد ما الرئيسية تستقر، عشان أول فتحة لأي تاب متهنجش

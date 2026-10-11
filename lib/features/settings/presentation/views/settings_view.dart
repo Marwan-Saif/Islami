@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/services/app_settings.dart';
+import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/widgets/appbar.dart';
 import 'package:islami/features/Timer/data/azkar_notifications.dart';
@@ -28,6 +29,8 @@ class _SettingsViewState extends State<SettingsView> {
   // معاينة الأصوات بـ audioplayers لأن just_audio_background بيسمح بمشغل واحد بس
   final AudioPlayer _preview = AudioPlayer();
   AdhanSound? _previewing;
+  // null لحد ما نعرف، والزرار بيظهر بس لو الإذن مقفول فعلاً
+  bool? _exactAlarmsAllowed;
 
   static const Map<AdhanSound, String> _soundAssets = {
     AdhanSound.full: 'sound/azan.mp3',
@@ -41,6 +44,16 @@ class _SettingsViewState extends State<SettingsView> {
     _preview.onPlayerComplete.listen((_) {
       if (mounted) setState(() => _previewing = null);
     });
+    NotificationHelper.canScheduleExact().then((allowed) {
+      if (mounted) setState(() => _exactAlarmsAllowed = allowed);
+    });
+  }
+
+  Future<void> _requestExactAlarms() async {
+    final allowed = await NotificationHelper.requestExactAlarms();
+    if (!mounted) return;
+    setState(() => _exactAlarmsAllowed = allowed);
+    if (allowed) await NotificationHelper.rescheduleAfterExactAlarmGrant();
   }
 
   @override
@@ -327,6 +340,19 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                 ),
               ),
+              if (_exactAlarmsAllowed == false && PrayerNotifications.isEnabled)
+                ListTile(
+                  onTap: _requestExactAlarms,
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(
+                    Icons.alarm_off_rounded,
+                    color: Colors.orangeAccent,
+                  ),
+                  title: Text(
+                    S.of(context).exactAlarmTile,
+                    style: TextStyle(color: Colors.orangeAccent, fontSize: 14.sp),
+                  ),
+                ),
               const Divider(color: Colors.white12, height: 1),
               for (int prayer = 0; prayer < 5; prayer++)
                 SwitchListTile(

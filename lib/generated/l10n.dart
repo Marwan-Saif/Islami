@@ -1905,6 +1905,76 @@ class S {
       args: [],
     );
   }
+
+  /// `Adhan right on time`
+  String get exactAlarmTitle {
+    return Intl.message(
+      'Adhan right on time',
+      name: 'exactAlarmTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To play the adhan exactly at prayer time, allow Islami to set alarms and reminders. Without this permission Android may delay the adhan by a few minutes.`
+  String get exactAlarmMessage {
+    return Intl.message(
+      'To play the adhan exactly at prayer time, allow Islami to set alarms and reminders. Without this permission Android may delay the adhan by a few minutes.',
+      name: 'exactAlarmMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow`
+  String get exactAlarmAllow {
+    return Intl.message(
+      'Allow',
+      name: 'exactAlarmAllow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not now`
+  String get exactAlarmLater {
+    return Intl.message(
+      'Not now',
+      name: 'exactAlarmLater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The adhan may be a few minutes late. Tap to allow alarms`
+  String get exactAlarmTile {
+    return Intl.message(
+      'The adhan may be a few minutes late. Tap to allow alarms',
+      name: 'exactAlarmTile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy policy`
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Licenses and data sources`
+  String get licensesAndSources {
+    return Intl.message(
+      'Licenses and data sources',
+      name: 'licensesAndSources',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

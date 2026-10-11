@@ -5,8 +5,10 @@ Posted by Raunak, modified by community. See post 'Timeline' for change history
 Retrieved 2025-12-04, License - CC BY-SA 4.0
 -->
 
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- USE_EXACT_ALARM جوجل بلاي بتقصره على تطبيقات المنبّه والتقويم وبترفض غيرها،
+         فبنستخدم SCHEDULE_EXACT_ALARM: المستخدم بيسمح بيه من الإعدادات (أندرويد 14+
+         مقفول افتراضياً)، ومن غيره الأذان بيتجدول inexact -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <!-- إشعارات الأذان والأذكار: إذن الإشعارات لأندرويد 13+، وإعادة الجدولة بعد restart الموبايل -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />

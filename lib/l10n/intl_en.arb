@@ -183,5 +183,12 @@
   "nextPrayer": "Next: {name} - {time}",
   "totalLabel": "Total:",
   "adhanMasterSwitch": "Adhan notifications",
-  "reminderHint": "A notification before every prayer, even when the adhan is off"
+  "reminderHint": "A notification before every prayer, even when the adhan is off",
+  "exactAlarmTitle": "Adhan right on time",
+  "exactAlarmMessage": "To play the adhan exactly at prayer time, allow Islami to set alarms and reminders. Without this permission Android may delay the adhan by a few minutes.",
+  "exactAlarmAllow": "Allow",
+  "exactAlarmLater": "Not now",
+  "exactAlarmTile": "The adhan may be a few minutes late. Tap to allow alarms",
+  "privacyPolicy": "Privacy policy",
+  "licensesAndSources": "Licenses and data sources"
 }

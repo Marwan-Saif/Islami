@@ -1,8 +1,19 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// مفتاح رفع Google Play (upload key) بيتقرا من android/key.properties،
+// والملف ده والـ keystore مش بيترفعوا على git. لو الملف مش موجود (زي الـ CI)
+// الـ release بيتوقّع بمفتاح الـ debug عشان الـ build يفضل شغال
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
 }
 
 android {
@@ -41,11 +52,24 @@ android {
     // coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.9")
 }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             // قواعد Gson اللي flutter_local_notifications محتاجاها في الـ release
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

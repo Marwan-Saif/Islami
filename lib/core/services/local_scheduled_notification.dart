@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:islami/core/services/app_settings.dart';
+import 'package:islami/features/Timer/data/azkar_notifications.dart';
+import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -119,10 +121,29 @@ class NotificationHelper {
         ?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
+  /// على أندرويد 12+ الأذان في وقته بالظبط محتاج إذن "المنبّهات والتذكيرات"،
+  /// وعلى أندرويد 14+ ده مقفول افتراضياً للتطبيقات الجديدة
+  static Future<bool> canScheduleExact() async {
+    if (kIsWeb) return true;
+    return await _androidPlugin?.canScheduleExactNotifications() ?? true;
+  }
+
+  /// بيفتح صفحة الإذن في إعدادات النظام، وبيرجع لما المستخدم يرجع للتطبيق
+  static Future<bool> requestExactAlarms() async {
+    if (kIsWeb) return true;
+    await _androidPlugin?.requestExactAlarmsPermission();
+    return canScheduleExact();
+  }
+
+  /// الأذان والأذكار اللي اتجدولوا inexact قبل الإذن بيتجدولوا تاني في وقتهم بالظبط
+  static Future<void> rescheduleAfterExactAlarmGrant() async {
+    await AzkarNotifications.scheduleFromStorage();
+    await PrayerNotifications.scheduleUpcoming();
+  }
+
   // لو إذن الـ exact alarm مش متاح بنجدول inexact بدل ما الجدولة تفشل
   static Future<AndroidScheduleMode> _scheduleMode() async {
-    final canScheduleExact =
-        await _androidPlugin?.canScheduleExactNotifications() ?? true;
+    final canScheduleExact = await NotificationHelper.canScheduleExact();
     return canScheduleExact
         ? AndroidScheduleMode.exactAllowWhileIdle
         : AndroidScheduleMode.inexactAllowWhileIdle;

@@ -15,6 +15,10 @@ class AboutSection extends StatelessWidget {
   static const String _playStoreUrl =
       'https://play.google.com/store/apps/details?id=com.marwansaif.islami';
 
+  // نفس اللينك اللي بيتحط في Google Play Console
+  static const String _privacyPolicyUrl =
+      'https://github.com/Marwan-Saif/Islami/blob/main/docs/privacy-policy.md';
+
   // رقم التطبيق على App Store (بيظهر بعد إنشائه على App Store Connect)،
   // ولحد ما يتحط زرار التقييم مش بيظهر على الآيفون
   static const String _appStoreId = '';
@@ -62,6 +66,24 @@ class AboutSection extends StatelessWidget {
             icon: Icons.star_rate_rounded,
             onTap: () => _rate(context),
           ),
+        SettingsTile(
+          title: S.of(context).privacyPolicy,
+          value: null,
+          icon: Icons.privacy_tip_outlined,
+          onTap: () => launchUrl(
+            Uri.parse(_privacyPolicyUrl),
+            mode: LaunchMode.externalApplication,
+          ),
+        ),
+        SettingsTile(
+          title: S.of(context).licensesAndSources,
+          value: null,
+          icon: Icons.description_outlined,
+          onTap: () => showLicensePage(
+            context: context,
+            applicationName: 'Islami',
+          ),
+        ),
         FutureBuilder<PackageInfo>(
           future: PackageInfo.fromPlatform(),
           builder: (context, snapshot) => Padding(
