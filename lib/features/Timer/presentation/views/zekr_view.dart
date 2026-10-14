@@ -59,10 +59,8 @@ class _ZekrViewState extends State<ZekrView> {
                       ),
                       SliverToBoxAdapter(child: SizedBox(height: 20.sp)),
                       SliverList.separated(
-                        itemBuilder: (context, index) => AZkarCard(
-                          hint: widget.azkarList[index].hint,
-                          txt: widget.azkarList[index].txt,
-                        ),
+                        itemBuilder: (context, index) =>
+                            AZkarCard(zekr: widget.azkarList[index]),
                         separatorBuilder: (context, index) =>
                             SizedBox(height: 20.sp),
                         itemCount: widget.azkarList.length,

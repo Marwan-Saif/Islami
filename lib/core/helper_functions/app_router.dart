@@ -48,7 +48,7 @@ abstract class AppRouter {
     GoRoute(
       path: suoraSCreen,
       builder: (context, state) => SuraSCreen(
-        txt: state.extra as List<String>,
+        zekr: state.extra as ZekrEntity,
       ),
     ),
     GoRoute(

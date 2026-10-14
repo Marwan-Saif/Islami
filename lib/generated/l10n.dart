@@ -1975,6 +1975,49 @@ class S {
       args: [],
     );
   }
+
+  /// `{count, plural, one{Once} two{Twice} other{{count} times}}`
+  String zekrRepeat(num count) {
+    return Intl.plural(
+      count,
+      one: 'Once',
+      two: 'Twice',
+      other: '$count times',
+      name: 'zekrRepeat',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Tap to count`
+  String get tapToCount {
+    return Intl.message(
+      'Tap to count',
+      name: 'tapToCount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done, tap to restart`
+  String get zekrDone {
+    return Intl.message(
+      'Done, tap to restart',
+      name: 'zekrDone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `of {count}`
+  String zekrOutOf(Object count) {
+    return Intl.message(
+      'of $count',
+      name: 'zekrOutOf',
+      desc: '',
+      args: [count],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

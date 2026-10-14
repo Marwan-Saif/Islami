@@ -190,5 +190,9 @@
   "exactAlarmLater": "مش دلوقتي",
   "exactAlarmTile": "الأذان ممكن يتأخر كام دقيقة، اضغط واسمح بالمنبّهات",
   "privacyPolicy": "سياسة الخصوصية",
-  "licensesAndSources": "التراخيص ومصادر البيانات"
+  "licensesAndSources": "التراخيص ومصادر البيانات",
+  "zekrRepeat": "{count, plural, one{مرة واحدة} two{مرتين} few{{count} مرات} other{{count} مرة}}",
+  "tapToCount": "اضغط للعد",
+  "zekrDone": "تم، اضغط للإعادة",
+  "zekrOutOf": "من {count}"
 }

@@ -88,6 +88,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m31(count) => "Total: ${count}";
 
+  static String m32(count) => "of ${count}";
+
+  static String m33(count) =>
+      "${Intl.plural(count, one: 'Once', two: 'Twice', other: '${count} times')}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Enter_text_here":
@@ -346,6 +351,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Tafsir (Al-Muyassar, Arabic)"),
         "tafsirUnavailable": MessageLookupByLibrary.simpleMessage(
             "Tafsir is not available for this ayah"),
+        "tapToCount": MessageLookupByLibrary.simpleMessage("Tap to count"),
         "timesForCity": m28,
         "timesForMyLocation": MessageLookupByLibrary.simpleMessage(
             "Times for your location - tap to refresh"),
@@ -358,6 +364,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "turnOnGpsForQibla": MessageLookupByLibrary.simpleMessage(
             "Turn on location (GPS) to find the Qibla"),
         "useMyLocation": MessageLookupByLibrary.simpleMessage(
-            "Use my current location (GPS)")
+            "Use my current location (GPS)"),
+        "zekrDone":
+            MessageLookupByLibrary.simpleMessage("Done, tap to restart"),
+        "zekrOutOf": m32,
+        "zekrRepeat": m33
       };
 }

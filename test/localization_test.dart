@@ -14,7 +14,8 @@ void main() {
     final ar = _arb('ar');
     final en = _arb('en');
     expect(ar.keys.toSet(), en.keys.toSet());
-    final placeholder = RegExp(r'\{(\w+)[,}]');
+    // فروع الجمع زي one{Once} مش placeholders، فبنتجاهل أي { قبلها حرف
+    final placeholder = RegExp(r'(?<![A-Za-z])\{(\w+)[,}]');
     for (final key in ar.keys) {
       Set<String> names(String text) =>
           placeholder.allMatches(text).map((m) => m.group(1)!).toSet();

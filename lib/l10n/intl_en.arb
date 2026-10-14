@@ -190,5 +190,9 @@
   "exactAlarmLater": "Not now",
   "exactAlarmTile": "The adhan may be a few minutes late. Tap to allow alarms",
   "privacyPolicy": "Privacy policy",
-  "licensesAndSources": "Licenses and data sources"
+  "licensesAndSources": "Licenses and data sources",
+  "zekrRepeat": "{count, plural, one{Once} two{Twice} other{{count} times}}",
+  "tapToCount": "Tap to count",
+  "zekrDone": "Done, tap to restart",
+  "zekrOutOf": "of {count}"
 }

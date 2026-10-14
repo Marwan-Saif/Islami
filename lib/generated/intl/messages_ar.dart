@@ -88,6 +88,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m31(count) => "الإجمالي: ${count}";
 
+  static String m32(count) => "من ${count}";
+
+  static String m33(count) =>
+      "${Intl.plural(count, one: 'مرة واحدة', two: 'مرتين', few: '${count} مرات', other: '${count} مرة')}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "Enter_text_here":
@@ -336,6 +341,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("التفسير الميسر"),
         "tafsirUnavailable":
             MessageLookupByLibrary.simpleMessage("التفسير غير متاح لهذه الآية"),
+        "tapToCount": MessageLookupByLibrary.simpleMessage("اضغط للعد"),
         "timesForCity": m28,
         "timesForMyLocation": MessageLookupByLibrary.simpleMessage(
             "المواقيت حسب موقعك - اضغط للتحديث"),
@@ -348,6 +354,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "turnOnGpsForQibla": MessageLookupByLibrary.simpleMessage(
             "شغّل خدمة الموقع (GPS) لتحديد اتجاه القبلة"),
         "useMyLocation":
-            MessageLookupByLibrary.simpleMessage("استخدام موقعي الحالي (GPS)")
+            MessageLookupByLibrary.simpleMessage("استخدام موقعي الحالي (GPS)"),
+        "zekrDone": MessageLookupByLibrary.simpleMessage("تم، اضغط للإعادة"),
+        "zekrOutOf": m32,
+        "zekrRepeat": m33
       };
 }
