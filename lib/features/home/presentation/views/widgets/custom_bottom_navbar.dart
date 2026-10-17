@@ -5,10 +5,7 @@ import 'package:islami/features/home/presentation/views/widgets/bottom_nav_item.
 import 'package:islami/generated/l10n.dart';
 
 class CustomBottomNaBar extends StatefulWidget {
-  const CustomBottomNaBar({
-    super.key,
-    required this.currentIndex,
-  });
+  const CustomBottomNaBar({super.key, required this.currentIndex});
   final void Function(int index) currentIndex;
 
   @override
@@ -34,10 +31,15 @@ class _CustomBottomNaBarState extends State<CustomBottomNaBar> {
       children: [
         // Black Horizontal Container
         Container(
-          margin: EdgeInsetsDirectional.symmetric(horizontal: 20.w, vertical: 10),
+          margin: EdgeInsetsDirectional.symmetric(
+            horizontal: 20.w,
+            vertical: 10,
+          ),
           height: 56,
           decoration: BoxDecoration(
-              color: Colors.black, borderRadius: BorderRadius.circular(30)),
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(30),
+          ),
         ),
         Positioned(
           left: 30.w,

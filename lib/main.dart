@@ -63,17 +63,21 @@ Future<void> _openHiveBoxes() async {
 void _registerFontLicenses() {
   LicenseRegistry.addLicense(() async* {
     for (final font in ['Amiri', 'Poppins']) {
-      final license =
-          await rootBundle.loadString('assets/google_fonts/OFL-$font.txt');
+      final license = await rootBundle.loadString(
+        'assets/google_fonts/OFL-$font.txt',
+      );
       yield LicenseEntryWithLineBreaks([font], license);
     }
     // مصادر البيانات بتظهر في صفحة "التراخيص ومصادر البيانات" في الإعدادات
-    yield const LicenseEntryWithLineBreaks(['Data sources'], '''
+    yield const LicenseEntryWithLineBreaks(
+      ['Data sources'],
+      '''
 Quran text, Tafsir Al-Muyassar and the Saheeh International translation: the quran_with_tafsir package (pub.dev).
 Ayah audio: everyayah.com.
 Full recitations and live Quran radio: mp3quran.net.
 Hadith texts and translations: fawazahmed0/hadith-api (github.com/fawazahmed0/hadith-api), served by jsDelivr.
-Prayer times: the prayers_times package, calculated on the device.''');
+Prayer times: the prayers_times package, calculated on the device.''',
+    );
   });
 }
 

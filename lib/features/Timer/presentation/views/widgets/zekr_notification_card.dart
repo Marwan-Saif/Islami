@@ -12,8 +12,11 @@ import 'package:islami/features/Timer/presentation/manager/Azkar/azkar_cubit.dar
 import 'package:islami/generated/l10n.dart';
 
 class NotificationCard extends StatefulWidget {
-  const NotificationCard(
-      {super.key, required this.showen, required this.index});
+  const NotificationCard({
+    super.key,
+    required this.showen,
+    required this.index,
+  });
   final bool showen;
   final int index;
   @override
@@ -40,97 +43,108 @@ class _NotificationCardState extends State<NotificationCard> {
         listener: (context, state) {},
         builder: (context, state) {
           return state is GetLocalDataLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
+              ? const Center(child: CircularProgressIndicator())
               : Container(
                   padding: EdgeInsetsDirectional.symmetric(
-                      vertical: 20.sp, horizontal: 20.sp),
+                    vertical: 20.sp,
+                    horizontal: 20.sp,
+                  ),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.primaryColor),
-                  child: Column(children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            S.of(context).enableNotifications,
-                            maxLines: 2,
-                            style: TextStyle(
+                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.primaryColor,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              S.of(context).enableNotifications,
+                              maxLines: 2,
+                              style: TextStyle(
                                 color: AppColors.backgroundColor,
                                 fontSize: 22.sp,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Switch(
-                          value: context
-                              .read<AzkarCubit>()
-                              .azkarLocalDataList[widget.index]
-                              .zekrAllawed,
-                          onChanged: (value) {
-                            setState(() {
-                              context.read<AzkarCubit>().updatelocalData(
-                                  index: widget.index, allowed: value);
-                              selected = value;
-                            });
-                          },
-                          activeThumbColor: AppColors.primaryColor,
-                          activeTrackColor: AppColors.secondaryColor,
-                          inactiveThumbColor: AppColors.primaryColor,
-                          inactiveTrackColor: AppColors.backgroundColor,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            S.of(context).notificationTime(
-                              // بيتعرض بنظام الساعة بتاع الموبايل (7:00 ص) بدل 07:00
-                              AzkarNotifications.parseTimeOfDay(context
-                                      .read<AzkarCubit>()
-                                      .azkarLocalDataList[widget.index]
-                                      .zekrtime)
-                                  .format(context),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            maxLines: 2,
-                            style: TextStyle(
+                          ),
+                          Switch(
+                            value: context
+                                .read<AzkarCubit>()
+                                .azkarLocalDataList[widget.index]
+                                .zekrAllawed,
+                            onChanged: (value) {
+                              setState(() {
+                                context.read<AzkarCubit>().updatelocalData(
+                                  index: widget.index,
+                                  allowed: value,
+                                );
+                                selected = value;
+                              });
+                            },
+                            activeThumbColor: AppColors.primaryColor,
+                            activeTrackColor: AppColors.secondaryColor,
+                            inactiveThumbColor: AppColors.primaryColor,
+                            inactiveTrackColor: AppColors.backgroundColor,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              S
+                                  .of(context)
+                                  .notificationTime(
+                                    // بيتعرض بنظام الساعة بتاع الموبايل (7:00 ص) بدل 07:00
+                                    AzkarNotifications.parseTimeOfDay(
+                                      context
+                                          .read<AzkarCubit>()
+                                          .azkarLocalDataList[widget.index]
+                                          .zekrtime,
+                                    ).format(context),
+                                  ),
+                              maxLines: 2,
+                              style: TextStyle(
                                 color: AppColors.backgroundColor,
                                 fontSize: 22.sp,
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 8.w),
-                        GestureDetector(
+                          SizedBox(width: 8.w),
+                          GestureDetector(
                             onTap: () {
                               showTimePicker(
                                 context: context,
                                 initialTime: AzkarNotifications.parseTimeOfDay(
-                                    context
-                                        .read<AzkarCubit>()
-                                        .azkarLocalDataList[widget.index]
-                                        .zekrtime),
+                                  context
+                                      .read<AzkarCubit>()
+                                      .azkarLocalDataList[widget.index]
+                                      .zekrtime,
+                                ),
                               ).then((value) {
                                 // value بيرجع null لو المستخدم داس إلغاء
                                 if (value == null || !context.mounted) return;
-                                log(
-                                  value.toString(),
-                                );
+                                log(value.toString());
                                 timeOfDay = value;
                                 timePicked =
                                     "${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}";
                                 log(timePicked);
                                 context.read<AzkarCubit>().updatelocalData(
-                                    index: widget.index,
-                                    time: timePicked.toString());
+                                  index: widget.index,
+                                  time: timePicked.toString(),
+                                );
                                 setState(() {});
                               });
                             },
-                            child: const Icon(Icons.history_toggle_off_sharp))
-                      ],
-                    )
-                  ]),
+                            child: const Icon(Icons.history_toggle_off_sharp),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 );
         },
       ),

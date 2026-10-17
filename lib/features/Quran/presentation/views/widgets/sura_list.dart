@@ -6,9 +6,7 @@ import 'package:islami/features/Quran/presentation/views/widgets/sura_card.dart'
 import 'package:islami/generated/l10n.dart';
 
 class SurasList extends StatelessWidget {
-  const SurasList({
-    super.key,
-  });
+  const SurasList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +26,16 @@ class SurasList extends StatelessWidget {
         }
         return Expanded(
           child: ListView.separated(
-              itemCount: state.surahs.length,
-              itemBuilder: (context, index) =>
-                  SuraCard(surah: state.surahs[index]),
-              separatorBuilder: (context, index) => const Divider(
-                    color: Colors.grey,
-                    thickness: 1.5,
-                    indent: 50,
-                    endIndent: 50,
-                  )),
+            itemCount: state.surahs.length,
+            itemBuilder: (context, index) =>
+                SuraCard(surah: state.surahs[index]),
+            separatorBuilder: (context, index) => const Divider(
+              color: Colors.grey,
+              thickness: 1.5,
+              indent: 50,
+              endIndent: 50,
+            ),
+          ),
         );
       },
     );

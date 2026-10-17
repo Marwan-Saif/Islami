@@ -8,8 +8,15 @@ void main() {
 
   test('the nine books are in the index', () {
     expect(kHadithBooks.map((b) => b.key), [
-      'bukhari', 'muslim', 'abudawud', 'tirmidhi', 'nasai', 'ibnmajah',
-      'malik', 'nawawi', 'qudsi',
+      'bukhari',
+      'muslim',
+      'abudawud',
+      'tirmidhi',
+      'nasai',
+      'ibnmajah',
+      'malik',
+      'nawawi',
+      'qudsi',
     ]);
   });
 
@@ -17,11 +24,18 @@ void main() {
     for (final book in kHadithBooks) {
       expect(book.sections, isNotEmpty, reason: book.key);
       for (final section in book.sections) {
-        expect(section.firstHadith, lessThanOrEqualTo(section.lastHadith),
-            reason: '${book.key} ${section.number}');
+        expect(
+          section.firstHadith,
+          lessThanOrEqualTo(section.lastHadith),
+          reason: '${book.key} ${section.number}',
+        );
       }
       final numbers = book.sections.map((s) => s.number).toList();
-      expect(numbers.toSet().length, numbers.length, reason: '${book.key} duplicates');
+      expect(
+        numbers.toSet().length,
+        numbers.length,
+        reason: '${book.key} duplicates',
+      );
     }
   });
 

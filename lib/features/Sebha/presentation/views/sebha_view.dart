@@ -231,7 +231,7 @@ class _SebhaViewState extends State<SebhaView> {
     List<LocalSypha> azkarList = _sebhaService.getAllAzkar();
 
     return CarouselSlider.builder(
-      itemCount: azkarList.length, 
+      itemCount: azkarList.length,
       itemBuilder: (context, index, realIndex) {
         return FittedBox(
           fit: BoxFit.scaleDown,
@@ -328,8 +328,8 @@ class _SebhaViewState extends State<SebhaView> {
                 TextButton(
                   onPressed: () {
                     _sebhaService.clearHistoryData();
-                    setStateDialog(() {}); 
-                    setState(() {}); 
+                    setStateDialog(() {});
+                    setState(() {});
                   },
                   child: Text(
                     S.of(context).clear,
@@ -338,7 +338,10 @@ class _SebhaViewState extends State<SebhaView> {
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text(S.of(context).close, style: TextStyle(fontSize: 16.sp)),
+                  child: Text(
+                    S.of(context).close,
+                    style: TextStyle(fontSize: 16.sp),
+                  ),
                 ),
               ],
             );

@@ -29,7 +29,10 @@ class HadithRepo {
   HadithBook bookByKey(String key) =>
       kHadithBooks.firstWhere((book) => book.key == key);
 
-  Future<List<Hadith>> getSection(HadithBook book, HadithSection section) async {
+  Future<List<Hadith>> getSection(
+    HadithBook book,
+    HadithSection section,
+  ) async {
     // الترجمة الإنجليزية من نفس المصدر وبنفس ترقيم الأحاديث،
     // ولو الباب مش متاح بالإنجليزي (أو مفيش نت ومش متخزن) بنرجع للعربي
     if (!AppSettings.instance.isArabic) {
@@ -50,8 +53,9 @@ class HadithRepo {
     final cache = _cache ??= await Hive.openLazyBox<String>(_cacheBoxName);
     var body = await cache.get(url);
     if (body == null) {
-      final response =
-          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 30));
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 30));
       if (response.statusCode != 200) {
         throw Exception('status code ${response.statusCode}');
       }
@@ -84,7 +88,9 @@ class HadithRepo {
 
   Future<List<Hadith>> getFavorites() async {
     final box = await _favoritesBox();
-    return [for (final item in box.values) Hadith.fromJson(item as Map)].reversed.toList();
+    return [
+      for (final item in box.values) Hadith.fromJson(item as Map),
+    ].reversed.toList();
   }
 
   Future<bool> isFavorite(Hadith hadith) async =>

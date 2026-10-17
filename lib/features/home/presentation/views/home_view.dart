@@ -22,9 +22,7 @@ class HomeView extends StatelessWidget {
 }
 
 class DefaultScreen extends StatefulWidget {
-  const DefaultScreen({
-    super.key,
-  });
+  const DefaultScreen({super.key});
 
   @override
   State<DefaultScreen> createState() => _DefaultScreenState();
@@ -110,12 +108,12 @@ class _DefaultScreenState extends State<DefaultScreen> {
   }
 
   static Widget _tab(int index) => switch (index) {
-        0 => const RadioView(),
-        1 => const QuranView(),
-        2 => const TimerView(),
-        3 => const SebhaView(),
-        _ => const QiblaScreen(),
-      };
+    0 => const RadioView(),
+    1 => const QuranView(),
+    2 => const TimerView(),
+    3 => const SebhaView(),
+    _ => const QiblaScreen(),
+  };
 
   @override
   Widget build(BuildContext context) {

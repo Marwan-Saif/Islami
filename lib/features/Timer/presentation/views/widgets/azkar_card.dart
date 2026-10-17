@@ -27,9 +27,10 @@ class AZkarCard extends StatelessWidget {
             Text(
               zekr.hint,
               style: GoogleFonts.amiri(
-                  fontSize: 20.sp,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.bold),
+                fontSize: 20.sp,
+                color: AppColors.primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 6.h),
@@ -57,7 +58,11 @@ class ZekrCountBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.repeat_rounded, size: 15.sp, color: AppColors.primaryColor),
+          Icon(
+            Icons.repeat_rounded,
+            size: 15.sp,
+            color: AppColors.primaryColor,
+          ),
           SizedBox(width: 4.w),
           Text(
             S.of(context).zekrRepeat(count),

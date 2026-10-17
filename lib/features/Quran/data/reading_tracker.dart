@@ -2,7 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
 class ReadingPosition {
-  const ReadingPosition({required this.surah, required this.ayah, required this.page});
+  const ReadingPosition({
+    required this.surah,
+    required this.ayah,
+    required this.page,
+  });
   final int surah;
   final int ayah;
   final int page;
@@ -28,7 +32,10 @@ class ReadingTracker {
     final Map? data = _box.get('last_read');
     if (data == null) return null;
     return ReadingPosition(
-        surah: data['surah'], ayah: data['ayah'], page: data['page']);
+      surah: data['surah'],
+      ayah: data['ayah'],
+      page: data['page'],
+    );
   }
 
   Future<void> saveLastRead(ReadingPosition position) async {
@@ -41,8 +48,9 @@ class ReadingTracker {
   }
 
   // ---------- الختمة ----------
-  Set<int> get khatmaPages =>
-      Set<int>.from(_box.get('khatma_pages', defaultValue: const <int>[]) as List);
+  Set<int> get khatmaPages => Set<int>.from(
+    _box.get('khatma_pages', defaultValue: const <int>[]) as List,
+  );
 
   int get completedKhatmas => _box.get('khatmas_completed', defaultValue: 0);
 
@@ -62,7 +70,9 @@ class ReadingTracker {
     }
 
     final todayKey = _dayKey(DateTime.now());
-    final today = Set<int>.from(_box.get(todayKey, defaultValue: const <int>[]) as List);
+    final today = Set<int>.from(
+      _box.get(todayKey, defaultValue: const <int>[]) as List,
+    );
     if (today.add(page)) await _box.put(todayKey, today.toList());
 
     _notify();
@@ -104,10 +114,14 @@ class ReadingTracker {
 
   // ---------- العلامات ----------
   List<ReadingPosition> get bookmarks => [
-        for (final Map item
-            in _box.get('bookmarks', defaultValue: const <Map>[]) as List)
-          ReadingPosition(surah: item['surah'], ayah: item['ayah'], page: item['page']),
-      ];
+    for (final Map item
+        in _box.get('bookmarks', defaultValue: const <Map>[]) as List)
+      ReadingPosition(
+        surah: item['surah'],
+        ayah: item['ayah'],
+        page: item['page'],
+      ),
+  ];
 
   bool isBookmarked(int surah, int ayah) =>
       bookmarks.any((b) => b.surah == surah && b.ayah == ayah);
@@ -116,7 +130,8 @@ class ReadingTracker {
   Future<bool> toggleBookmark(ReadingPosition position) async {
     final list = bookmarks;
     final exists = list.indexWhere(
-        (b) => b.surah == position.surah && b.ayah == position.ayah);
+      (b) => b.surah == position.surah && b.ayah == position.ayah,
+    );
     if (exists >= 0) {
       list.removeAt(exists);
     } else {

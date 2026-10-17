@@ -43,11 +43,11 @@ class AudioService {
   }
 
   MediaItem _mediaItem(AudioModel audio, Uri? art) => MediaItem(
-        id: audio.id,
-        title: audio.title,
-        artist: audio.subtitle,
-        artUri: art,
-      );
+    id: audio.id,
+    title: audio.title,
+    artist: audio.subtitle,
+    artUri: art,
+  );
 
   // 1. دالة تشغيل ملف صوتي واحد
   Future<void> playSingle(AudioModel audio) async {
@@ -66,7 +66,10 @@ class AudioService {
   }
 
   // 2. دالة تشغيل قائمة صوتيات
-  Future<void> playList(List<AudioModel> playlist, {int initialIndex = 0}) async {
+  Future<void> playList(
+    List<AudioModel> playlist, {
+    int initialIndex = 0,
+  }) async {
     final art = await _art;
     final List<AudioSource> audioSources = [
       for (final audio in playlist)

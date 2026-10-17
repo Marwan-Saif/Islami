@@ -19,10 +19,10 @@ class ReciterModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'moshaf': [for (var item in moshaf) item.toJson()],
-      };
+    'id': id,
+    'name': name,
+    'moshaf': [for (var item in moshaf) item.toJson()],
+  };
 }
 
 /// المصحف = رواية معينة للقارئ (حفص، ورش، ...) وليها سيرفر وقائمة سور
@@ -53,25 +53,25 @@ class MoshafModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'server': server,
-        'surah_list': surahList.join(','),
-      };
+    'id': id,
+    'name': name,
+    'server': server,
+    'surah_list': surahList.join(','),
+  };
 
   // رابط السورة على سيرفرات mp3quran: server + 001.mp3
   String surahUrl(int surahNumber) =>
       '$server${surahNumber.toString().padLeft(3, '0')}.mp3';
 
   List<AudioModel> toPlaylist(ReciterModel reciter) => [
-        for (var surah in surahList)
-          AudioModel(
-            id: audioId(reciter, surah),
-            title: surahTitle(surah),
-            subtitle: reciter.name,
-            url: surahUrl(surah),
-          ),
-      ];
+    for (var surah in surahList)
+      AudioModel(
+        id: audioId(reciter, surah),
+        title: surahTitle(surah),
+        subtitle: reciter.name,
+        url: surahUrl(surah),
+      ),
+  ];
 
   String audioId(ReciterModel reciter, int surah) =>
       'recitation_${reciter.id}_${id}_$surah';

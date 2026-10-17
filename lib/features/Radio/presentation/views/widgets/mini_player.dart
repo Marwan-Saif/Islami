@@ -55,7 +55,10 @@ class MiniPlayer extends StatelessWidget {
                           tag.artist ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12.sp,
+                          ),
                         ),
                       ],
                     ),
@@ -98,7 +101,8 @@ class _PlayPauseButton extends StatelessWidget {
       stream: player.playerStateStream,
       builder: (context, snapshot) {
         final state = snapshot.data;
-        final loading = state?.processingState == ProcessingState.loading ||
+        final loading =
+            state?.processingState == ProcessingState.loading ||
             state?.processingState == ProcessingState.buffering;
         final playing = state?.playing ?? false;
 
@@ -173,8 +177,12 @@ class _ProgressBar extends StatelessWidget {
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   trackHeight: 2.5,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 6,
+                  ),
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 14,
+                  ),
                 ),
                 child: Slider(
                   value: max > 0 ? value : 0,
@@ -182,8 +190,9 @@ class _ProgressBar extends StatelessWidget {
                   activeColor: AppColors.primaryColor,
                   inactiveColor: Colors.white24,
                   onChanged: max > 0
-                      ? (newValue) =>
-                          player.seek(Duration(milliseconds: newValue.toInt()))
+                      ? (newValue) => player.seek(
+                          Duration(milliseconds: newValue.toInt()),
+                        )
                       : null,
                 ),
               ),

@@ -79,10 +79,8 @@ class AboutSection extends StatelessWidget {
           title: S.of(context).licensesAndSources,
           value: null,
           icon: Icons.description_outlined,
-          onTap: () => showLicensePage(
-            context: context,
-            applicationName: 'Islami',
-          ),
+          onTap: () =>
+              showLicensePage(context: context, applicationName: 'Islami'),
         ),
         FutureBuilder<PackageInfo>(
           future: PackageInfo.fromPlatform(),

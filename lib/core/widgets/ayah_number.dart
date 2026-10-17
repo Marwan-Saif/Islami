@@ -4,11 +4,7 @@ import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/app_images.dart';
 
 class AyahNumber extends StatelessWidget {
-  const AyahNumber({
-    super.key,
-    required this.number,
-    this.size, this.volum,
-  });
+  const AyahNumber({super.key, required this.number, this.size, this.volum});
   final int number;
   final double? size;
   final double? volum;
@@ -25,9 +21,10 @@ class AyahNumber extends StatelessWidget {
         Text(
           number.toString(),
           style: TextStyle(
-              color: Colors.white,
-              fontSize:14.sp,
-              fontWeight: FontWeight.bold),
+            color: Colors.white,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );

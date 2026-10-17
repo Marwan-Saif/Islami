@@ -24,7 +24,10 @@ class ReciterSurahsView extends StatelessWidget {
 
   Future<void> _play(int index) async {
     try {
-      await AudioService().playList(moshaf.toPlaylist(reciter), initialIndex: index);
+      await AudioService().playList(
+        moshaf.toPlaylist(reciter),
+        initialIndex: index,
+      );
     } catch (e) {
       debugPrint('failed to play recitation: $e');
     }
@@ -68,7 +71,8 @@ class ReciterSurahsView extends StatelessWidget {
                   child: _HeaderButton(
                     icon: Icons.swap_horiz_rounded,
                     label: S.of(context).changeReciter,
-                    onTap: () => context.pushReplacement(AppRouter.recitersView),
+                    onTap: () =>
+                        context.pushReplacement(AppRouter.recitersView),
                   ),
                 ),
               ],
@@ -142,7 +146,9 @@ class SurahAudioTile extends StatelessWidget {
               ),
             ),
             Icon(
-              isCurrent ? Icons.graphic_eq_rounded : Icons.play_circle_outline_rounded,
+              isCurrent
+                  ? Icons.graphic_eq_rounded
+                  : Icons.play_circle_outline_rounded,
               color: AppColors.primaryColor,
               size: 28.r,
             ),
@@ -167,14 +173,18 @@ class _HeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = filled ? AppColors.backgroundColor : AppColors.primaryColor;
+    final foreground = filled
+        ? AppColors.backgroundColor
+        : AppColors.primaryColor;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14.r),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
-          color: filled ? AppColors.primaryColor : Colors.black.withValues(alpha: 0.4),
+          color: filled
+              ? AppColors.primaryColor
+              : Colors.black.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: AppColors.primaryColor, width: 1.5),
         ),

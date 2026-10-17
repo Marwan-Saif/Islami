@@ -26,13 +26,17 @@ class QuranCubit extends Cubit<QuranState> {
       emit(GetQuranSuccess(_allSurahs));
       return;
     }
-    emit(GetQuranSuccess(_allSurahs.where((surah) {
-      if (number != null) return surah.number == number;
-      return (arabicQuery.isNotEmpty &&
-              normalizeArabic(surah.nameAr).contains(arabicQuery)) ||
-          (englishQuery.isNotEmpty &&
-              _normalizeEnglish(surah.nameEn).contains(englishQuery));
-    }).toList()));
+    emit(
+      GetQuranSuccess(
+        _allSurahs.where((surah) {
+          if (number != null) return surah.number == number;
+          return (arabicQuery.isNotEmpty &&
+                  normalizeArabic(surah.nameAr).contains(arabicQuery)) ||
+              (englishQuery.isNotEmpty &&
+                  _normalizeEnglish(surah.nameEn).contains(englishQuery));
+        }).toList(),
+      ),
+    );
   }
 
   // بيشيل التشكيل وكلمة "سورة" وبيوحد أشكال الألف والتاء المربوطة
@@ -46,8 +50,20 @@ class QuranCubit extends Cubit<QuranState> {
 
   // أسماء الباكدج فيها حروف زي "Al-Fātiḥah"، فبنحولها لحروف عادية الأول
   static const Map<String, String> _latinFolds = {
-    'ā': 'a', 'á': 'a', 'â': 'a', 'ī': 'i', 'í': 'i', 'ū': 'u', 'ú': 'u',
-    'ḥ': 'h', 'ṣ': 's', 'ḍ': 'd', 'ṭ': 't', 'ẓ': 'z', 'ḏ': 'dh', 'ṯ': 'th',
+    'ā': 'a',
+    'á': 'a',
+    'â': 'a',
+    'ī': 'i',
+    'í': 'i',
+    'ū': 'u',
+    'ú': 'u',
+    'ḥ': 'h',
+    'ṣ': 's',
+    'ḍ': 'd',
+    'ṭ': 't',
+    'ẓ': 'z',
+    'ḏ': 'dh',
+    'ṯ': 'th',
   };
 
   String _normalizeEnglish(String text) {

@@ -47,20 +47,20 @@ class NotificationHelper {
   };
   static const AndroidNotificationChannel _reminderChannel =
       AndroidNotificationChannel(
-    'prayer_reminder_channel',
-    'التذكير قبل الصلاة',
-    description: 'تذكير قبل دخول وقت الصلاة',
-    importance: Importance.high,
-    sound: RawResourceAndroidNotificationSound('notification'),
-  );
+        'prayer_reminder_channel',
+        'التذكير قبل الصلاة',
+        description: 'تذكير قبل دخول وقت الصلاة',
+        importance: Importance.high,
+        sound: RawResourceAndroidNotificationSound('notification'),
+      );
   static const AndroidNotificationChannel _azkarChannel =
       AndroidNotificationChannel(
-    'azkar_channel',
-    'الأذكار',
-    description: 'تذكير بأذكار الصباح والمساء',
-    importance: Importance.high,
-    sound: RawResourceAndroidNotificationSound('notification'),
-  );
+        'azkar_channel',
+        'الأذكار',
+        description: 'تذكير بأذكار الصباح والمساء',
+        importance: Importance.high,
+        sound: RawResourceAndroidNotificationSound('notification'),
+      );
 
   // الـ channel القديمة كانت بصوت واحد لكل الإشعارات
   static const String _legacyChannelId = 'important_notification';
@@ -68,7 +68,8 @@ class NotificationHelper {
   // مش بنعتمد على tz.local لأن مكتبة prayers_times بتعمل initializeTimeZones
   // جوه الـ constructor وده بيرجع tz.local لـ UTC
   static tz.Location? _location;
-  static tz.Location get location => _location ?? tz.getLocation('Africa/Cairo');
+  static tz.Location get location =>
+      _location ?? tz.getLocation('Africa/Cairo');
 
   static Future<void> init() async {
     // flutter_local_notifications مش بتدعم الويب
@@ -77,14 +78,16 @@ class NotificationHelper {
     _location = await _deviceLocation();
     tz.setLocalLocation(location);
 
-    await _notification.initialize(const InitializationSettings(
-      android: AndroidInitializationSettings('ic_notification'),
-      iOS: DarwinInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false,
+    await _notification.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('ic_notification'),
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        ),
       ),
-    ));
+    );
 
     final android = _androidPlugin;
     if (android != null) {
@@ -108,8 +111,10 @@ class NotificationHelper {
   }
 
   static AndroidFlutterLocalNotificationsPlugin? get _androidPlugin =>
-      _notification.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      _notification
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
 
   /// أندرويد 13+ و iOS لازم المستخدم يوافق على الإشعارات الأول
   static Future<void> requestPermissions() async {
@@ -117,7 +122,8 @@ class NotificationHelper {
     await _androidPlugin?.requestNotificationsPermission();
     await _notification
         .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
+          IOSFlutterLocalNotificationsPlugin
+        >()
         ?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
@@ -249,7 +255,13 @@ class NotificationHelper {
     if (kIsWeb) return;
     final now = tz.TZDateTime.now(location);
     var scheduledDate = tz.TZDateTime(
-        location, now.year, now.month, now.day, time.hour, time.minute);
+      location,
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
     // لو الوقت عدى النهارده يبدأ من بكرة
     if (!scheduledDate.isAfter(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));

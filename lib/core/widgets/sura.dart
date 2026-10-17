@@ -76,35 +76,32 @@ class _SuraSCreenState extends State<SuraSCreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: LayoutBuilder(
-                        builder: (context, constraints) => SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: constraints.maxHeight,
-                            ),
-                            child: Center(
-                              child: Text(
-                                widget.zekr.txt,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.amiri(
-                                  fontSize: 20.sp,
-                                  color: AppColors.primaryColor,
+                        builder: (context, constraints) =>
+                            SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    widget.zekr.txt,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.amiri(
+                                      fontSize: 20.sp,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 12.h),
                   ZekrCountBadge(count: count),
                   SizedBox(height: 12.h),
-                  _ZekrCounter(
-                    done: _done,
-                    count: count,
-                    onTap: _count,
-                  ),
+                  _ZekrCounter(done: _done, count: count, onTap: _count),
                   SizedBox(height: 8.h),
                   Text(
                     _finished

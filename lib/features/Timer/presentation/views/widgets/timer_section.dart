@@ -84,12 +84,16 @@ class _PrayerTimerState extends State<PrayerTimer> {
     if (updated) unawaited(PrayerNotifications.scheduleUpcoming());
     if (!mounted) return;
     setState(() {});
-    messenger.showSnackBar(SnackBar(
-      content: Text(updated
-          ? S.of(context).timesUpdatedForLocation
-          : S.of(context).enableLocationForTimes),
-      duration: const Duration(seconds: 3),
-    ));
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          updated
+              ? S.of(context).timesUpdatedForLocation
+              : S.of(context).enableLocationForTimes,
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   Future<void> _initializePrayerTimes() async {
@@ -117,12 +121,16 @@ class _PrayerTimerState extends State<PrayerTimer> {
     await PrayerNotifications.setEnabled(adhanEnabled);
     setState(() {});
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(adhanEnabled
-          ? S.of(context).adhanTurnedOn
-          : S.of(context).adhanTurnedOff),
-      duration: const Duration(seconds: 2),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          adhanEnabled
+              ? S.of(context).adhanTurnedOn
+              : S.of(context).adhanTurnedOff,
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   String _prayerName(String prayer) {
@@ -170,15 +178,14 @@ class _PrayerTimerState extends State<PrayerTimer> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         image: const DecorationImage(
-          image: AssetImage(Assets.imagesTimerBackground), 
-          fit: BoxFit.fill
+          image: AssetImage(Assets.imagesTimerBackground),
+          fit: BoxFit.fill,
         ),
         color: const Color(0xFF856b3e),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Column(
         children: [
-          
           // الميلادي على الشمال والهجري على اليمين في اللغتين
           Row(
             textDirection: TextDirection.ltr,
@@ -190,14 +197,18 @@ class _PrayerTimerState extends State<PrayerTimer> {
                 child: Text(
                   "${S.of(context).prayerTimes}\n$currentDay",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.amiri(fontSize: 18.sp, color: Colors.black, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.amiri(
+                    fontSize: 18.sp,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               Expanded(child: _DateText(_hijriDate(now, language))),
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Prayer Times Carousel
           CarouselSlider.builder(
             carouselController: _carousel,
@@ -219,15 +230,17 @@ class _PrayerTimerState extends State<PrayerTimer> {
           ),
           const SizedBox(height: 20),
 
-          
           Row(
             children: [
               IconButton(
                 onPressed: _updateLocation,
                 tooltip: PrayerTimesService.usesDeviceLocation
                     ? S.of(context).timesForMyLocation
-                    : S.of(context).timesForCity(
-                        city?.name ?? S.of(context).defaultCityName),
+                    : S
+                          .of(context)
+                          .timesForCity(
+                            city?.name ?? S.of(context).defaultCityName,
+                          ),
                 icon: Icon(
                   PrayerTimesService.usesDeviceLocation
                       ? Icons.location_on
@@ -237,12 +250,18 @@ class _PrayerTimerState extends State<PrayerTimer> {
               ),
               Expanded(
                 child: Text(
-                  S.of(context).nextPrayer(
-                    _prayerName(next),
-                    DateFormat('hh:mm a', language).format(nextTime),
-                  ), 
+                  S
+                      .of(context)
+                      .nextPrayer(
+                        _prayerName(next),
+                        DateFormat('hh:mm a', language).format(nextTime),
+                      ),
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               IconButton(
@@ -270,15 +289,16 @@ class _PrayerTimerState extends State<PrayerTimer> {
   String _hijriDate(DateTime now, String language) {
     HijriCalendar.setLocal(language);
     final hijri = HijriCalendar.fromDate(now);
-    final text = '${hijri.hDay} ${hijri.longMonthName}\n'
+    final text =
+        '${hijri.hDay} ${hijri.longMonthName}\n'
         '${hijri.hYear} ${language == 'ar' ? 'هـ' : 'AH'}';
     return language == 'ar' ? _arabicDigits(text) : text;
   }
 
   static String _arabicDigits(String text) => text.replaceAllMapped(
-        RegExp('[0-9]'),
-        (m) => String.fromCharCode(0x0660 + int.parse(m[0]!)),
-      );
+    RegExp('[0-9]'),
+    (m) => String.fromCharCode(0x0660 + int.parse(m[0]!)),
+  );
 }
 
 class _DateText extends StatelessWidget {

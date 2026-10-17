@@ -72,8 +72,11 @@ void main() {
       for (int i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
         final scrollables = find.byType(Scrollable).hitTestable();
         if (scrollables.evaluate().isEmpty) break;
-        await tester.drag(scrollables.first, const Offset(0, -250),
-            warnIfMissed: false);
+        await tester.drag(
+          scrollables.first,
+          const Offset(0, -250),
+          warnIfMissed: false,
+        );
         await frames(250);
       }
       if (finder.evaluate().isNotEmpty) {
@@ -117,7 +120,10 @@ void main() {
     }
 
     // أول تشغيل بيفتح الـ onboarding، والتيست بيبدأ من الرئيسية
-    await (await SharedPreferences.getInstance()).setBool(kOnboardingSeenKey, true);
+    await (await SharedPreferences.getInstance()).setBool(
+      kOnboardingSeenKey,
+      true,
+    );
     app.main();
     await waitFor(find.byType(BottomNavItem), seconds: 60);
 
@@ -125,10 +131,9 @@ void main() {
     final previousOnError = FlutterError.onError;
     FlutterError.onError = (details) {
       final text = details.toString();
-      final widgetLine = RegExp(r'The relevant error-causing widget was:\s*\n\s*(.+)')
-          .firstMatch(text)
-          ?.group(1)
-          ?.trim();
+      final widgetLine = RegExp(
+        r'The relevant error-causing widget was:\s*\n\s*(.+)',
+      ).firstMatch(text)?.group(1)?.trim();
       final first = details.exceptionAsString().split('\n').first;
       problems.add('$where: $first  <- ${widgetLine ?? '?'}');
     };
@@ -142,7 +147,8 @@ void main() {
           tester.view.physicalSize = config.size * config.pixelRatio;
           tester.platformDispatcher.textScaleFactorTestValue = config.textScale;
           final s = S.current;
-          String at(String screen) => where = '[$language ${config.name}] $screen';
+          String at(String screen) =>
+              where = '[$language ${config.name}] $screen';
 
           at('splash');
           AppRouter.router.go('/');
@@ -205,7 +211,10 @@ void main() {
 
           for (final translation in [false, true]) {
             await AppSettings.instance.setShowTranslation(translation);
-            for (final fontSize in [AppSettings.minFontSize, AppSettings.maxFontSize]) {
+            for (final fontSize in [
+              AppSettings.minFontSize,
+              AppSettings.maxFontSize,
+            ]) {
               await AppSettings.instance.setQuranFontSize(fontSize);
               at('surah view (font $fontSize, translation $translation)');
               await open(AppRouter.surahScreen, extra: SurahScreenArgs(2));
@@ -218,11 +227,13 @@ void main() {
           at('ayah sheet');
           await open(AppRouter.surahScreen, extra: SurahScreenArgs(2));
           final ayah = getit.get<QuranRepo>().getAyahs(2)[254];
-          unawaited(showAyahActionsSheet(
-            tester.element(find.byType(SurahBody)),
-            surahNumber: 2,
-            ayah: ayah,
-          ));
+          unawaited(
+            showAyahActionsSheet(
+              tester.element(find.byType(SurahBody)),
+              surahNumber: 2,
+              ayah: ayah,
+            ),
+          );
           await frames();
           at('ayah sheet with tafsir');
           await tapIfPresent(find.text(s.tafsirMuyassar));
@@ -239,7 +250,10 @@ void main() {
           await open(AppRouter.hadithSectionsView, extra: 'bukhari');
           await home();
           at('hadith list');
-          await open(AppRouter.hadithListView, extra: (book: 'bukhari', section: 1));
+          await open(
+            AppRouter.hadithListView,
+            extra: (book: 'bukhari', section: 1),
+          );
           await frames(3000);
           await home();
           at('hadith favorites');
@@ -250,10 +264,12 @@ void main() {
           await open(AppRouter.recitersView);
           await waitFor(find.byType(ReciterCard), seconds: 15);
           at('rewaya sheet');
-          await tapIfPresent(find.descendant(
-            of: find.byType(ReciterCard),
-            matching: find.textContaining(RegExp('روايات|narrations')),
-          ));
+          await tapIfPresent(
+            find.descendant(
+              of: find.byType(ReciterCard),
+              matching: find.textContaining(RegExp('روايات|narrations')),
+            ),
+          );
           await home();
 
           at('reciter surahs + mini player');

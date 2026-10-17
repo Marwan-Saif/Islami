@@ -16,7 +16,14 @@ class QiblaScreen extends StatefulWidget {
   State<QiblaScreen> createState() => _QiblaScreenState();
 }
 
-enum _QiblaStatus { checking, ready, noSensor, serviceDisabled, denied, deniedForever }
+enum _QiblaStatus {
+  checking,
+  ready,
+  noSensor,
+  serviceDisabled,
+  denied,
+  deniedForever,
+}
 
 class _QiblaScreenState extends State<QiblaScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
@@ -41,7 +48,7 @@ class _QiblaScreenState extends State<QiblaScreen>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -65,7 +72,8 @@ class _QiblaScreenState extends State<QiblaScreen>
   Future<void> _checkStatus() async {
     _QiblaStatus status;
     try {
-      final hasSensor = await FlutterQiblah.androidDeviceSensorSupport() ?? true;
+      final hasSensor =
+          await FlutterQiblah.androidDeviceSensorSupport() ?? true;
       final location = await FlutterQiblah.checkLocationStatus();
       if (!hasSensor) {
         status = _QiblaStatus.noSensor;
@@ -118,9 +126,7 @@ class _QiblaScreenState extends State<QiblaScreen>
             physics: const BouncingScrollPhysics(),
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: IntrinsicHeight(
-                child: _buildContent(compassSize),
-              ),
+              child: IntrinsicHeight(child: _buildContent(compassSize)),
             ),
           );
         },
@@ -130,45 +136,49 @@ class _QiblaScreenState extends State<QiblaScreen>
 
   Widget _buildContent(double compassSize) {
     return Column(
-        children: [
-          SizedBox(height: 20.h),
-          
-          // العنوان
-          Text(
-            S.of(context).qiblaDirection,
-            style: GoogleFonts.amiri(
-              color: Colors.white,
-              fontSize: 28.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          
-          const Spacer(),
+      children: [
+        SizedBox(height: 20.h),
 
-          // بناء البوصلة واستقبال البيانات من الحساس
-          if (_status == _QiblaStatus.checking)
-            const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryColor),
-            )
-          else if (_status != _QiblaStatus.ready)
-            _buildStatusMessage(compassSize)
-          // التاب مش ظاهر (IndexedStack بيقفل الـ TickerMode): بنفصل الحساس
-          // عشان قراءاته متفضلش تعيد بناء البوصلة في الخلفية
-          else if (!TickerMode.valuesOf(context).enabled)
-            SizedBox(height: compassSize)
-          else
+        // العنوان
+        Text(
+          S.of(context).qiblaDirection,
+          style: GoogleFonts.amiri(
+            color: Colors.white,
+            fontSize: 28.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        const Spacer(),
+
+        // بناء البوصلة واستقبال البيانات من الحساس
+        if (_status == _QiblaStatus.checking)
+          const Center(
+            child: CircularProgressIndicator(color: AppColors.primaryColor),
+          )
+        else if (_status != _QiblaStatus.ready)
+          _buildStatusMessage(compassSize)
+        // التاب مش ظاهر (IndexedStack بيقفل الـ TickerMode): بنفصل الحساس
+        // عشان قراءاته متفضلش تعيد بناء البوصلة في الخلفية
+        else if (!TickerMode.valuesOf(context).enabled)
+          SizedBox(height: compassSize)
+        else
           StreamBuilder<QiblahDirection>(
             stream: FlutterQiblah.qiblahStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return _buildStatusMessage(compassSize,
-                    message: S.of(context).locationFailed);
+                return _buildStatusMessage(
+                  compassSize,
+                  message: S.of(context).locationFailed,
+                );
               }
               // لو لسه بيحمل أو مفيش بيانات
               if (snapshot.connectionState == ConnectionState.waiting ||
                   snapshot.data == null) {
                 return Center(
-                  child: CircularProgressIndicator(color: AppColors.primaryColor),
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ),
                 );
               }
 
@@ -189,11 +199,15 @@ class _QiblaScreenState extends State<QiblaScreen>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             // وضعنا لون داكن متطابق مع الخلفية حتى ينعكس الظل
-                            color:  Color(0xFF1A1512), 
+                            color: Color(0xFF1A1512),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primaryColor.withValues(alpha: 0.8 * _pulseAnimation.value),
-                                blurRadius: 60 * _pulseAnimation.value, // تكبير الانتشار
+                                color: AppColors.primaryColor.withValues(
+                                  alpha: 0.8 * _pulseAnimation.value,
+                                ),
+                                blurRadius:
+                                    60 *
+                                    _pulseAnimation.value, // تكبير الانتشار
                                 spreadRadius: 15 * _pulseAnimation.value,
                               ),
                             ],
@@ -232,7 +246,9 @@ class _QiblaScreenState extends State<QiblaScreen>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: const DecorationImage(
-                            image: AssetImage("assets/images/compass1.png"), // صورة الإبرة أو النجمة
+                            image: AssetImage(
+                              "assets/images/compass1.png",
+                            ), // صورة الإبرة أو النجمة
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -265,28 +281,30 @@ class _QiblaScreenState extends State<QiblaScreen>
             },
           ),
 
-          SizedBox(height: 60.h),
+        SizedBox(height: 60.h),
 
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.4)),
-            ),
-            child: Text(
-              S.of(context).rotateDeviceForQibla,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-              ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: AppColors.primaryColor.withValues(alpha: 0.4),
             ),
           ),
+          child: Text(
+            S.of(context).rotateDeviceForQibla,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
 
-          const Spacer(),
-          SizedBox(height: 100.h),
-        ],
+        const Spacer(),
+        SizedBox(height: 100.h),
+      ],
     );
   }
 
@@ -306,8 +324,11 @@ class _QiblaScreenState extends State<QiblaScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.location_off_rounded,
-                  color: AppColors.primaryColor, size: 56.r),
+              Icon(
+                Icons.location_off_rounded,
+                color: AppColors.primaryColor,
+                size: 56.r,
+              ),
               SizedBox(height: 16.h),
               Text(
                 message ?? text,

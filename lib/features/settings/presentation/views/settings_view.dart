@@ -350,7 +350,10 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                   title: Text(
                     S.of(context).exactAlarmTile,
-                    style: TextStyle(color: Colors.orangeAccent, fontSize: 14.sp),
+                    style: TextStyle(
+                      color: Colors.orangeAccent,
+                      fontSize: 14.sp,
+                    ),
                   ),
                 ),
               const Divider(color: Colors.white12, height: 1),
@@ -396,9 +399,11 @@ class _SettingsViewState extends State<SettingsView> {
                 children: [
                   for (final minutes in PrayerNotifications.reminderOptions)
                     ChoiceChip(
-                      label: Text(minutes == 0
-                          ? S.of(context).off
-                          : S.of(context).minutesCount(minutes)),
+                      label: Text(
+                        minutes == 0
+                            ? S.of(context).off
+                            : S.of(context).minutesCount(minutes),
+                      ),
                       selected: PrayerNotifications.reminderMinutes == minutes,
                       onSelected: (_) async {
                         await PrayerNotifications.setReminderMinutes(minutes);

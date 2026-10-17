@@ -16,20 +16,27 @@ class SearchTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       onChanged: onChanged,
-      style:  TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-          fontSize: 16.sp,
-          decoration: TextDecoration.none),
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w500,
+        fontSize: 16.sp,
+        decoration: TextDecoration.none,
+      ),
       decoration: InputDecoration(
         fillColor: Colors.white,
         hintText: hintText,
-        hintStyle:  TextStyle(
-            color: Colors.white, fontWeight: FontWeight.w500, fontSize: 16.sp),
+        hintStyle: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
+          fontSize: 16.sp,
+        ),
 
         prefixIcon: Padding(
-          padding:
-              const EdgeInsetsDirectional.only(start: 8.0, top: 9, bottom: 9),
+          padding: const EdgeInsetsDirectional.only(
+            start: 8.0,
+            top: 9,
+            bottom: 9,
+          ),
           child: Image.asset(Assets.imagesQuranIcon),
         ), // Suffix icon
         border: customBorder(),

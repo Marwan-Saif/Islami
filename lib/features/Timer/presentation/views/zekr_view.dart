@@ -23,62 +23,69 @@ class _ZekrViewState extends State<ZekrView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.backgroundColor,
-        appBar: customAppBar(context, widget.title),
-        body: Stack(
-          alignment: Alignment.center,
-          fit: StackFit.expand,
-          children: [
-            Positioned(
-              top: 0,
-              right: 12,
-              child: Image.asset(Assets.imagesMaskgroupRight),
-            ),
-            Positioned(
-              top: 0,
-              left: 12,
-              child: Image.asset(Assets.imagesMaskgroupLeft),
-            ),
-            Positioned.fill(
-              top: 70.sp,
-              child: Padding(
-                padding: const EdgeInsetsDirectional.only(
-                    start: 25, end: 25, bottom: 66),
-                child: CustomScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: widget.title == kFileNames[0] ||
-                                widget.title == kFileNames[1]
-                            ? NotificationCard(
-                                index: kFileNames.indexOf(widget.title),
-                                showen: widget.title == kFileNames[0] ||
-                                    widget.title == kFileNames[1],
-                              )
-                            : const SizedBox(),
-                      ),
-                      SliverToBoxAdapter(child: SizedBox(height: 20.sp)),
-                      SliverList.separated(
-                        itemBuilder: (context, index) =>
-                            AZkarCard(zekr: widget.azkarList[index]),
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 20.sp),
-                        itemCount: widget.azkarList.length,
-                      ),
-                    ]),
+      backgroundColor: AppColors.backgroundColor,
+      appBar: customAppBar(context, widget.title),
+      body: Stack(
+        alignment: Alignment.center,
+        fit: StackFit.expand,
+        children: [
+          Positioned(
+            top: 0,
+            right: 12,
+            child: Image.asset(Assets.imagesMaskgroupRight),
+          ),
+          Positioned(
+            top: 0,
+            left: 12,
+            child: Image.asset(Assets.imagesMaskgroupLeft),
+          ),
+          Positioned.fill(
+            top: 70.sp,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(
+                start: 25,
+                end: 25,
+                bottom: 66,
+              ),
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child:
+                        widget.title == kFileNames[0] ||
+                            widget.title == kFileNames[1]
+                        ? NotificationCard(
+                            index: kFileNames.indexOf(widget.title),
+                            showen:
+                                widget.title == kFileNames[0] ||
+                                widget.title == kFileNames[1],
+                          )
+                        : const SizedBox(),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 20.sp)),
+                  SliverList.separated(
+                    itemBuilder: (context, index) =>
+                        AZkarCard(zekr: widget.azkarList[index]),
+                    separatorBuilder: (context, index) =>
+                        SizedBox(height: 20.sp),
+                    itemCount: widget.azkarList.length,
+                  ),
+                ],
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Image.asset(
-                Assets.imagesMosque02,
-                fit: BoxFit.cover,
-                color: AppColors.primaryColor.withValues(alpha: 0.4),
-              ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              Assets.imagesMosque02,
+              fit: BoxFit.cover,
+              color: AppColors.primaryColor.withValues(alpha: 0.4),
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 }

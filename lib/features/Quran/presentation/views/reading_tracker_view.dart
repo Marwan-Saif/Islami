@@ -41,11 +41,14 @@ class ReadingTrackerView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 12.h),
-              Text(S.of(context).dailyWird,
-                  style: GoogleFonts.amiri(
-                      color: AppColors.primaryColor,
-                      fontSize: 22.sp,
-                      fontWeight: FontWeight.bold)),
+              Text(
+                S.of(context).dailyWird,
+                style: GoogleFonts.amiri(
+                  color: AppColors.primaryColor,
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Flexible(
                 child: ListView(
                   shrinkWrap: true,
@@ -57,19 +60,27 @@ class ReadingTrackerView extends StatelessWidget {
                           pages == 20
                               ? S.of(context).fullJuz
                               : S.of(context).pagesCount(pages),
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 15.sp),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.sp,
+                          ),
                         ),
                         subtitle: Text(
-                          S.of(context).khatmaEveryDays(
-                            (ReadingTracker.totalPages / pages).ceil(),
-                          ),
+                          S
+                              .of(context)
+                              .khatmaEveryDays(
+                                (ReadingTracker.totalPages / pages).ceil(),
+                              ),
                           style: TextStyle(
-                              color: Colors.white54, fontSize: 12.sp),
+                            color: Colors.white54,
+                            fontSize: 12.sp,
+                          ),
                         ),
                         trailing: pages == tracker.dailyGoal
-                            ? const Icon(Icons.check,
-                                color: AppColors.primaryColor)
+                            ? const Icon(
+                                Icons.check,
+                                color: AppColors.primaryColor,
+                              )
                             : null,
                       ),
                   ],
@@ -88,18 +99,26 @@ class ReadingTrackerView extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.backgroundColor,
-        title: Text(S.of(context).startNewKhatma,
-            style: const TextStyle(color: AppColors.primaryColor)),
-        content: Text(S.of(context).resetKhatmaConfirm,
-            style: const TextStyle(color: Colors.white)),
+        title: Text(
+          S.of(context).startNewKhatma,
+          style: const TextStyle(color: AppColors.primaryColor),
+        ),
+        content: Text(
+          S.of(context).resetKhatmaConfirm,
+          style: const TextStyle(color: Colors.white),
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(S.of(context).cancel)),
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(S.of(context).cancel),
+          ),
           TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(S.of(context).startOver,
-                  style: const TextStyle(color: Colors.redAccent))),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              S.of(context).startOver,
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+          ),
         ],
       ),
     );
@@ -131,15 +150,26 @@ class ReadingTrackerView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _InfoText(
-                              S.of(context).readPagesOf(tracker.khatmaPages.length, ReadingTracker.totalPages)),
-                          _InfoText(S.of(context).completedKhatmas(tracker.completedKhatmas)),
+                            S
+                                .of(context)
+                                .readPagesOf(
+                                  tracker.khatmaPages.length,
+                                  ReadingTracker.totalPages,
+                                ),
+                          ),
+                          _InfoText(
+                            S
+                                .of(context)
+                                .completedKhatmas(tracker.completedKhatmas),
+                          ),
                           TextButton.icon(
                             onPressed: () => _confirmReset(context),
                             icon: const Icon(Icons.restart_alt_rounded),
                             label: Text(S.of(context).startNewKhatma),
                             style: TextButton.styleFrom(
-                                foregroundColor: AppColors.primaryColor,
-                                padding: EdgeInsets.zero),
+                              foregroundColor: AppColors.primaryColor,
+                              padding: EdgeInsets.zero,
+                            ),
                           ),
                         ],
                       ),
@@ -151,17 +181,25 @@ class ReadingTrackerView extends StatelessWidget {
                 title: S.of(context).dailyWird,
                 action: TextButton(
                   onPressed: () => _pickGoal(context),
-                  child: Text(S.of(context).editGoal,
-                      style: const TextStyle(color: AppColors.primaryColor)),
+                  child: Text(
+                    S.of(context).editGoal,
+                    style: const TextStyle(color: AppColors.primaryColor),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _InfoText(
-                        S.of(context).todayPagesOf(tracker.todayPages, tracker.dailyGoal)),
+                      S
+                          .of(context)
+                          .todayPagesOf(tracker.todayPages, tracker.dailyGoal),
+                    ),
                     SizedBox(height: 8.h),
                     LinearProgressIndicator(
-                      value: (tracker.todayPages / tracker.dailyGoal).clamp(0, 1),
+                      value: (tracker.todayPages / tracker.dailyGoal).clamp(
+                        0,
+                        1,
+                      ),
                       minHeight: 8.h,
                       borderRadius: BorderRadius.circular(8.r),
                       color: AppColors.primaryColor,
@@ -194,8 +232,7 @@ class ReadingTrackerView extends StatelessWidget {
                               position: bookmark,
                               icon: Icons.bookmark_rounded,
                               onTap: () => _open(context, bookmark),
-                              onDelete: () =>
-                                  tracker.toggleBookmark(bookmark),
+                              onDelete: () => tracker.toggleBookmark(bookmark),
                             ),
                         ],
                       ),
@@ -222,7 +259,9 @@ class _Section extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.35)),
+        border: Border.all(
+          color: AppColors.primaryColor.withValues(alpha: 0.35),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,11 +269,14 @@ class _Section extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(title,
-                    style: GoogleFonts.amiri(
-                        color: AppColors.primaryColor,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold)),
+                child: Text(
+                  title,
+                  style: GoogleFonts.amiri(
+                    color: AppColors.primaryColor,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               if (action != null) action!,
             ],
@@ -252,8 +294,10 @@ class _InfoText extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) =>
-      Text(text, style: TextStyle(color: Colors.white, fontSize: 14.sp));
+  Widget build(BuildContext context) => Text(
+    text,
+    style: TextStyle(color: Colors.white, fontSize: 14.sp),
+  );
 }
 
 class _PositionTile extends StatelessWidget {
@@ -274,10 +318,14 @@ class _PositionTile extends StatelessWidget {
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: AppColors.primaryColor),
-      title: Text(S.of(context).ayahRef(surahTitle(position.surah), position.ayah),
-          style: TextStyle(color: Colors.white, fontSize: 15.sp)),
-      subtitle: Text(S.of(context).pageNumber(position.page),
-          style: TextStyle(color: Colors.white54, fontSize: 12.sp)),
+      title: Text(
+        S.of(context).ayahRef(surahTitle(position.surah), position.ayah),
+        style: TextStyle(color: Colors.white, fontSize: 15.sp),
+      ),
+      subtitle: Text(
+        S.of(context).pageNumber(position.page),
+        style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+      ),
       trailing: onDelete == null
           ? null
           : IconButton(
@@ -303,7 +351,9 @@ class _WeekChart extends StatelessWidget {
       'EEEEE',
       Localizations.localeOf(context).languageCode,
     );
-    final days = [for (int i = 6; i >= 0; i--) today.subtract(Duration(days: i))];
+    final days = [
+      for (int i = 6; i >= 0; i--) today.subtract(Duration(days: i)),
+    ];
     final maxPages = [
       goal,
       ...days.map(tracker.pagesReadOn),
@@ -320,8 +370,10 @@ class _WeekChart extends StatelessWidget {
                 children: [
                   Flexible(
                     child: FractionallySizedBox(
-                      heightFactor: (tracker.pagesReadOn(day) / maxPages)
-                          .clamp(0.04, 1.0),
+                      heightFactor: (tracker.pagesReadOn(day) / maxPages).clamp(
+                        0.04,
+                        1.0,
+                      ),
                       child: Container(
                         width: 14.w,
                         decoration: BoxDecoration(
@@ -334,8 +386,10 @@ class _WeekChart extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  Text(dayLetter.format(day),
-                      style: TextStyle(color: Colors.white54, fontSize: 11.sp)),
+                  Text(
+                    dayLetter.format(day),
+                    style: TextStyle(color: Colors.white54, fontSize: 11.sp),
+                  ),
                 ],
               ),
             ),

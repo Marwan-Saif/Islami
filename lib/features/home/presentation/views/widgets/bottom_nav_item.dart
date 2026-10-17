@@ -21,16 +21,17 @@ class BottomNavItem extends StatelessWidget {
       child: Column(
         children: [
           CircleAvatar(
-            
             radius: isSelected ? 25 : 22,
-            backgroundColor:
-                isSelected ? AppColors.backgroundColor : AppColors.primaryColor,
+            backgroundColor: isSelected
+                ? AppColors.backgroundColor
+                : AppColors.primaryColor,
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Image.asset(
                 icon,
                 // الأيقونات ملفات كبيرة (البوصلة 1295px)، فبتتفك بحجم ظهورها بس
-                cacheWidth: (50 * MediaQuery.devicePixelRatioOf(context)).ceil(),
+                cacheWidth: (50 * MediaQuery.devicePixelRatioOf(context))
+                    .ceil(),
                 fit: BoxFit.fill,
                 color: isSelected
                     ? AppColors.primaryColor
@@ -38,9 +39,7 @@ class BottomNavItem extends StatelessWidget {
               ),
             ), //SvgPicture.asset(icon,),
           ),
-          const SizedBox(
-            height: 5,
-          ),
+          const SizedBox(height: 5),
           isSelected
               ? Text(
                   label,
@@ -51,7 +50,7 @@ class BottomNavItem extends StatelessWidget {
                     fontSize: 15,
                   ),
                 )
-              : const SizedBox()
+              : const SizedBox(),
         ],
       ),
     );

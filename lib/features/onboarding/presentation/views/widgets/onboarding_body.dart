@@ -14,74 +14,83 @@ class OnBoardingBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntroductionScreen(
-      curve:Curves.elasticIn ,
-        skipOrBackFlex: 3,
-        nextFlex: 3,
-        dotsFlex: 5,
-        dotsDecorator: DotsDecorator(
-          size: const Size.square(8.0),
-          activeSize: const Size(25.0, 9.0),
-          activeColor: AppColors.primaryColor,
-          color: Colors.grey,
-          spacing: const EdgeInsets.symmetric(horizontal: 3.0),
-          activeShape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
+      curve: Curves.elasticIn,
+      skipOrBackFlex: 3,
+      nextFlex: 3,
+      dotsFlex: 5,
+      dotsDecorator: DotsDecorator(
+        size: const Size.square(8.0),
+        activeSize: const Size(25.0, 9.0),
+        activeColor: AppColors.primaryColor,
+        color: Colors.grey,
+        spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+        activeShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
         ),
-        globalBackgroundColor: AppColors.backgroundColor,
-        isProgressTap: true,
-        showNextButton: true,
-        next: Text(
-          S.of(context).next,
-          style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              color: AppColors.primaryColor,
-              fontSize: 16),
+      ),
+      globalBackgroundColor: AppColors.backgroundColor,
+      isProgressTap: true,
+      showNextButton: true,
+      next: Text(
+        S.of(context).next,
+        style: const TextStyle(
+          fontWeight: FontWeight.w500,
+          color: AppColors.primaryColor,
+          fontSize: 16,
         ),
-        showSkipButton: true,
-        skipSemantic: 'Skip',
-        // skipStyle: ,
-        skip: Text(
-          S.of(context).skip,
-          style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              color: AppColors.primaryColor,
-              fontSize: 16),
+      ),
+      showSkipButton: true,
+      skipSemantic: 'Skip',
+      // skipStyle: ,
+      skip: Text(
+        S.of(context).skip,
+        style: const TextStyle(
+          fontWeight: FontWeight.w500,
+          color: AppColors.primaryColor,
+          fontSize: 16,
         ),
-        // back: Text(
-        //   S.of(context).back,
-        //   style: const TextStyle(
-        //       fontWeight: FontWeight.w500,
-        //       color: AppColors.primaryColor,
-        //       fontSize: 16),
-        // ),
-        // showBackButton: true,
-        done: Text(
-          S.of(context).finish,
-          style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              color: AppColors.primaryColor,
-              fontSize: 16),
+      ),
+      // back: Text(
+      //   S.of(context).back,
+      //   style: const TextStyle(
+      //       fontWeight: FontWeight.w500,
+      //       color: AppColors.primaryColor,
+      //       fontSize: 16),
+      // ),
+      // showBackButton: true,
+      done: Text(
+        S.of(context).finish,
+        style: const TextStyle(
+          fontWeight: FontWeight.w500,
+          color: AppColors.primaryColor,
+          fontSize: 16,
         ),
-        onDone: () => _finish(context),
-        onSkip: () => _finish(context),
-        pages: [
-          customPageViewModel(
-              title: S.of(context).onboarding1_title,
-              image: Assets.imagesKabba,
-              child: S.of(context).onboarding1_body),
-          customPageViewModel(
-              title: S.of(context).onboarding2_title,
-              image: Assets.imagesWelcome,
-              child: S.of(context).onboarding2_body),
-          customPageViewModel(
-              title: S.of(context).onboarding3_title,
-              image: Assets.imagesBearish,
-              child: S.of(context).onboarding3_body),
-          customPageViewModel(
-              title: S.of(context).onboarding4_title,
-              image: Assets.imagesRadio,
-              child: S.of(context).onboarding4_body),
-        ]);
+      ),
+      onDone: () => _finish(context),
+      onSkip: () => _finish(context),
+      pages: [
+        customPageViewModel(
+          title: S.of(context).onboarding1_title,
+          image: Assets.imagesKabba,
+          child: S.of(context).onboarding1_body,
+        ),
+        customPageViewModel(
+          title: S.of(context).onboarding2_title,
+          image: Assets.imagesWelcome,
+          child: S.of(context).onboarding2_body,
+        ),
+        customPageViewModel(
+          title: S.of(context).onboarding3_title,
+          image: Assets.imagesBearish,
+          child: S.of(context).onboarding3_body,
+        ),
+        customPageViewModel(
+          title: S.of(context).onboarding4_title,
+          image: Assets.imagesRadio,
+          child: S.of(context).onboarding4_body,
+        ),
+      ],
+    );
   }
 
   // الـ onboarding بيظهر أول مرة بس
@@ -90,8 +99,11 @@ class OnBoardingBody extends StatelessWidget {
     if (context.mounted) context.go(AppRouter.homeView);
   }
 
-  PageViewModel customPageViewModel(
-      {required String title, required String image, required String child}) {
+  PageViewModel customPageViewModel({
+    required String title,
+    required String image,
+    required String child,
+  }) {
     return PageViewModel(
       titleWidget: Text(
         title,
@@ -113,7 +125,9 @@ class OnBoardingBody extends StatelessWidget {
         ),
       ),
       decoration: const PageDecoration(
-          imageFlex: 3, pageColor: AppColors.backgroundColor),
+        imageFlex: 3,
+        pageColor: AppColors.backgroundColor,
+      ),
       // الصور كانت بأحجام ثابتة (حوالي 500 بكسل) فكانت بتعمل overflow في
       // الشاشات الصغيرة، دلوقتي بتتقسم على المساحة المتاحة وبتصغر لو محتاجة
       image: Column(

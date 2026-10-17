@@ -9,7 +9,11 @@ import 'package:islami/generated/l10n.dart';
 
 /// أحاديث باب واحد (بتتنزل أول مرة وبعدين بتفتح من غير نت)
 class HadithListView extends StatefulWidget {
-  const HadithListView({super.key, required this.bookKey, required this.sectionNumber});
+  const HadithListView({
+    super.key,
+    required this.bookKey,
+    required this.sectionNumber,
+  });
   final String bookKey;
   final int sectionNumber;
 
@@ -20,8 +24,9 @@ class HadithListView extends StatefulWidget {
 class _HadithListViewState extends State<HadithListView> {
   final _repo = HadithRepo.instance;
   late final HadithBook _book = _repo.bookByKey(widget.bookKey);
-  late final HadithSection _section =
-      _book.sections.firstWhere((s) => s.number == widget.sectionNumber);
+  late final HadithSection _section = _book.sections.firstWhere(
+    (s) => s.number == widget.sectionNumber,
+  );
   late Future<List<Hadith>> _hadiths = _repo.getSection(_book, _section);
 
   void _retry() => setState(() => _hadiths = _repo.getSection(_book, _section));
@@ -40,12 +45,17 @@ class _HadithListViewState extends State<HadithListView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.wifi_off_rounded,
-                      color: AppColors.primaryColor, size: 48.r),
+                  Icon(
+                    Icons.wifi_off_rounded,
+                    color: AppColors.primaryColor,
+                    size: 48.r,
+                  ),
                   SizedBox(height: 12.h),
-                  Text(S.of(context).hadithLoadError,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white70, fontSize: 15.sp)),
+                  Text(
+                    S.of(context).hadithLoadError,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white70, fontSize: 15.sp),
+                  ),
                   SizedBox(height: 12.h),
                   OutlinedButton(
                     onPressed: _retry,
@@ -99,8 +109,10 @@ class HadithFavoritesView extends StatelessWidget {
             }
             if (favorites.isEmpty) {
               return Center(
-                child: Text(S.of(context).favoritesEmpty,
-                    style: TextStyle(color: Colors.white70, fontSize: 15.sp)),
+                child: Text(
+                  S.of(context).favoritesEmpty,
+                  style: TextStyle(color: Colors.white70, fontSize: 15.sp),
+                ),
               );
             }
             return ListView.separated(
@@ -108,7 +120,9 @@ class HadithFavoritesView extends StatelessWidget {
               itemCount: favorites.length,
               separatorBuilder: (context, index) => SizedBox(height: 12.h),
               itemBuilder: (context, index) => HadithCard(
-                key: ValueKey('${favorites[index].bookKey}_${favorites[index].number}'),
+                key: ValueKey(
+                  '${favorites[index].bookKey}_${favorites[index].number}',
+                ),
                 hadith: favorites[index],
                 showBookName: true,
               ),

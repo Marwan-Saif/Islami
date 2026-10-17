@@ -1,14 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PrayerTimerCard extends StatelessWidget {
-  const PrayerTimerCard(
-      {super.key,
-      required this.prayerName,
-      required this.time,
-      required this.isHighlighted,
-      required this.pm});
+  const PrayerTimerCard({
+    super.key,
+    required this.prayerName,
+    required this.time,
+    required this.isHighlighted,
+    required this.pm,
+  });
   final String prayerName, time, pm;
   final bool isHighlighted;
   @override
@@ -23,7 +23,9 @@ class PrayerTimerCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             const Color(0xFF202020),
-            const Color(0xFFB19768).withValues(alpha: isHighlighted ? 0.85 : 0.5),
+            const Color(
+              0xFFB19768,
+            ).withValues(alpha: isHighlighted ? 0.85 : 0.5),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -49,23 +51,25 @@ class PrayerTimerCard extends StatelessWidget {
             child: Text(
               prayerName,
               style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isHighlighted ? Colors.white : Colors.white70),
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: isHighlighted ? Colors.white : Colors.white70,
+              ),
             ),
           ),
           const SizedBox(height: 2),
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 12.0.sp),
+            padding: EdgeInsets.symmetric(horizontal: 12.0.sp),
             child: FittedBox(
-               fit: BoxFit.scaleDown,
+              fit: BoxFit.scaleDown,
               child: Text(
                 time,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: isHighlighted ? Colors.white : Colors.white70),
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: isHighlighted ? Colors.white : Colors.white70,
+                ),
               ),
             ),
           ),
@@ -73,9 +77,10 @@ class PrayerTimerCard extends StatelessWidget {
             pm,
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-                color: isHighlighted ? Colors.white : Colors.white70),
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              color: isHighlighted ? Colors.white : Colors.white70,
+            ),
           ),
         ],
       ),

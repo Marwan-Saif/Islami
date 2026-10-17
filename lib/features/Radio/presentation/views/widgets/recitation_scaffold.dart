@@ -7,7 +7,11 @@ import 'package:islami/features/Radio/presentation/views/widgets/mini_player.dar
 
 /// نفس إطار شاشات الأذكار والسور (الزخارف فوق والمسجد تحت) + مشغل صغير
 class RecitationScaffold extends StatelessWidget {
-  const RecitationScaffold({super.key, required this.title, required this.body});
+  const RecitationScaffold({
+    super.key,
+    required this.title,
+    required this.body,
+  });
   final String title;
   final Widget body;
 

@@ -19,7 +19,12 @@ class HadithBook {
 }
 
 class HadithSection {
-  const HadithSection(this.number, this.nameEn, this.firstHadith, this.lastHadith);
+  const HadithSection(
+    this.number,
+    this.nameEn,
+    this.firstHadith,
+    this.lastHadith,
+  );
   final int number;
 
   /// المصدر فيه أسماء الأبواب بالإنجليزي بس
@@ -33,7 +38,11 @@ class HadithSection {
 }
 
 class Hadith {
-  const Hadith({required this.bookKey, required this.number, required this.text});
+  const Hadith({
+    required this.bookKey,
+    required this.number,
+    required this.text,
+  });
   final String bookKey;
   final num number;
   final String text;
@@ -42,7 +51,11 @@ class Hadith {
   bool get isArabic =>
       RegExp('[؀-ۿ]').hasMatch(text.substring(0, text.length.clamp(0, 30)));
 
-  Map<String, dynamic> toJson() => {'book': bookKey, 'number': number, 'text': text};
+  Map<String, dynamic> toJson() => {
+    'book': bookKey,
+    'number': number,
+    'text': text,
+  };
 
   factory Hadith.fromJson(Map json) =>
       Hadith(bookKey: json['book'], number: json['number'], text: json['text']);

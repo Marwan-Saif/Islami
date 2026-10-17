@@ -84,7 +84,9 @@ class _RadioViewState extends State<RadioView> {
 
             _buildSelectionCard(
               title: S.of(context).chooseRecitation,
-              subtitle: S.of(context).surahsByReciter(lastSelection.reciter.name),
+              subtitle: S
+                  .of(context)
+                  .surahsByReciter(lastSelection.reciter.name),
               icon: Icons.menu_book_rounded,
               onTap: () async {
                 await context.push(
@@ -246,103 +248,109 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
             child: StreamBuilder<PlayerState>(
               stream: _audioService.audioPlayer.playerStateStream,
               builder: (context, _) => StreamBuilder<SequenceState?>(
-              // 1. هنا بنراقب إيه اللي شغال دلوقتي في المشغل بالكامل
-              stream: _audioService.audioPlayer.sequenceStateStream,
-              builder: (context, sequenceSnapshot) {
-                final currentTag = sequenceSnapshot.data?.currentSource?.tag;
-                // بعد stop المشغل بيفضل شايل آخر حاجة اتشغلت (آية أو سورة)،
-                // فكان الكارت بيعرضها وزرار التشغيل بيرجعها بدل الإذاعة
-                final idle = _audioService.audioPlayer.processingState ==
-                    ProcessingState.idle;
-                final MediaItem? currentMediaItem =
-                    currentTag is MediaItem && !idle ? currentTag : null;
+                // 1. هنا بنراقب إيه اللي شغال دلوقتي في المشغل بالكامل
+                stream: _audioService.audioPlayer.sequenceStateStream,
+                builder: (context, sequenceSnapshot) {
+                  final currentTag = sequenceSnapshot.data?.currentSource?.tag;
+                  // بعد stop المشغل بيفضل شايل آخر حاجة اتشغلت (آية أو سورة)،
+                  // فكان الكارت بيعرضها وزرار التشغيل بيرجعها بدل الإذاعة
+                  final idle =
+                      _audioService.audioPlayer.processingState ==
+                      ProcessingState.idle;
+                  final MediaItem? currentMediaItem =
+                      currentTag is MediaItem && !idle ? currentTag : null;
 
-                // 2. بنحدد النصوص: لو في حاجة شغالة نعرضها، لو مفيش نعرض أول عنصر في الـ Playlist
-                final String displayTitle = currentMediaItem?.title ?? playlist.first.title;
-                final String displaySubtitle = currentMediaItem?.artist ?? playlist.first.subtitle;
+                  // 2. بنحدد النصوص: لو في حاجة شغالة نعرضها، لو مفيش نعرض أول عنصر في الـ Playlist
+                  final String displayTitle =
+                      currentMediaItem?.title ?? playlist.first.title;
+                  final String displaySubtitle =
+                      currentMediaItem?.artist ?? playlist.first.subtitle;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // النصوص بقت تتغير ديناميكياً
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          displaySubtitle, // اسم القارئ (مثل: عبد الباري محمد)
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // النصوص بقت تتغير ديناميكياً
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            displaySubtitle, // اسم القارئ (مثل: عبد الباري محمد)
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        // أسماء سور التلاوات متشكلة فالتشكيل بيطلع لفوق
-                        SizedBox(height: 6.h),
-                        Text(
-                          displayTitle, // اسم السورة أو الإذاعة (مثل: سورة الفاتحة)
-                          style: GoogleFonts.amiri(
-                            color: Colors.black,
-                            fontSize: 26.sp,
-                            fontWeight: FontWeight.bold,
+                          // أسماء سور التلاوات متشكلة فالتشكيل بيطلع لفوق
+                          SizedBox(height: 6.h),
+                          Text(
+                            displayTitle, // اسم السورة أو الإذاعة (مثل: سورة الفاتحة)
+                            style: GoogleFonts.amiri(
+                              color: Colors.black,
+                              fontSize: 26.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                    // زرار التشغيل
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: StreamBuilder<PlayerState>(
-                        stream: _audioService.audioPlayer.playerStateStream,
-                        builder: (context, playerSnapshot) {
-                          final playerState = playerSnapshot.data;
-                          final processingState = playerState?.processingState;
-                          final playing = playerState?.playing ?? false;
+                      // زرار التشغيل
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: StreamBuilder<PlayerState>(
+                          stream: _audioService.audioPlayer.playerStateStream,
+                          builder: (context, playerSnapshot) {
+                            final playerState = playerSnapshot.data;
+                            final processingState =
+                                playerState?.processingState;
+                            final playing = playerState?.playing ?? false;
 
-                          final bool isLoading = processingState == ProcessingState.loading || processingState == ProcessingState.buffering;
+                            final bool isLoading =
+                                processingState == ProcessingState.loading ||
+                                processingState == ProcessingState.buffering;
 
-                          // 1. حالة التحميل
-                          if (isLoading) {
-                            return _buildPlayButton(
-                              child: Padding(
-                                padding: EdgeInsets.all(15.w),
-                                child: CircularProgressIndicator(
-                                  color: AppColors.primaryColor,
-                                  strokeWidth: 3,
+                            // 1. حالة التحميل
+                            if (isLoading) {
+                              return _buildPlayButton(
+                                child: Padding(
+                                  padding: EdgeInsets.all(15.w),
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.primaryColor,
+                                    strokeWidth: 3,
+                                  ),
                                 ),
-                              ),
-                            );
-                          } 
-                          // 2. حالة التشغيل (يعرض Pause)
-                          else if (playing) {
-                            return _buildPlayButton(
-                              icon: Icons.pause_rounded,
-                              onTap: _audioService.pauseAudio,
-                            );
-                          } 
-                          // 3. حالة الإيقاف أو البداية (يعرض Play)
-                          else {
-                            return _buildPlayButton(
-                              icon: Icons.play_arrow_rounded,
-                              onTap: () async {
-                                if (currentMediaItem != null) {
-                                  // لو في ملف محمل فعلاً لكن متوقف، كمل تشغيله
-                                  await _audioService.audioPlayer.play();
-                                } else {
-                                  // لو مفيش أي حاجة شغالة، ابدأ القائمة من الأول
-                                  await _audioService.playList(playlist);
-                                }
-                              },
-                            );
-                          }
-                        },
-                      )
-                    ),
-                  ],
-                );
-              },
-            ),
+                              );
+                            }
+                            // 2. حالة التشغيل (يعرض Pause)
+                            else if (playing) {
+                              return _buildPlayButton(
+                                icon: Icons.pause_rounded,
+                                onTap: _audioService.pauseAudio,
+                              );
+                            }
+                            // 3. حالة الإيقاف أو البداية (يعرض Play)
+                            else {
+                              return _buildPlayButton(
+                                icon: Icons.play_arrow_rounded,
+                                onTap: () async {
+                                  if (currentMediaItem != null) {
+                                    // لو في ملف محمل فعلاً لكن متوقف، كمل تشغيله
+                                    await _audioService.audioPlayer.play();
+                                  } else {
+                                    // لو مفيش أي حاجة شغالة، ابدأ القائمة من الأول
+                                    await _audioService.playList(playlist);
+                                  }
+                                },
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -351,7 +359,11 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
   }
 
   // دالة مساعدة لرسم الزرار الدائري بأسلوب نظيف
-  Widget _buildPlayButton({IconData? icon, Widget? child, VoidCallback? onTap}) {
+  Widget _buildPlayButton({
+    IconData? icon,
+    Widget? child,
+    VoidCallback? onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Container(

@@ -18,7 +18,10 @@ class SuraCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.push(AppRouter.surahScreen, extra: SurahScreenArgs(surah.number));
+        context.push(
+          AppRouter.surahScreen,
+          extra: SurahScreenArgs(surah.number),
+        );
       },
       highlightColor: AppColors.primaryColor.withValues(alpha: 0.2),
       splashColor: AppColors.primaryColor.withValues(alpha: 0),

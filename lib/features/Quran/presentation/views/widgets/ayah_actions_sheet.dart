@@ -34,11 +34,11 @@ int? ayahFromAudioId(String id, int surahNumber) {
 }
 
 AudioModel _ayahAudio(int surah, int ayah, AyahReciter reciter) => AudioModel(
-      id: _audioId(surah, ayah, reciter),
-      title: S.current.ayahRef(surahTitle(surah), ayah),
-      subtitle: reciter.name,
-      url: reciter.ayahUrl(surah, ayah),
-    );
+  id: _audioId(surah, ayah, reciter),
+  title: S.current.ayahRef(surahTitle(surah), ayah),
+  subtitle: reciter.name,
+  url: reciter.ayahUrl(surah, ayah),
+);
 
 Future<void> showAyahActionsSheet(
   BuildContext context, {
@@ -54,8 +54,9 @@ Future<void> showAyahActionsSheet(
       side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
     ),
     builder: (context) => ConstrainedBox(
-      constraints:
-          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+      ),
       child: _AyahActions(surahNumber: surahNumber, ayah: ayah),
     ),
   );
@@ -73,28 +74,36 @@ class _AyahActions extends StatefulWidget {
 class _AyahActionsState extends State<_AyahActions> {
   bool _showTafsir = false;
   AyahReciter _reciter = selectedAyahReciter;
-  late bool _bookmarked = ReadingTracker.instance
-      .isBookmarked(widget.surahNumber, widget.ayah.id);
+  late bool _bookmarked = ReadingTracker.instance.isBookmarked(
+    widget.surahNumber,
+    widget.ayah.id,
+  );
 
   Future<void> _toggleBookmark() async {
-    final added = await ReadingTracker.instance.toggleBookmark(ReadingPosition(
-      surah: widget.surahNumber,
-      ayah: widget.ayah.id,
-      page: widget.ayah.page,
-    ));
+    final added = await ReadingTracker.instance.toggleBookmark(
+      ReadingPosition(
+        surah: widget.surahNumber,
+        ayah: widget.ayah.id,
+        page: widget.ayah.page,
+      ),
+    );
     if (!mounted) return;
     setState(() => _bookmarked = added);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-          added ? S.of(context).bookmarkAdded : S.of(context).bookmarkRemoved),
-      duration: const Duration(seconds: 2),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          added ? S.of(context).bookmarkAdded : S.of(context).bookmarkRemoved,
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   Future<void> _playAyah() async {
     Navigator.of(context).pop();
-    await AudioService()
-        .playSingle(_ayahAudio(widget.surahNumber, widget.ayah.id, _reciter));
+    await AudioService().playSingle(
+      _ayahAudio(widget.surahNumber, widget.ayah.id, _reciter),
+    );
   }
 
   Future<void> _playFromHere() async {
@@ -112,9 +121,9 @@ class _AyahActionsState extends State<_AyahActions> {
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(S.of(context).ayahCopied)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(S.of(context).ayahCopied)));
   }
 
   Future<void> _pickReciter() async {
@@ -126,8 +135,10 @@ class _AyahActionsState extends State<_AyahActions> {
           for (final reciter in kAyahReciters)
             ListTile(
               onTap: () => Navigator.of(context).pop(reciter),
-              title: Text(reciter.name,
-                  style: TextStyle(color: Colors.white, fontSize: 15.sp)),
+              title: Text(
+                reciter.name,
+                style: TextStyle(color: Colors.white, fontSize: 15.sp),
+              ),
               trailing: reciter.id == _reciter.id
                   ? const Icon(Icons.check, color: AppColors.primaryColor)
                   : null,
@@ -142,8 +153,9 @@ class _AyahActionsState extends State<_AyahActions> {
 
   @override
   Widget build(BuildContext context) {
-    final tafsir =
-        getit.get<QuranRepo>().getTafsir(widget.surahNumber)[widget.ayah.id];
+    final tafsir = getit.get<QuranRepo>().getTafsir(
+      widget.surahNumber,
+    )[widget.ayah.id];
     return SafeArea(
       child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
@@ -152,7 +164,9 @@ class _AyahActionsState extends State<_AyahActions> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              S.of(context).ayahRefDot(surahTitle(widget.surahNumber), widget.ayah.id),
+              S
+                  .of(context)
+                  .ayahRefDot(surahTitle(widget.surahNumber), widget.ayah.id),
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white54, fontSize: 13.sp),
             ),
@@ -197,12 +211,16 @@ class _AyahActionsState extends State<_AyahActions> {
                   color: Colors.black.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(14.r),
                   border: Border.all(
-                      color: AppColors.primaryColor.withValues(alpha: 0.3)),
+                    color: AppColors.primaryColor.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Text(
                   tafsir ?? S.of(context).tafsirUnavailable,
                   style: TextStyle(
-                      color: Colors.white, fontSize: 15.sp, height: 1.7),
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    height: 1.7,
+                  ),
                 ),
               ),
             _ActionTile(
@@ -227,7 +245,11 @@ class _AyahActionsState extends State<_AyahActions> {
 }
 
 class _ActionTile extends StatelessWidget {
-  const _ActionTile({required this.icon, required this.title, required this.onTap});
+  const _ActionTile({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
   final IconData icon;
   final String title;
   final VoidCallback onTap;
@@ -238,7 +260,10 @@ class _ActionTile extends StatelessWidget {
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: AppColors.primaryColor),
-      title: Text(title, style: TextStyle(color: Colors.white, fontSize: 16.sp)),
+      title: Text(
+        title,
+        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+      ),
     );
   }
 }

@@ -111,8 +111,11 @@ class ReciterCard extends StatelessWidget {
                 color: AppColors.primaryColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(15.r),
               ),
-              child: Icon(Icons.record_voice_over_rounded,
-                  color: AppColors.primaryColor, size: 26.r),
+              child: Icon(
+                Icons.record_voice_over_rounded,
+                color: AppColors.primaryColor,
+                size: 26.r,
+              ),
             ),
             SizedBox(width: 16.w),
             Expanded(
@@ -138,8 +141,11 @@ class ReciterCard extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded,
-                color: Colors.white38, size: 18.r),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white38,
+              size: 18.r,
+            ),
           ],
         ),
       ),
@@ -193,15 +199,23 @@ class ReciterCard extends StatelessWidget {
                     for (var moshaf in reciter.moshaf)
                       ListTile(
                         onTap: () => Navigator.of(context).pop(moshaf),
-                        leading: const Icon(Icons.menu_book_rounded,
-                            color: AppColors.primaryColor),
+                        leading: const Icon(
+                          Icons.menu_book_rounded,
+                          color: AppColors.primaryColor,
+                        ),
                         title: Text(
                           moshaf.name,
-                          style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                          ),
                         ),
                         subtitle: Text(
                           S.of(context).surahCount(moshaf.surahList.length),
-                          style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+                          style: TextStyle(
+                            color: Colors.white54,
+                            fontSize: 12.sp,
+                          ),
                         ),
                       ),
                   ],
@@ -226,7 +240,11 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.wifi_off_rounded, color: AppColors.primaryColor, size: 48.r),
+          Icon(
+            Icons.wifi_off_rounded,
+            color: AppColors.primaryColor,
+            size: 48.r,
+          ),
           SizedBox(height: 12.h),
           Text(
             message,
