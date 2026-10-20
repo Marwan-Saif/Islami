@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         // Google Play مش بيقبل com.example، والـ ID ده مينفعش يتغير بعد أول نشر
-        applicationId = "com.marwansaif.islami"
+        applicationId = "com.marwansaif.athar"
         // You can update the following values to match your application needs.
         
         // For more information, see: https://flutter.dev/to/review-gradle-config.
