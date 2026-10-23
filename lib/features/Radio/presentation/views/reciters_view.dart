@@ -57,7 +57,7 @@ class RecitersListBody extends StatelessWidget {
           );
         }
         if (state is! RecitersSuccess) {
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(color: AppColors.primaryColor),
           );
         }
@@ -65,7 +65,7 @@ class RecitersListBody extends StatelessWidget {
           return Center(
             child: Text(
               S.of(context).noReciterFound,
-              style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+              style: TextStyle(color: AppColors.textMuted, fontSize: 16.sp),
             ),
           );
         }
@@ -96,7 +96,7 @@ class ReciterCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.4),
+          color: AppColors.card,
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: AppColors.primaryColor.withValues(alpha: 0.3),
@@ -125,7 +125,7 @@ class ReciterCard extends StatelessWidget {
                   Text(
                     reciter.name,
                     style: GoogleFonts.amiri(
-                      color: Colors.white,
+                      color: AppColors.text,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -136,14 +136,17 @@ class ReciterCard extends StatelessWidget {
                         : S.of(context).rewayatCount(rewayat),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+                    style: TextStyle(
+                      color: AppColors.textFaint,
+                      fontSize: 13.sp,
+                    ),
                   ),
                 ],
               ),
             ),
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: Colors.white38,
+              color: AppColors.textFaint,
               size: 18.r,
             ),
           ],
@@ -172,7 +175,7 @@ class ReciterCard extends StatelessWidget {
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-        side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+        side: BorderSide(color: AppColors.primaryColor, width: 1.5),
       ),
       builder: (context) => ConstrainedBox(
         constraints: BoxConstraints(
@@ -199,21 +202,21 @@ class ReciterCard extends StatelessWidget {
                     for (var moshaf in reciter.moshaf)
                       ListTile(
                         onTap: () => Navigator.of(context).pop(moshaf),
-                        leading: const Icon(
+                        leading: Icon(
                           Icons.menu_book_rounded,
                           color: AppColors.primaryColor,
                         ),
                         title: Text(
                           moshaf.name,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.text,
                             fontSize: 16.sp,
                           ),
                         ),
                         subtitle: Text(
                           S.of(context).surahCount(moshaf.surahList.length),
                           style: TextStyle(
-                            color: Colors.white54,
+                            color: AppColors.textFaint,
                             fontSize: 12.sp,
                           ),
                         ),
@@ -249,14 +252,14 @@ class _ErrorView extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white70, fontSize: 15.sp),
+            style: TextStyle(color: AppColors.textMuted, fontSize: 15.sp),
           ),
           SizedBox(height: 16.h),
           OutlinedButton(
             onPressed: onRetry,
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primaryColor,
-              side: const BorderSide(color: AppColors.primaryColor),
+              side: BorderSide(color: AppColors.primaryColor),
             ),
             child: Text(S.of(context).retry),
           ),

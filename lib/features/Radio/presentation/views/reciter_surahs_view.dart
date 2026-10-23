@@ -53,7 +53,7 @@ class ReciterSurahsView extends StatelessWidget {
             Text(
               moshaf.name,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+              style: TextStyle(color: AppColors.textFaint, fontSize: 13.sp),
             ),
             SizedBox(height: 12.h),
             Row(
@@ -89,7 +89,7 @@ class ReciterSurahsView extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: 12.h),
                     itemCount: moshaf.surahList.length,
                     separatorBuilder: (context, index) => Divider(
-                      color: Colors.white12,
+                      color: AppColors.divider,
                       height: 1,
                       indent: 40.w,
                       endIndent: 40.w,
@@ -139,7 +139,7 @@ class SurahAudioTile extends StatelessWidget {
               child: Text(
                 surahTitle(surahNumber),
                 style: GoogleFonts.amiri(
-                  color: isCurrent ? AppColors.primaryColor : Colors.white,
+                  color: isCurrent ? AppColors.primaryColor : AppColors.text,
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -182,9 +182,7 @@ class _HeaderButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
-          color: filled
-              ? AppColors.primaryColor
-              : Colors.black.withValues(alpha: 0.4),
+          color: filled ? AppColors.primaryColor : AppColors.card,
           borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: AppColors.primaryColor, width: 1.5),
         ),

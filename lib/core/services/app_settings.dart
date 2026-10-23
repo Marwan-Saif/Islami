@@ -24,6 +24,21 @@ class AppSettings {
   /// بيزيد مع أي تغيير في إعدادات القراءة عشان شاشة السورة تتحدث
   final ValueNotifier<int> readingChanges = ValueNotifier(0);
 
+  static const String _themeKey = 'app_theme';
+
+  /// فاتح أو داكن أو حسب الموبايل (الافتراضي)
+  late final ValueNotifier<ThemeMode> themeMode = ValueNotifier(
+    ThemeMode.values.firstWhere(
+      (mode) => mode.name == Prefs.getData(key: _themeKey),
+      orElse: () => ThemeMode.system,
+    ),
+  );
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    await Prefs.saveData(key: _themeKey, value: mode.name);
+    themeMode.value = mode;
+  }
+
   bool get isArabic => locale.value.languageCode == 'ar';
 
   Future<void> setLanguage(String code) async {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islami/constants.dart';
 import 'package:islami/core/utils/app_colors.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/pattern_background.dart';
 import 'package:islami/core/widgets/appbar.dart';
 import 'package:islami/features/Timer/domain/zekr_entity.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/azkar_card.dart';
@@ -29,23 +29,14 @@ class _ZekrViewState extends State<ZekrView> {
         alignment: Alignment.center,
         fit: StackFit.expand,
         children: [
-          Positioned(
-            top: 0,
-            right: 12,
-            child: Image.asset(Assets.imagesMaskgroupRight),
-          ),
-          Positioned(
-            top: 0,
-            left: 12,
-            child: Image.asset(Assets.imagesMaskgroupLeft),
-          ),
+          const Positioned.fill(child: IslamicPatternLayer()),
           Positioned.fill(
-            top: 70.sp,
+            top: 8.sp,
             child: Padding(
               padding: const EdgeInsetsDirectional.only(
                 start: 25,
                 end: 25,
-                bottom: 66,
+                bottom: 16,
               ),
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -72,16 +63,6 @@ class _ZekrViewState extends State<ZekrView> {
                   ),
                 ],
               ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Image.asset(
-              Assets.imagesMosque02,
-              fit: BoxFit.cover,
-              color: AppColors.primaryColor.withValues(alpha: 0.4),
             ),
           ),
         ],

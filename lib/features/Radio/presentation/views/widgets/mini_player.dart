@@ -25,7 +25,7 @@ class MiniPlayer extends StatelessWidget {
           margin: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
           padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.85),
+            color: AppColors.surfaceHigh,
             borderRadius: BorderRadius.circular(20.r),
             border: Border.all(
               color: AppColors.primaryColor.withValues(alpha: 0.5),
@@ -56,7 +56,7 @@ class MiniPlayer extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: AppColors.textMuted,
                             fontSize: 12.sp,
                           ),
                         ),
@@ -110,14 +110,14 @@ class _PlayPauseButton extends StatelessWidget {
           width: 46.r,
           height: 46.r,
           margin: EdgeInsets.symmetric(horizontal: 6.w),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.primaryColor,
             shape: BoxShape.circle,
           ),
           child: loading
               ? Padding(
                   padding: EdgeInsets.all(12.r),
-                  child: const CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                     color: AppColors.backgroundColor,
                     strokeWidth: 2.5,
                   ),
@@ -151,7 +151,7 @@ class _ControlButton extends StatelessWidget {
       onPressed: onTap,
       icon: Icon(icon, size: 30.r),
       color: AppColors.primaryColor,
-      disabledColor: Colors.white24,
+      disabledColor: AppColors.divider,
     );
   }
 }
@@ -188,7 +188,7 @@ class _ProgressBar extends StatelessWidget {
                   value: max > 0 ? value : 0,
                   max: max > 0 ? max : 1,
                   activeColor: AppColors.primaryColor,
-                  inactiveColor: Colors.white24,
+                  inactiveColor: AppColors.divider,
                   onChanged: max > 0
                       ? (newValue) => player.seek(
                           Duration(milliseconds: newValue.toInt()),
@@ -204,7 +204,8 @@ class _ProgressBar extends StatelessWidget {
     );
   }
 
-  TextStyle get _timeStyle => TextStyle(color: Colors.white54, fontSize: 11.sp);
+  TextStyle get _timeStyle =>
+      TextStyle(color: AppColors.textFaint, fontSize: 11.sp);
 
   String _format(Duration duration) {
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');

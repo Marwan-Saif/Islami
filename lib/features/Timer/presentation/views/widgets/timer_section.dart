@@ -1,3 +1,4 @@
+import 'package:islami/core/utils/app_colors.dart';
 import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/pattern_background.dart';
 import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_card.dart';
 import 'package:islami/generated/l10n.dart';
@@ -177,102 +178,116 @@ class _PrayerTimerState extends State<PrayerTimer> {
       margin: EdgeInsetsDirectional.symmetric(horizontal: 20.sp),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        image: const DecorationImage(
-          image: AssetImage(Assets.imagesTimerBackground),
-          fit: BoxFit.fill,
-        ),
-        color: const Color(0xFF856b3e),
+        gradient: AppColors.goldGradient,
         borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withValues(alpha: 0.25),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-      child: Column(
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          // الميلادي على الشمال والهجري على اليمين في اللغتين
-          Row(
-            textDirection: TextDirection.ltr,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(child: _DateText(_gregorianDate(now, language))),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  "${S.of(context).prayerTimes}\n$currentDay",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.amiri(
-                    fontSize: 18.sp,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Expanded(child: _DateText(_hijriDate(now, language))),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Prayer Times Carousel
-          CarouselSlider.builder(
-            carouselController: _carousel,
-            itemBuilder: (context, index, realIndex) => PrayerTimerCard(
-              prayerName: prayerTimesList[index].$1,
-              time: prayerTimesList[index].$2,
-              isHighlighted: index == nextIndex,
-              pm: prayerTimesList[index].$3,
-            ),
-            itemCount: prayerTimesList.length,
-            options: CarouselOptions(
-              height: 110.sp,
-              viewportFraction: 0.35,
-              enlargeCenterPage: true,
-              enlargeFactor: 0.22,
-              initialPage: nextIndex,
-              enableInfiniteScroll: true,
+          Positioned.fill(
+            child: IslamicPatternLayer(
+              color: AppColors.onPrimary,
+              opacity: 1.4,
             ),
           ),
-          const SizedBox(height: 20),
-
-          Row(
+          Column(
             children: [
-              IconButton(
-                onPressed: _updateLocation,
-                tooltip: PrayerTimesService.usesDeviceLocation
-                    ? S.of(context).timesForMyLocation
-                    : S
-                          .of(context)
-                          .timesForCity(
-                            city?.name ?? S.of(context).defaultCityName,
-                          ),
-                icon: Icon(
-                  PrayerTimesService.usesDeviceLocation
-                      ? Icons.location_on
-                      : Icons.location_off,
-                  color: Colors.black,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  S
-                      .of(context)
-                      .nextPrayer(
-                        _prayerName(next),
-                        DateFormat('hh:mm a', language).format(nextTime),
+              // الميلادي على الشمال والهجري على اليمين في اللغتين
+              Row(
+                textDirection: TextDirection.ltr,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(child: _DateText(_gregorianDate(now, language))),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      "${S.of(context).prayerTimes}\n$currentDay",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.amiri(
+                        fontSize: 18.sp,
+                        color: AppColors.onPrimary,
+                        fontWeight: FontWeight.bold,
                       ),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    ),
                   ),
+                  Expanded(child: _DateText(_hijriDate(now, language))),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Prayer Times Carousel
+              CarouselSlider.builder(
+                carouselController: _carousel,
+                itemBuilder: (context, index, realIndex) => PrayerTimerCard(
+                  prayerName: prayerTimesList[index].$1,
+                  time: prayerTimesList[index].$2,
+                  isHighlighted: index == nextIndex,
+                  pm: prayerTimesList[index].$3,
+                ),
+                itemCount: prayerTimesList.length,
+                options: CarouselOptions(
+                  height: 110.sp,
+                  viewportFraction: 0.35,
+                  enlargeCenterPage: true,
+                  enlargeFactor: 0.22,
+                  initialPage: nextIndex,
+                  enableInfiniteScroll: true,
                 ),
               ),
-              IconButton(
-                onPressed: _toggleAdhan,
-                tooltip: adhanEnabled
-                    ? S.of(context).disableAdhan
-                    : S.of(context).enableAdhan,
-                icon: Icon(
-                  adhanEnabled ? Icons.volume_up : Icons.volume_off,
-                  color: Colors.black,
-                ),
+              const SizedBox(height: 20),
+
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: _updateLocation,
+                    tooltip: PrayerTimesService.usesDeviceLocation
+                        ? S.of(context).timesForMyLocation
+                        : S
+                              .of(context)
+                              .timesForCity(
+                                city?.name ?? S.of(context).defaultCityName,
+                              ),
+                    icon: Icon(
+                      PrayerTimesService.usesDeviceLocation
+                          ? Icons.location_on
+                          : Icons.location_off,
+                      color: AppColors.onPrimary,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      S
+                          .of(context)
+                          .nextPrayer(
+                            _prayerName(next),
+                            DateFormat('hh:mm a', language).format(nextTime),
+                          ),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.onPrimary,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _toggleAdhan,
+                    tooltip: adhanEnabled
+                        ? S.of(context).disableAdhan
+                        : S.of(context).enableAdhan,
+                    icon: Icon(
+                      adhanEnabled ? Icons.volume_up : Icons.volume_off,
+                      color: AppColors.onPrimary,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -315,7 +330,7 @@ class _DateText extends StatelessWidget {
         style: TextStyle(
           fontSize: 14.sp,
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: AppColors.onPrimary,
           height: 1.3,
         ),
       ),

@@ -38,7 +38,7 @@ class _AyahSearchViewState extends State<AyahSearchView> {
         future: _results,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: AppColors.primaryColor),
             );
           }
@@ -47,7 +47,7 @@ class _AyahSearchViewState extends State<AyahSearchView> {
             return Center(
               child: Text(
                 S.of(context).noAyahsFor(widget.query),
-                style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+                style: TextStyle(color: AppColors.textMuted, fontSize: 16.sp),
               ),
             );
           }
@@ -55,7 +55,7 @@ class _AyahSearchViewState extends State<AyahSearchView> {
             padding: EdgeInsets.all(16.r),
             itemCount: ayahs.length,
             separatorBuilder: (context, index) =>
-                const Divider(color: Colors.white12),
+                Divider(color: AppColors.divider),
             itemBuilder: (context, index) {
               final ayah = ayahs[index];
               return InkWell(
@@ -76,7 +76,7 @@ class _AyahSearchViewState extends State<AyahSearchView> {
                             .of(context)
                             .ayahRefDot(surahTitle(ayah.surahNumber), ayah.id),
                         style: TextStyle(
-                          color: Colors.white54,
+                          color: AppColors.textFaint,
                           fontSize: 13.sp,
                         ),
                       ),

@@ -20,8 +20,7 @@ class HadithSectionsView extends StatelessWidget {
       body: ListView.separated(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         itemCount: book.sections.length,
-        separatorBuilder: (context, index) =>
-            const Divider(color: Colors.white12),
+        separatorBuilder: (context, index) => Divider(color: AppColors.divider),
         itemBuilder: (context, index) {
           final section = book.sections[index];
           return ListTile(
@@ -34,12 +33,12 @@ class HadithSectionsView extends StatelessWidget {
               backgroundColor: AppColors.primaryColor.withValues(alpha: 0.15),
               child: Text(
                 '${section.number}',
-                style: const TextStyle(color: AppColors.primaryColor),
+                style: TextStyle(color: AppColors.primaryColor),
               ),
             ),
             title: Text(
               section.rangeLabel,
-              style: TextStyle(color: Colors.white, fontSize: 16.sp),
+              style: TextStyle(color: AppColors.text, fontSize: 16.sp),
             ),
             subtitle: Text(
               section.nameEn,
@@ -47,11 +46,11 @@ class HadithSectionsView extends StatelessWidget {
               textAlign: Directionality.of(context) == TextDirection.rtl
                   ? TextAlign.right
                   : TextAlign.left,
-              style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+              style: TextStyle(color: AppColors.textFaint, fontSize: 12.sp),
             ),
             trailing: Icon(
               Icons.arrow_forward_ios_rounded,
-              color: Colors.white38,
+              color: AppColors.textFaint,
               size: 16.r,
             ),
           );

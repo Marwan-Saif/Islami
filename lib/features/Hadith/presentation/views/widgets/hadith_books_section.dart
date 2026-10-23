@@ -35,7 +35,7 @@ class HadithBooksSection extends StatelessWidget {
             child: Text(
               S.of(context).hadiths,
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -105,7 +105,7 @@ class _BookCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: GoogleFonts.amiri(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 17.sp,
                     fontWeight: FontWeight.bold,
                   ),

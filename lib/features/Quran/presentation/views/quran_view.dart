@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/utils/app_colors.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/brand_header.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/manager/quran_cubit/quran_cubit.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/reading_tracker_card.dart';
@@ -35,12 +35,8 @@ class _QuranViewState extends State<QuranView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 40.sp),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsetsDirectional.symmetric(horizontal: 60.sp),
-            child: Image.asset(Assets.imagesMosque001, width: 200.sp),
-          ),
+          const BrandHeader(),
+          SizedBox(height: 4.h),
           //*****Screen */
           Expanded(
             child: Padding(
@@ -70,7 +66,7 @@ class _QuranViewState extends State<QuranView> {
                     child: Text(
                       S.of(context).Suras_List,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.text,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -98,10 +94,7 @@ class _AyahSearchTile extends StatelessWidget {
       onTap: onTap,
       dense: true,
       contentPadding: EdgeInsets.zero,
-      leading: const Icon(
-        Icons.manage_search_rounded,
-        color: AppColors.primaryColor,
-      ),
+      leading: Icon(Icons.manage_search_rounded, color: AppColors.primaryColor),
       title: Text(
         S.of(context).searchAyahsFor(query.trim()),
         maxLines: 1,

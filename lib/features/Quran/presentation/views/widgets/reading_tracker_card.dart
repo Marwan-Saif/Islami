@@ -27,7 +27,7 @@ class ReadingTrackerCard extends StatelessWidget {
             margin: EdgeInsets.symmetric(vertical: 8.h),
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.45),
+              color: AppColors.card,
               borderRadius: BorderRadius.circular(18.r),
               border: Border.all(
                 color: AppColors.primaryColor.withValues(alpha: 0.4),
@@ -45,7 +45,7 @@ class ReadingTrackerCard extends StatelessWidget {
                       Text(
                         S.of(context).readingTracker,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.text,
                           fontSize: 15.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -63,7 +63,7 @@ class ReadingTrackerCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: AppColors.textMuted,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -83,7 +83,7 @@ class ReadingTrackerCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Colors.white54,
+                          color: AppColors.textFaint,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -140,7 +140,7 @@ class ProgressRing extends StatelessWidget {
               value: progress,
               strokeWidth: size / 10,
               color: AppColors.primaryColor,
-              backgroundColor: Colors.white12,
+              backgroundColor: AppColors.divider,
             ),
           ),
           FittedBox(
@@ -149,8 +149,8 @@ class ProgressRing extends StatelessWidget {
               padding: EdgeInsets.all(size / 6),
               child: Text(
                 '${(progress * 100).floor()}%',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.text,
                   fontWeight: FontWeight.bold,
                 ),
               ),

@@ -51,7 +51,7 @@ Future<void> showAyahActionsSheet(
     backgroundColor: AppColors.backgroundColor,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-      side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+      side: BorderSide(color: AppColors.primaryColor, width: 1.5),
     ),
     builder: (context) => ConstrainedBox(
       constraints: BoxConstraints(
@@ -137,10 +137,10 @@ class _AyahActionsState extends State<_AyahActions> {
               onTap: () => Navigator.of(context).pop(reciter),
               title: Text(
                 reciter.name,
-                style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                style: TextStyle(color: AppColors.text, fontSize: 15.sp),
               ),
               trailing: reciter.id == _reciter.id
-                  ? const Icon(Icons.check, color: AppColors.primaryColor)
+                  ? Icon(Icons.check, color: AppColors.primaryColor)
                   : null,
             ),
         ],
@@ -168,7 +168,7 @@ class _AyahActionsState extends State<_AyahActions> {
                   .of(context)
                   .ayahRefDot(surahTitle(widget.surahNumber), widget.ayah.id),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+              style: TextStyle(color: AppColors.textFaint, fontSize: 13.sp),
             ),
             SizedBox(height: 8.h),
             Text(
@@ -180,7 +180,7 @@ class _AyahActionsState extends State<_AyahActions> {
                 height: 1.8,
               ),
             ),
-            const Divider(color: Colors.white12),
+            Divider(color: AppColors.divider),
             _ActionTile(
               icon: Icons.record_voice_over_rounded,
               title: S.of(context).reciterLabel(_reciter.name),
@@ -208,7 +208,7 @@ class _AyahActionsState extends State<_AyahActions> {
                 padding: EdgeInsets.all(14.r),
                 margin: EdgeInsets.symmetric(vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.35),
+                  color: AppColors.card,
                   borderRadius: BorderRadius.circular(14.r),
                   border: Border.all(
                     color: AppColors.primaryColor.withValues(alpha: 0.3),
@@ -217,7 +217,7 @@ class _AyahActionsState extends State<_AyahActions> {
                 child: Text(
                   tafsir ?? S.of(context).tafsirUnavailable,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 15.sp,
                     height: 1.7,
                   ),
@@ -262,7 +262,7 @@ class _ActionTile extends StatelessWidget {
       leading: Icon(icon, color: AppColors.primaryColor),
       title: Text(
         title,
-        style: TextStyle(color: Colors.white, fontSize: 16.sp),
+        style: TextStyle(color: AppColors.text, fontSize: 16.sp),
       ),
     );
   }

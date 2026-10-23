@@ -25,6 +25,11 @@ class _RadioViewState extends State<RadioView> {
     final lastSelection = getit.get<RecitationsRepo>().getLastSelection();
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
+      // الأيقونة اللي فوق كانت بتركب على شريط الساعة والبطارية
+      padding: EdgeInsets.only(
+        top: MediaQuery.paddingOf(context).top,
+        bottom: MediaQuery.paddingOf(context).bottom + 16,
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: Column(
@@ -43,7 +48,7 @@ class _RadioViewState extends State<RadioView> {
                   Text(
                     S.of(context).radioAndRecitations,
                     style: GoogleFonts.amiri(
-                      color: Colors.white,
+                      color: AppColors.text,
                       fontSize: 28.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -61,7 +66,7 @@ class _RadioViewState extends State<RadioView> {
             Text(
               S.of(context).audioLibrary,
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -117,7 +122,7 @@ class _RadioViewState extends State<RadioView> {
       child: Container(
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.4),
+          color: AppColors.card,
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: AppColors.primaryColor.withValues(alpha: 0.3),
@@ -144,7 +149,7 @@ class _RadioViewState extends State<RadioView> {
                   Text(
                     title,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.text,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -152,7 +157,10 @@ class _RadioViewState extends State<RadioView> {
                   SizedBox(height: 4.h),
                   Text(
                     subtitle,
-                    style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+                    style: TextStyle(
+                      color: AppColors.textFaint,
+                      fontSize: 13.sp,
+                    ),
                   ),
                 ],
               ),
@@ -161,7 +169,7 @@ class _RadioViewState extends State<RadioView> {
             // سهم الدخول
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: Colors.white38,
+              color: AppColors.textFaint,
               size: 18.sp,
             ),
           ],
@@ -215,14 +223,7 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.primaryColor.withValues(alpha: 0.9),
-            AppColors.primaryColor.withValues(alpha: 0.5),
-          ],
-        ),
+        gradient: AppColors.goldGradient,
         boxShadow: [
           BoxShadow(
             color: AppColors.primaryColor.withValues(alpha: 0.2),
@@ -239,7 +240,7 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
             child: Icon(
               Icons.mosque_rounded,
               size: 150.sp,
-              color: Colors.black.withValues(alpha: 0.1),
+              color: AppColors.onPrimary.withValues(alpha: 0.1),
             ),
           ),
           Padding(
@@ -277,7 +278,9 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
                           Text(
                             displaySubtitle, // اسم القارئ (مثل: عبد الباري محمد)
                             style: TextStyle(
-                              color: Colors.black54,
+                              color: AppColors.onPrimary.withValues(
+                                alpha: 0.75,
+                              ),
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -287,7 +290,7 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
                           Text(
                             displayTitle, // اسم السورة أو الإذاعة (مثل: سورة الفاتحة)
                             style: GoogleFonts.amiri(
-                              color: Colors.black,
+                              color: AppColors.onPrimary,
                               fontSize: 26.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -369,8 +372,8 @@ class _LiveRadioCardState extends State<LiveRadioCard> {
       child: Container(
         width: 60.w,
         height: 60.w,
-        decoration: const BoxDecoration(
-          color: Colors.black,
+        decoration: BoxDecoration(
+          color: AppColors.backgroundColor,
           shape: BoxShape.circle,
         ),
         child: child ?? Icon(icon, color: AppColors.primaryColor, size: 35.sp),

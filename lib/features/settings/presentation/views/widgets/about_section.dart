@@ -13,7 +13,7 @@ class AboutSection extends StatelessWidget {
 
   // بيشتغل بعد ما التطبيق يتنشر على Google Play بالـ ID ده
   static const String _playStoreUrl =
-      'https://play.google.com/store/apps/details?id=com.marwansaif.islami';
+      'https://play.google.com/store/apps/details?id=com.marwansaif.athar';
 
   // نفس اللينك اللي بيتحط في Google Play Console
   static const String _privacyPolicyUrl =
@@ -79,8 +79,10 @@ class AboutSection extends StatelessWidget {
           title: S.of(context).licensesAndSources,
           value: null,
           icon: Icons.description_outlined,
-          onTap: () =>
-              showLicensePage(context: context, applicationName: 'Islami'),
+          onTap: () => showLicensePage(
+            context: context,
+            applicationName: S.of(context).appName,
+          ),
         ),
         FutureBuilder<PackageInfo>(
           future: PackageInfo.fromPlatform(),

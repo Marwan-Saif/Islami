@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/utils/app_colors.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/pattern_background.dart';
 import 'package:islami/core/widgets/appbar.dart';
 import 'package:islami/features/Timer/domain/zekr_entity.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/azkar_card.dart';
@@ -45,28 +45,9 @@ class _SuraSCreenState extends State<SuraSCreen> {
         alignment: Alignment.center,
         fit: StackFit.expand,
         children: [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Image.asset(
-              Assets.imagesMosque02,
-              fit: BoxFit.cover,
-              color: AppColors.primaryColor.withValues(alpha: 0.4),
-            ),
-          ),
-          Positioned(
-            top: 8,
-            right: 12,
-            child: Image.asset(Assets.imagesMaskgroupRight),
-          ),
-          Positioned(
-            top: 8,
-            left: 12,
-            child: Image.asset(Assets.imagesMaskgroupLeft),
-          ),
+          const Positioned.fill(child: IslamicPatternLayer()),
           Positioned.fill(
-            top: 90,
+            top: 16,
             child: SafeArea(
               top: false,
               child: Column(
@@ -107,10 +88,12 @@ class _SuraSCreenState extends State<SuraSCreen> {
                     _finished
                         ? S.of(context).zekrDone
                         : S.of(context).tapToCount,
-                    style: TextStyle(color: Colors.white70, fontSize: 13.sp),
+                    style: TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 13.sp,
+                    ),
                   ),
-                  // فوق رسمة الجامع اللي في آخر الشاشة
-                  SizedBox(height: 110.h),
+                  SizedBox(height: 32.h),
                 ],
               ),
             ),
@@ -175,7 +158,7 @@ class _ZekrCounter extends StatelessWidget {
                           Text(
                             S.of(context).zekrOutOf(count),
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: AppColors.textMuted,
                               fontSize: 12.sp,
                             ),
                           ),

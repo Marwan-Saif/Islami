@@ -4,7 +4,7 @@ import 'package:islami/core/services/shared_prefs.dart';
 import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:islami/generated/l10n.dart';
 import 'package:islami/core/utils/app_colors.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/pattern_background.dart';
 import 'package:islami/features/Qibla/presentation/views/qibla_view.dart';
 import 'package:islami/features/Quran/presentation/views/quran_view.dart';
 import 'package:islami/features/Radio/presentation/views/radio_view.dart';
@@ -62,23 +62,23 @@ class _DefaultScreenState extends State<DefaultScreen> {
         backgroundColor: AppColors.backgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+          side: BorderSide(color: AppColors.primaryColor, width: 1.5),
         ),
-        icon: const Icon(Icons.alarm_on_rounded, color: AppColors.primaryColor),
+        icon: Icon(Icons.alarm_on_rounded, color: AppColors.primaryColor),
         title: Text(
           S.of(context).exactAlarmTitle,
-          style: const TextStyle(color: AppColors.primaryColor),
+          style: TextStyle(color: AppColors.primaryColor),
         ),
         content: Text(
           S.of(context).exactAlarmMessage,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: AppColors.text),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(
               S.of(context).exactAlarmLater,
-              style: const TextStyle(color: Colors.white70),
+              style: TextStyle(color: AppColors.textMuted),
             ),
           ),
           FilledButton(
@@ -117,36 +117,32 @@ class _DefaultScreenState extends State<DefaultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        //background
-        Image.asset(
-          Assets.imagesTajMahalAgraIndia,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
-        //scaffold
-        Positioned(
-          child: Scaffold(
-            backgroundColor: AppColors.backgroundColor.withAlpha(150),
-            body: IndexedStack(
-              index: currentIndex,
-              children: [
-                for (int i = 0; i < 5; i++)
-                  _builtTabs.contains(i) ? _tab(i) : const SizedBox.shrink(),
-              ],
-            ),
-            bottomNavigationBar: CustomBottomNaBar(
-              currentIndex: (index) {
-                currentIndex = index;
-                _builtTabs.add(index);
-                setState(() {});
-              },
-            ),
+    // الخلفية زخرفة مرسومة بالكود بدل الصورة الفوتوغرافية
+    return PatternBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        // المحتوى بيكمل تحت الشريط العائم، والتابات بتسيب مسافة قدّه
+        // (Scaffold بيحطها في MediaQuery.padding.bottom)
+        extendBody: true,
+        // المحتوى مش بيدخل تحت شريط الساعة والإشارة وهو بيعمل scroll
+        body: SafeArea(
+          bottom: false,
+          child: IndexedStack(
+            index: currentIndex,
+            children: [
+              for (int i = 0; i < 5; i++)
+                _builtTabs.contains(i) ? _tab(i) : const SizedBox.shrink(),
+            ],
           ),
         ),
-      ],
+        bottomNavigationBar: CustomBottomNaBar(
+          currentIndex: (index) {
+            currentIndex = index;
+            _builtTabs.add(index);
+            setState(() {});
+          },
+        ),
+      ),
     );
   }
 }

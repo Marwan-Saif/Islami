@@ -55,8 +55,11 @@ class AzkarListViewBody extends StatelessWidget {
           vertical: 20.sp,
           horizontal: 20.sp,
         ),
-        itemBuilder: (context, index) =>
-            ZekrCard(name: names[index], zekrList: azkar[index]),
+        itemBuilder: (context, index) => ZekrCard(
+          name: names[index],
+          zekrList: azkar[index],
+          icon: kAzkarIcons[index % kAzkarIcons.length],
+        ),
         separatorBuilder: (context, index) => SizedBox(width: 20.sp),
         // كان مكتوب 7 ثابت فـ "أذكار النوم" (الملف التامن) مكنتش بتظهر
         itemCount: azkar.length,

@@ -61,7 +61,7 @@ class ReadingTrackerView extends StatelessWidget {
                               ? S.of(context).fullJuz
                               : S.of(context).pagesCount(pages),
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.text,
                             fontSize: 15.sp,
                           ),
                         ),
@@ -72,15 +72,12 @@ class ReadingTrackerView extends StatelessWidget {
                                 (ReadingTracker.totalPages / pages).ceil(),
                               ),
                           style: TextStyle(
-                            color: Colors.white54,
+                            color: AppColors.textFaint,
                             fontSize: 12.sp,
                           ),
                         ),
                         trailing: pages == tracker.dailyGoal
-                            ? const Icon(
-                                Icons.check,
-                                color: AppColors.primaryColor,
-                              )
+                            ? Icon(Icons.check, color: AppColors.primaryColor)
                             : null,
                       ),
                   ],
@@ -101,11 +98,11 @@ class ReadingTrackerView extends StatelessWidget {
         backgroundColor: AppColors.backgroundColor,
         title: Text(
           S.of(context).startNewKhatma,
-          style: const TextStyle(color: AppColors.primaryColor),
+          style: TextStyle(color: AppColors.primaryColor),
         ),
         content: Text(
           S.of(context).resetKhatmaConfirm,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: AppColors.text),
         ),
         actions: [
           TextButton(
@@ -116,7 +113,7 @@ class ReadingTrackerView extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
               S.of(context).startOver,
-              style: const TextStyle(color: Colors.redAccent),
+              style: TextStyle(color: AppColors.danger),
             ),
           ),
         ],
@@ -183,7 +180,7 @@ class ReadingTrackerView extends StatelessWidget {
                   onPressed: () => _pickGoal(context),
                   child: Text(
                     S.of(context).editGoal,
-                    style: const TextStyle(color: AppColors.primaryColor),
+                    style: TextStyle(color: AppColors.primaryColor),
                   ),
                 ),
                 child: Column(
@@ -203,7 +200,7 @@ class ReadingTrackerView extends StatelessWidget {
                       minHeight: 8.h,
                       borderRadius: BorderRadius.circular(8.r),
                       color: AppColors.primaryColor,
-                      backgroundColor: Colors.white12,
+                      backgroundColor: AppColors.divider,
                     ),
                     SizedBox(height: 12.h),
                     _WeekChart(goal: tracker.dailyGoal),
@@ -257,7 +254,7 @@ class _Section extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 14.h),
       padding: EdgeInsets.all(14.r),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(18.r),
         border: Border.all(
           color: AppColors.primaryColor.withValues(alpha: 0.35),
@@ -296,7 +293,7 @@ class _InfoText extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: TextStyle(color: Colors.white, fontSize: 14.sp),
+    style: TextStyle(color: AppColors.text, fontSize: 14.sp),
   );
 }
 
@@ -320,18 +317,18 @@ class _PositionTile extends StatelessWidget {
       leading: Icon(icon, color: AppColors.primaryColor),
       title: Text(
         S.of(context).ayahRef(surahTitle(position.surah), position.ayah),
-        style: TextStyle(color: Colors.white, fontSize: 15.sp),
+        style: TextStyle(color: AppColors.text, fontSize: 15.sp),
       ),
       subtitle: Text(
         S.of(context).pageNumber(position.page),
-        style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+        style: TextStyle(color: AppColors.textFaint, fontSize: 12.sp),
       ),
       trailing: onDelete == null
           ? null
           : IconButton(
               onPressed: onDelete,
               tooltip: S.of(context).deleteBookmark,
-              icon: const Icon(Icons.delete_outline, color: Colors.white54),
+              icon: Icon(Icons.delete_outline, color: AppColors.textFaint),
             ),
     );
   }
@@ -388,7 +385,10 @@ class _WeekChart extends StatelessWidget {
                   SizedBox(height: 4.h),
                   Text(
                     dayLetter.format(day),
-                    style: TextStyle(color: Colors.white54, fontSize: 11.sp),
+                    style: TextStyle(
+                      color: AppColors.textFaint,
+                      fontSize: 11.sp,
+                    ),
                   ),
                 ],
               ),

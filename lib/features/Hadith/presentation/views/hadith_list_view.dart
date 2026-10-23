@@ -54,14 +54,17 @@ class _HadithListViewState extends State<HadithListView> {
                   Text(
                     S.of(context).hadithLoadError,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70, fontSize: 15.sp),
+                    style: TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 15.sp,
+                    ),
                   ),
                   SizedBox(height: 12.h),
                   OutlinedButton(
                     onPressed: _retry,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primaryColor,
-                      side: const BorderSide(color: AppColors.primaryColor),
+                      side: BorderSide(color: AppColors.primaryColor),
                     ),
                     child: Text(S.of(context).retry),
                   ),
@@ -70,7 +73,7 @@ class _HadithListViewState extends State<HadithListView> {
             );
           }
           if (!snapshot.hasData) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: AppColors.primaryColor),
             );
           }
@@ -103,7 +106,7 @@ class HadithFavoritesView extends StatelessWidget {
           builder: (context, snapshot) {
             final favorites = snapshot.data;
             if (favorites == null) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(color: AppColors.primaryColor),
               );
             }
@@ -111,7 +114,7 @@ class HadithFavoritesView extends StatelessWidget {
               return Center(
                 child: Text(
                   S.of(context).favoritesEmpty,
-                  style: TextStyle(color: Colors.white70, fontSize: 15.sp),
+                  style: TextStyle(color: AppColors.textMuted, fontSize: 15.sp),
                 ),
               );
             }

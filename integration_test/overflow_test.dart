@@ -16,7 +16,6 @@ import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/app_settings.dart';
 import 'package:islami/core/services/audio_services.dart';
 import 'package:islami/core/services/get_it.dart';
-import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/views/surah_view.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/ayah_actions_sheet.dart';
@@ -174,7 +173,7 @@ void main() {
           at('tasbih history dialog');
           await tester.tap(find.byType(BottomNavItem).at(3));
           await frames();
-          await tapIfPresent(find.image(const AssetImage(Assets.imagesReset)));
+          await tapIfPresent(find.byIcon(Icons.history_rounded));
           await home();
 
           at('azkar screen');

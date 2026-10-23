@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_single_quotes
 class Assets {
+  /// assets/images/app_icon.png
+  static const String imagesAppIcon = "assets/images/app_icon.png";
+
   Assets._();
 
   /// Assets for imagesAyahNumber

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:islami/core/utils/app_images.dart';
 import 'package:islami/features/Radio/data/models/audio_model.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -33,7 +34,7 @@ class AudioService {
     try {
       final file = File('${Directory.systemTemp.path}/islami_media_art.png');
       // بتتكتب مرة في كل تشغيلة (23KB) عشان لو الأيقونة اتغيرت في تحديث
-      final data = await rootBundle.load('assets/images/app_icon.png');
+      final data = await rootBundle.load(Assets.imagesAppIcon);
       await file.writeAsBytes(data.buffer.asUint8List(), flush: true);
       return file.uri;
     } catch (e) {

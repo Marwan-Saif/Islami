@@ -72,7 +72,7 @@ class _HadithCardState extends State<HadithCard> {
     return Container(
       padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 14.h),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.35),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(18.r),
         border: Border.all(
           color: AppColors.primaryColor.withValues(alpha: 0.4),
@@ -96,7 +96,7 @@ class _HadithCardState extends State<HadithCard> {
               IconButton(
                 onPressed: _copy,
                 tooltip: S.of(context).copy,
-                icon: const Icon(Icons.copy_rounded, color: Colors.white54),
+                icon: Icon(Icons.copy_rounded, color: AppColors.textFaint),
               ),
               IconButton(
                 onPressed: _toggleFavorite,
@@ -117,7 +117,7 @@ class _HadithCardState extends State<HadithCard> {
               widget.hadith.text,
               textDirection: TextDirection.rtl,
               style: GoogleFonts.amiri(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 18.sp,
                 height: 1.8,
               ),
@@ -127,7 +127,7 @@ class _HadithCardState extends State<HadithCard> {
               widget.hadith.text,
               textDirection: TextDirection.ltr,
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 15.sp,
                 height: 1.6,
               ),

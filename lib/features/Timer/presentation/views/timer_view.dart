@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/utils/app_colors.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/brand_header.dart';
 import 'package:islami/features/Hadith/presentation/views/widgets/hadith_books_section.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/timer_section.dart';
 import 'package:islami/features/Timer/presentation/views/widgets/zekr_section.dart';
@@ -19,36 +19,19 @@ class TimerView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 20.h),
-
-          Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                margin: EdgeInsetsDirectional.symmetric(horizontal: 60.w),
-                child: Image.asset(
-                  Assets.imagesMosque001,
-                  height: 150.h,
-                  fit: BoxFit.cover,
-                ),
+          BrandHeader(
+            trailing: IconButton(
+              onPressed: () => context.push(AppRouter.settingsView),
+              tooltip: S.of(context).settings,
+              icon: Icon(
+                Icons.settings_rounded,
+                color: AppColors.primaryColor,
+                size: 28.r,
               ),
-              PositionedDirectional(
-                top: 8.h,
-                end: 8.w,
-                child: IconButton(
-                  onPressed: () => context.push(AppRouter.settingsView),
-                  tooltip: S.of(context).settings,
-                  icon: Icon(
-                    Icons.settings_rounded,
-                    color: AppColors.primaryColor,
-                    size: 28.r,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
 
-          SizedBox(height: 20.h),
+          SizedBox(height: 12.h),
 
           const PrayerTimer(),
 
@@ -61,7 +44,7 @@ class TimerView extends StatelessWidget {
               child: Text(
                 S.of(context).azkar,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.text,
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -75,7 +58,8 @@ class TimerView extends StatelessWidget {
 
           const HadithBooksSection(),
 
-          SizedBox(height: 80.h),
+          // مسافة الشريط العائم اللي تحت (extendBody)
+          SizedBox(height: MediaQuery.paddingOf(context).bottom + 16.h),
         ],
       ),
     );

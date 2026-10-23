@@ -13,6 +13,7 @@ import 'package:islami/core/services/app_settings.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/services/shared_prefs.dart';
+import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Sebha/presentation/views/local_sypha.dart';
 import 'package:islami/features/Timer/data/azkar_notifications.dart';
@@ -37,7 +38,7 @@ void main() async {
     _openHiveBoxes(),
     // تهيئة مشغل الصوت للعمل في الخلفية وإظهار شريط الإشعارات
     JustAudioBackground.init(
-      androidNotificationChannelId: 'com.marwansaif.islami.channel.audio',
+      androidNotificationChannelId: 'com.marwansaif.athar.channel.audio',
       androidNotificationChannelName: 'تشغيل الراديو والتلاوات',
       androidNotificationOngoing: true,
       androidShowNotificationBadge: true,
@@ -96,43 +97,151 @@ Future<void> _scheduleNotifications() async {
   }
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
   @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
+  final _settings = AppSettings.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _settings.locale.addListener(_rebuild);
+    _settings.themeMode.addListener(_rebuild);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _settings.locale.removeListener(_rebuild);
+    _settings.themeMode.removeListener(_rebuild);
+    super.dispose();
+  }
+
+  // لما المستخدم يغير وضع الموبايل (فاتح/داكن) والتطبيق على "حسب الموبايل"
+  @override
+  void didChangePlatformBrightness() => _rebuild();
+
+  void _rebuild() => setState(() {});
+
+  Brightness get _brightness => switch (_settings.themeMode.value) {
+    ThemeMode.light => Brightness.light,
+    ThemeMode.dark => Brightness.dark,
+    ThemeMode.system =>
+      WidgetsBinding.instance.platformDispatcher.platformBrightness,
+  };
+
+  @override
   Widget build(BuildContext context) {
+    final brightness = _brightness;
+    // لازم يتحدد قبل ما أي ويدجت تقرا AppColors
+    AppColors.brightness = brightness;
+    final locale = _settings.locale.value;
     return ScreenUtilInit(
       minTextAdapt: true,
       designSize: const Size(395, 825),
-      // تغيير اللغة من الإعدادات بيعيد بناء التطبيق كله بالـ locale الجديدة
-      child: ValueListenableBuilder<Locale>(
-        valueListenable: AppSettings.instance.locale,
-        builder: (context, locale, _) => MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          // حجم خط النظام بيتضرب في .sp، فبنحطله حد أقصى عشان الكروت متتكسرش
-          builder: (context, child) {
-            final mediaQuery = MediaQuery.of(context);
-            return MediaQuery(
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        builder: (context, child) {
+          final mediaQuery = MediaQuery.of(context);
+          final dark = brightness == Brightness.dark;
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value:
+                (dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+                    .copyWith(
+                      statusBarColor: Colors.transparent,
+                      systemNavigationBarColor: AppColors.backgroundDeep,
+                    ),
+            // حجم خط النظام بيتضرب في .sp، فبنحطله حد أقصى عشان الكروت متتكسرش
+            child: MediaQuery(
               data: mediaQuery.copyWith(
                 textScaler: mediaQuery.textScaler.clamp(
                   minScaleFactor: 0.85,
                   maxScaleFactor: 1.3,
                 ),
               ),
-              child: child!,
-            );
-          },
-          localizationsDelegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          locale: locale,
-          theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
-          routerConfig: AppRouter.router,
+              // الألوان مش جاية من Theme.of، فمع تغيير الوضع بنبني الشاشات
+              // من جديد (مكان المستخدم في التنقل محفوظ في الـ router)
+              child: KeyedSubtree(key: ValueKey(brightness), child: child!),
+            ),
+          );
+        },
+        themeAnimationDuration: Duration.zero,
+        theme: _buildTheme(brightness),
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        locale: locale,
+        routerConfig: AppRouter.router,
+      ),
+    );
+  }
+
+  /// ثيم المكونات الجاهزة (الحوارات، المفاتيح، الشيتات، صفحة التراخيص...)
+  /// بنفس ألوان AppColors للوضع الحالي
+  static ThemeData _buildTheme(Brightness brightness) {
+    final base = ThemeData(brightness: brightness, useMaterial3: true);
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.primaryColor,
+          brightness: brightness,
+        ).copyWith(
+          primary: AppColors.primaryColor,
+          onPrimary: AppColors.onPrimary,
+          secondary: AppColors.primaryColor,
+          onSecondary: AppColors.onPrimary,
+          surface: AppColors.surface,
+          onSurface: AppColors.text,
+          error: AppColors.danger,
+        );
+    return base.copyWith(
+      colorScheme: scheme,
+      scaffoldBackgroundColor: AppColors.backgroundColor,
+      canvasColor: AppColors.backgroundColor,
+      textTheme: GoogleFonts.poppinsTextTheme(
+        base.textTheme,
+      ).apply(bodyColor: AppColors.text, displayColor: AppColors.text),
+      iconTheme: IconThemeData(color: AppColors.primaryColor),
+      dividerColor: AppColors.divider,
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.backgroundColor,
+        foregroundColor: AppColors.text,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.surfaceHigh,
+        titleTextStyle: TextStyle(
+          color: AppColors.primaryColor,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
         ),
+        contentTextStyle: TextStyle(color: AppColors.text, fontSize: 15),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: AppColors.surfaceHigh,
+        modalBackgroundColor: AppColors.surfaceHigh,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: AppColors.surfaceHigh,
+        contentTextStyle: TextStyle(color: AppColors.text),
+        actionTextColor: AppColors.primaryColor,
+        behavior: SnackBarBehavior.floating,
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: AppColors.primaryColor,
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: AppColors.primaryColor),
       ),
     );
   }

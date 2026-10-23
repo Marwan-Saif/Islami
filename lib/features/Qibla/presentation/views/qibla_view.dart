@@ -27,7 +27,7 @@ enum _QiblaStatus {
 
 class _QiblaScreenState extends State<QiblaScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  // final Color AppColors.primaryColor = const Color(0xFFC9A063);
+  // final Color AppColors.primaryColor = const AppColors.primaryColor;
 
   // الأنيميشن الخاص بالنبض (Glow)
   late AnimationController _pulseController;
@@ -143,7 +143,7 @@ class _QiblaScreenState extends State<QiblaScreen>
         Text(
           S.of(context).qiblaDirection,
           style: GoogleFonts.amiri(
-            color: Colors.white,
+            color: AppColors.text,
             fontSize: 28.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -153,7 +153,7 @@ class _QiblaScreenState extends State<QiblaScreen>
 
         // بناء البوصلة واستقبال البيانات من الحساس
         if (_status == _QiblaStatus.checking)
-          const Center(
+          Center(
             child: CircularProgressIndicator(color: AppColors.primaryColor),
           )
         else if (_status != _QiblaStatus.ready)
@@ -199,7 +199,7 @@ class _QiblaScreenState extends State<QiblaScreen>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             // وضعنا لون داكن متطابق مع الخلفية حتى ينعكس الظل
-                            color: Color(0xFF1A1512),
+                            color: AppColors.surface,
                             boxShadow: [
                               BoxShadow(
                                 color: AppColors.primaryColor.withValues(
@@ -240,41 +240,17 @@ class _QiblaScreenState extends State<QiblaScreen>
                     // 3. النجمة/الإبرة الدوارة (تتحرك مع حركة الموبايل)
                     Transform.rotate(
                       angle: qiblaAngle, // الزاوية الحقيقية للقبلة من الحساس
-                      child: Container(
-                        width: compassSize * 0.8,
-                        height: compassSize * 0.8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: const DecorationImage(
-                            image: AssetImage(
-                              "assets/images/compass1.png",
-                            ), // صورة الإبرة أو النجمة
-                            fit: BoxFit.contain,
-                          ),
+                      child: CustomPaint(
+                        size: Size.square(compassSize * 0.8),
+                        painter: QiblaNeedlePainter(
+                          gold: AppColors.goldGradient.colors,
+                          kaaba: AppColors.isDark
+                              ? const Color(0xFF05080B)
+                              : const Color(0xFF1A2530),
+                          tail: AppColors.textFaint,
                         ),
                       ),
                     ),
-
-                    // // 4. أيقونة المنتصف (ثابتة)
-                    // Container(
-                    //   width: 60.w,
-                    //   height: 60.w,
-                    //   decoration: BoxDecoration(
-                    //     color: const Color(0xFF1A1512),
-                    //     shape: BoxShape.circle,
-                    //     border: Border.all(color: AppColors.primaryColor, width: 2),
-                    //     boxShadow: [
-                    //       BoxShadow(color: Colors.black.withValues(alpha: 0.8), blurRadius: 10),
-                    //     ],
-                    //   ),
-                    //   child: Center(
-                    //     child: Icon(
-                    //       Icons.mosque_rounded, // الكعبة أو المسجد
-                    //       color: AppColors.primaryColor,
-                    //       size: 30.sp,
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               );
@@ -286,7 +262,7 @@ class _QiblaScreenState extends State<QiblaScreen>
         Container(
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: AppColors.card,
             borderRadius: BorderRadius.circular(20.r),
             border: Border.all(
               color: AppColors.primaryColor.withValues(alpha: 0.4),
@@ -295,7 +271,7 @@ class _QiblaScreenState extends State<QiblaScreen>
           child: Text(
             S.of(context).rotateDeviceForQibla,
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.text,
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
             ),
@@ -303,7 +279,7 @@ class _QiblaScreenState extends State<QiblaScreen>
         ),
 
         const Spacer(),
-        SizedBox(height: 100.h),
+        SizedBox(height: MediaQuery.paddingOf(context).bottom + 16.h),
       ],
     );
   }
@@ -333,7 +309,7 @@ class _QiblaScreenState extends State<QiblaScreen>
               Text(
                 message ?? text,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                style: TextStyle(color: AppColors.text, fontSize: 16.sp),
               ),
               if (message != null || action != null) ...[
                 SizedBox(height: 16.h),
@@ -341,7 +317,7 @@ class _QiblaScreenState extends State<QiblaScreen>
                   onPressed: message != null ? _checkStatus : _onStatusAction,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primaryColor,
-                    side: const BorderSide(color: AppColors.primaryColor),
+                    side: BorderSide(color: AppColors.primaryColor),
                   ),
                   child: Text(message != null ? s.retry : action!),
                 ),
@@ -369,4 +345,77 @@ class _QiblaScreenState extends State<QiblaScreen>
       ),
     );
   }
+}
+
+/// إبرة القبلة: سهم دهبي ناحية الكعبة (مكعب أسود بحزام دهبي) وذيل باهت.
+/// مرسومة بالكود بدل صورة الإبرة
+class QiblaNeedlePainter extends CustomPainter {
+  QiblaNeedlePainter({
+    required this.gold,
+    required this.kaaba,
+    required this.tail,
+  });
+
+  final List<Color> gold;
+  final Color kaaba;
+  final Color tail;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final c = size.center(Offset.zero);
+    final r = size.shortestSide / 2;
+    final w = r * 0.11;
+
+    final goldPaint = Paint()
+      ..shader = LinearGradient(
+        colors: gold,
+      ).createShader(Rect.fromCenter(center: c, width: w * 2, height: r * 2));
+
+    // نص السهم اللي ناحية القبلة
+    final head = Path()
+      ..moveTo(c.dx, c.dy - r * 0.62)
+      ..lineTo(c.dx + w, c.dy)
+      ..lineTo(c.dx - w, c.dy)
+      ..close();
+    canvas.drawPath(head, goldPaint);
+
+    // الذيل
+    final back = Path()
+      ..moveTo(c.dx, c.dy + r * 0.55)
+      ..lineTo(c.dx + w, c.dy)
+      ..lineTo(c.dx - w, c.dy)
+      ..close();
+    canvas.drawPath(back, Paint()..color = tail.withValues(alpha: 0.5));
+
+    // الكعبة فوق السهم
+    final side = r * 0.24;
+    final cube = Rect.fromCenter(
+      center: Offset(c.dx, c.dy - r * 0.8),
+      width: side,
+      height: side,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(cube, Radius.circular(side * 0.08)),
+      Paint()..color = kaaba,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(cube.left, cube.top + side * 0.22, side, side * 0.14),
+      goldPaint,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(cube, Radius.circular(side * 0.08)),
+      Paint()
+        ..shader = goldPaint.shader
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+
+    // المحور
+    canvas.drawCircle(c, w * 0.9, goldPaint);
+    canvas.drawCircle(c, w * 0.4, Paint()..color = kaaba);
+  }
+
+  @override
+  bool shouldRepaint(QiblaNeedlePainter old) =>
+      old.kaaba != kaaba || old.tail != tail;
 }
