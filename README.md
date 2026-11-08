@@ -1,4 +1,4 @@
-# Islami
+# Athar · أثر
 
 A Flutter app for daily Muslim worship: the Holy Quran with tafsir and recitations,
 prayer times with adhan notifications, azkar, hadith, a tasbih counter and the qibla
@@ -35,7 +35,7 @@ direction. Arabic first, with a full English translation.
 | **Radio & recitations** | Live Quran radio stations, plus full recitations by hundreds of reciters and narrations (rewayat) with background playback and media controls in the notification. |
 | **Tasbih** | Counter with history. |
 | **Qibla** | Compass pointing to the Kaaba from the user's location. |
-| **Settings** | Language (Arabic / English), adhan sound, calculation method, location, madhab, per-prayer adhan, reminders, Quran font size, default reciter, translation, about. |
+| **Settings** | Light / dark mode (or follow the phone), language (Arabic / English), adhan sound, calculation method, location, madhab, per-prayer adhan, reminders, Quran font size, default reciter, translation, about. |
 
 ## Getting started
 
@@ -53,7 +53,7 @@ flutter build apk --release        # or: flutter build appbundle --release
 flutter build ios --release
 ```
 
-Android application id: `com.marwansaif.islami`.
+Android application id: `com.marwansaif.athar`. The Dart package is still named `islami`.
 
 ## Project structure
 
@@ -97,7 +97,18 @@ Other folders:
 | `ios/Runner/*.wav` | Notification sounds for iOS (max 30 s, so the adhan is shortened) |
 | `test/` | Unit tests |
 | `integration_test/`, `test_driver/` | Performance benchmark and UI audit (see Testing) |
-| `design/unused_images/` | Design assets that are not used by the app |
+
+## Branding and assets
+
+The logo (a lantern), the background pattern, the tasbih beads and the qibla needle are all drawn in code under `lib/core/widgets/brand/`, so they follow the light and dark themes and need no image files. `tool/render_brand_test.dart` exports the same drawings as the app icon, splash images, notification icon and Play Store graphics:
+
+```bash
+flutter test tool/render_brand_test.dart
+dart run flutter_launcher_icons
+dart run flutter_native_splash:create
+```
+
+Colors for both themes live in `lib/core/utils/app_colors.dart`. Where every asset comes from, and under what license, is listed in [docs/CREDITS.md](docs/CREDITS.md).
 
 ## Data sources
 

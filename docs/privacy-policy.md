@@ -1,8 +1,8 @@
-# Privacy Policy — Islami
+# Privacy Policy — Athar
 
 _Last updated: November 12, 2026_
 
-Islami is a free app for reading the Holy Quran, prayer times and adhan, azkar,
+Athar (أثر) is a free app for reading the Holy Quran, prayer times and adhan, azkar,
 hadith, a tasbih counter and the qibla direction. This policy explains what
 the app does with your information.
 
@@ -62,7 +62,7 @@ https://github.com/Marwan-Saif/Islami/issues
 
 ---
 
-# سياسة الخصوصية — إسلامي
+# سياسة الخصوصية — أثر
 
 _آخر تحديث: ١٢ نوفمبر ٢٠٢٦_
 
