@@ -117,14 +117,25 @@ class NotificationHelper {
           >();
 
   /// أندرويد 13+ و iOS لازم المستخدم يوافق على الإشعارات الأول
-  static Future<void> requestPermissions() async {
+  /// مرة واحدة بس في كل تشغيل: الرئيسية بتتبني من جديد مع تغيير الثيم،
+  /// وطلب تاني وهو لسه مفتوح كان بيرمي permissionRequestInProgress
+  static Future<void>? _permissionRequest;
+
+  static Future<void> requestPermissions() =>
+      _permissionRequest ??= _requestPermissions();
+
+  static Future<void> _requestPermissions() async {
     if (kIsWeb) return;
-    await _androidPlugin?.requestNotificationsPermission();
-    await _notification
-        .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin
-        >()
-        ?.requestPermissions(alert: true, badge: true, sound: true);
+    try {
+      await _androidPlugin?.requestNotificationsPermission();
+      await _notification
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+    } catch (e) {
+      log('notification permission request failed: $e');
+    }
   }
 
   /// على أندرويد 12+ الأذان في وقته بالظبط محتاج إذن "المنبّهات والتذكيرات"،
