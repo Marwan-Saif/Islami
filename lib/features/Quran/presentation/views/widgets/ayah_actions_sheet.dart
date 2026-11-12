@@ -148,6 +148,7 @@ class _AyahActionsState extends State<_AyahActions> {
     );
     if (picked == null) return;
     await saveAyahReciter(picked);
+    if (!mounted) return;
     setState(() => _reciter = picked);
   }
 
@@ -216,6 +217,10 @@ class _AyahActionsState extends State<_AyahActions> {
                 ),
                 child: Text(
                   tafsir ?? S.of(context).tafsirUnavailable,
+                  // التفسير نصه عربي دايماً، فبيتكتب من اليمين حتى لو التطبيق
+                  // بالإنجليزي (كانت الأقواس والنقطة بتطلع في الناحية الغلط)
+                  textDirection: tafsir != null ? TextDirection.rtl : null,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     color: AppColors.text,
                     fontSize: 15.sp,

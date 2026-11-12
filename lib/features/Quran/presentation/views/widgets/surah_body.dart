@@ -9,7 +9,6 @@ import 'package:islami/core/services/audio_services.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/utils/quran_utils.dart';
-import 'package:islami/core/widgets/ayah_number.dart';
 import 'package:islami/features/Quran/data/reading_tracker.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/ayah_actions_sheet.dart';
@@ -278,11 +277,12 @@ class _QuranPageState extends State<_QuranPage> {
                       : textStyle,
                 ),
                 if (ayah.isSajda) TextSpan(text: '۩ ', style: textStyle),
-                WidgetSpan(
-                  alignment: PlaceholderAlignment.middle,
-                  child: AyahNumber(number: ayah.id),
+                // نص مش WidgetSpan: الـ WidgetSpans كانت بتتعكس في السطر
+                TextSpan(
+                  text: '${ayahEndMarker(ayah.id)} ',
+                  recognizer: _recognizerFor(ayah),
+                  style: textStyle.copyWith(color: AppColors.primaryColor),
                 ),
-                const TextSpan(text: ' '),
               ],
             ],
           ),

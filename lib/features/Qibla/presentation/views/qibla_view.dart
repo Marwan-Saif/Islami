@@ -1,3 +1,4 @@
+import 'package:islami/core/services/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -182,8 +183,15 @@ class _QiblaScreenState extends State<QiblaScreen>
                 );
               }
 
-              // زاوية القبلة (بنجيبها من الباكدج وبنحولها لـ Radians)
-              final double qiblaAngle = snapshot.data!.qiblah * (math.pi / 180);
+              // الباكدج بترجع qiblah = heading - offset، فالإبرة (بالنسبة لأعلى
+              // الموبايل) لازم تلف بالسالب زي مثال flutter_qiblah. قبل كده كانت
+              // بتلف بالموجب فكانت معكوسة وبتلف مع الموبايل بدل ما تثبت على القبلة
+              final double qiblaAngle =
+                  -snapshot.data!.qiblah * (math.pi / 180);
+              // حلقة الاتجاهات بتلف عكس اتجاه الموبايل عشان الشمال يفضل شمال
+              final double dialAngle =
+                  -snapshot.data!.direction * (math.pi / 180);
+              final arabic = AppSettings.instance.isArabic;
 
               return Center(
                 child: Stack(
@@ -216,24 +224,42 @@ class _QiblaScreenState extends State<QiblaScreen>
                       },
                     ),
 
-                    // 2. الإطار الخارجي للبوصلة (ثابت)
-                    Container(
-                      width: compassSize,
-                      height: compassSize,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.primaryColor.withValues(alpha: 0.4),
-                          width: 2,
+                    // 2. الإطار الخارجي للبوصلة، بيلف مع اتجاه الموبايل
+                    Transform.rotate(
+                      angle: dialAngle,
+                      child: Container(
+                        width: compassSize,
+                        height: compassSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.primaryColor.withValues(
+                              alpha: 0.4,
+                            ),
+                            width: 2,
+                          ),
                         ),
-                      ),
-                      child: Stack(
-                        children: [
-                          _buildDirectionMarker(Alignment.topCenter, 'N'),
-                          _buildDirectionMarker(Alignment.bottomCenter, 'S'),
-                          _buildDirectionMarker(Alignment.centerRight, 'E'),
-                          _buildDirectionMarker(Alignment.centerLeft, 'W'),
-                        ],
+                        child: Stack(
+                          children: [
+                            _buildDirectionMarker(
+                              Alignment.topCenter,
+                              arabic ? 'ش' : 'N',
+                              highlight: true,
+                            ),
+                            _buildDirectionMarker(
+                              Alignment.bottomCenter,
+                              arabic ? 'ج' : 'S',
+                            ),
+                            _buildDirectionMarker(
+                              Alignment.centerRight,
+                              arabic ? 'ق' : 'E',
+                            ),
+                            _buildDirectionMarker(
+                              Alignment.centerLeft,
+                              arabic ? 'غ' : 'W',
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -329,7 +355,11 @@ class _QiblaScreenState extends State<QiblaScreen>
     );
   }
 
-  Widget _buildDirectionMarker(Alignment alignment, String label) {
+  Widget _buildDirectionMarker(
+    Alignment alignment,
+    String label, {
+    bool highlight = false,
+  }) {
     return Align(
       alignment: alignment,
       child: Padding(
@@ -337,7 +367,10 @@ class _QiblaScreenState extends State<QiblaScreen>
         child: Text(
           label,
           style: TextStyle(
-            color: AppColors.primaryColor.withValues(alpha: 0.6),
+            // الشمال أوضح من باقي الاتجاهات
+            color: AppColors.primaryColor.withValues(
+              alpha: highlight ? 1 : 0.6,
+            ),
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),

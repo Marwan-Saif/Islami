@@ -19,3 +19,15 @@ String ayahCountLabel(int count) => S.current.ayahCount(count);
 final RegExp _ayahEndGlyph = RegExp('[\u00A0 ]*[\uFC00-\uFD3F]\\s*\$');
 
 String cleanAyahText(String text) => text.replaceFirst(_ayahEndGlyph, '');
+
+/// علامة نهاية الآية "۝" ورقمها بالأرقام العربية جواها (زي المصحف).
+/// خط Amiri بيرسم الرقم جوه الزخرفة لوحده. بتتكتب كنص عادي بدل WidgetSpan
+/// لأن Flutter بيعكس ترتيب الـ WidgetSpans في السطر الواحد في النص العربي
+/// (كان رقم 2 بيظهر قبل 1 في سورة الإخلاص)
+String ayahEndMarker(int number) => '۝${arabicDigits(number.toString())}';
+
+/// 0-9 → ٠-٩
+String arabicDigits(String text) => text.replaceAllMapped(
+  RegExp('[0-9]'),
+  (m) => String.fromCharCode(0x0660 + int.parse(m[0]!)),
+);

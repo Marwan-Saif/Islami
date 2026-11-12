@@ -82,12 +82,46 @@ class RecitationsRepoImpl implements RecitationsRepo {
         final json = jsonDecode(saved) as Map<String, dynamic>;
         final reciter = ReciterModel.fromJson(json['reciter']);
         final moshaf = MoshafModel.fromJson(json['moshaf']);
+        // الاختيار بيتحفظ بالأسماء باللغة اللي اتختار بيها، فبنجيب الأسماء
+        // من قائمة اللغة الحالية لو موجودة (كان القارئ بيفضل بالعربي في الإنجليزي)
+        final localized = _localizedReciters();
+        final current = localized?.where((r) => r.id == reciter.id).firstOrNull;
+        final currentMoshaf = current?.moshaf
+            .where((m) => m.id == moshaf.id)
+            .firstOrNull;
+        if (current != null && currentMoshaf != null) {
+          return (reciter: current, moshaf: currentMoshaf);
+        }
         return (reciter: reciter, moshaf: moshaf);
       } catch (e) {
         log('invalid saved recitation: $e');
       }
     }
     return (reciter: _defaultReciter, moshaf: _defaultReciter.moshaf.first);
+  }
+
+  /// قائمة القراء باللغة الحالية من الذاكرة أو من النسخة المحفوظة
+  /// (بتتقرا من Prefs مرة واحدة لكل لغة)، أو null لو مفيش نسخة باللغة دي
+  // متغيرات منفصلة عن _reciters عشان getReciters يفضل يحدّث من النت
+  List<ReciterModel>? _cachedReciters;
+  String? _cachedLanguage;
+
+  List<ReciterModel>? _localizedReciters() {
+    final language = _language;
+    if (_reciters != null && _recitersLanguage == language) return _reciters;
+    if (_cachedReciters != null && _cachedLanguage == language) {
+      return _cachedReciters;
+    }
+    final String? cached = Prefs.getData(key: _cacheKey);
+    if (cached == null) return null;
+    try {
+      _cachedReciters = _parse(cached);
+      _cachedLanguage = language;
+      return _cachedReciters;
+    } catch (e) {
+      log('invalid reciters cache: $e');
+      return null;
+    }
   }
 
   @override

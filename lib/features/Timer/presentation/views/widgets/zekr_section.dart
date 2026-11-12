@@ -48,8 +48,12 @@ class AzkarListViewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     // لازم تتقرا هنا مش جوه itemBuilder عشان الكروت تتبني تاني لما اللغة تتغير
     final names = azkarNames(S.of(context));
+    // الارتفاع بيتحسب من محتوى الكارت بحجم الخط الفعلي: الدايرة + سطرين
+    // للاسم + المسافات، عشان الاسم ميتقصش مع تكبير الخط في الشاشات الصغيرة
+    final titleHeight = MediaQuery.textScalerOf(context).scale(18.sp) * 1.2 * 2;
+    final height = 28 + 64.r + 12.h + titleHeight + 40.sp + 6;
     return SizedBox(
-      height: 200.h,
+      height: height,
       child: ListView.separated(
         padding: EdgeInsetsDirectional.symmetric(
           vertical: 20.sp,
