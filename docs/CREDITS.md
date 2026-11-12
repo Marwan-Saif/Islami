@@ -19,18 +19,18 @@ The app no longer contains any photos or third-party illustrations.
 | File | Source | License |
 | --- | --- | --- |
 | `notification.wav` (short tone, prayer and azkar reminders) | Synthesized for this app (two bell tones) | Original work |
-| `azan.mp3`, `azan_short.wav`, `ios/Runner/azan.wav` | Adhan by Sheikh Abdul Basit, from a 2012 adhan collection. The original publisher and license are **unknown** | **Needs a decision before release, see below** |
+| `azan.mp3`, `azan_short.wav`, `ios/Runner/azan.wav` | Adhan by Sheikh Abdul Basit, from a 2012 adhan collection. The original publisher and license are **unknown** | Kept by the project owner, see below |
 
 ### Adhan recording
 
-The current adhan comes from a collection shared online, and its license can't be verified.
-Replace it with a recording that has a clear license, or get permission. A free candidate:
+The project owner decided to keep the current adhan (Sheikh Abdul Basit) for the
+first release. Its original publisher and license are not verified. If a rights
+holder objects, or for a future release, a free alternative is:
 
 - "The Adhan - Muslim Call to Prayer - Aaqib Azeez.mp3" by Atcovi, Wikimedia Commons,
   [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/):
   https://commons.wikimedia.org/wiki/File:The_Adhan_-_Muslim_Call_to_Prayer_-_Aaqib_Azeez.mp3
-  (1:27; an older 3:55 version is in the file history). Listen to it first. If it is used, credit
-  it here and in the in-app licenses page as: *"Adhan by Atcovi, CC BY-SA 4.0, via Wikimedia Commons"*.
+  Credit it as *"Adhan by Atcovi, CC BY-SA 4.0, via Wikimedia Commons"* if it is used.
 
 ## Fonts
 
