@@ -280,7 +280,10 @@ class _SebhaViewState extends State<SebhaView> {
                       ...List.generate(azkarList.length, (index) {
                         return Padding(
                           padding: EdgeInsets.symmetric(vertical: 4.h),
+                          // أسماء الأذكار عربي دايماً، فالسطر بيتكتب من اليمين
+                          // حتى في الإنجليزي (كان بيطلع "0 : سبحان الله")
                           child: Text.rich(
+                            textDirection: TextDirection.rtl,
                             TextSpan(
                               children: [
                                 TextSpan(
@@ -320,10 +323,31 @@ class _SebhaViewState extends State<SebhaView> {
               actionsAlignment: MainAxisAlignment.spaceAround,
               actions: [
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    // المسح مينفعش يترجع، فبنسأل الأول
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        content: Text(S.of(context).clearHistoryConfirm),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text(S.of(context).cancel),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            style: TextButton.styleFrom(
+                              foregroundColor: AppColors.danger,
+                            ),
+                            child: Text(S.of(context).clear),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirmed != true) return;
                     _sebhaService.clearHistoryData();
-                    setStateDialog(() {});
-                    setState(() {});
+                    if (context.mounted) setStateDialog(() {});
+                    if (mounted) setState(() {});
                   },
                   child: Text(
                     S.of(context).clear,

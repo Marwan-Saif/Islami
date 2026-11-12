@@ -169,6 +169,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chooseRewaya": MessageLookupByLibrary.simpleMessage("Choose a narration"),
     "clear": MessageLookupByLibrary.simpleMessage("Clear"),
+    "clearHistoryConfirm": MessageLookupByLibrary.simpleMessage(
+      "Clear the tasbih history? This can\'t be undone.",
+    ),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
     "completedKhatmas": m4,
     "continueReading": MessageLookupByLibrary.simpleMessage("Continue"),
@@ -275,6 +278,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "No surah matches this name",
     ),
     "notificationTime": m13,
+    "notificationsOffMessage": MessageLookupByLibrary.simpleMessage(
+      "Notifications are off, so the adhan and reminders won\'t appear",
+    ),
+    "notificationsOffTile": MessageLookupByLibrary.simpleMessage(
+      "Notifications are off, so the adhan won\'t appear. Tap to open settings",
+    ),
     "off": MessageLookupByLibrary.simpleMessage("Off"),
     "onboarding1_body": MessageLookupByLibrary.simpleMessage(
       "Your daily companion: the Quran, prayer and azkar in one place, with no ads",
@@ -415,6 +424,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "todayPagesOf": m29,
     "todayWird": m30,
+    "tomorrow": MessageLookupByLibrary.simpleMessage("tomorrow"),
     "total": m31,
     "totalLabel": MessageLookupByLibrary.simpleMessage("Total:"),
     "turnOnGpsForQibla": MessageLookupByLibrary.simpleMessage(

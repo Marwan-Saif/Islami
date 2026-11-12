@@ -201,5 +201,9 @@
   "themeLight": "فاتح",
   "themeSystem": "حسب الموبايل",
   "saveToHistory": "احفظ وابدأ من جديد",
-  "appTagline": "القرآن والصلاة والأذكار"
+  "appTagline": "القرآن والصلاة والأذكار",
+  "notificationsOffMessage": "الإشعارات متوقفة، فلن يظهر الأذان ولا التذكيرات",
+  "notificationsOffTile": "الإشعارات متوقفة، فلن يظهر الأذان. اضغط لفتح الإعدادات",
+  "tomorrow": "غدًا",
+  "clearHistoryConfirm": "هل تريد مسح سجل التسبيح؟ لا يمكن التراجع عن ذلك."
 }

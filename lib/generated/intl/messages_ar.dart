@@ -161,6 +161,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chooseRewaya": MessageLookupByLibrary.simpleMessage("اختر الرواية"),
     "clear": MessageLookupByLibrary.simpleMessage("تنظيف"),
+    "clearHistoryConfirm": MessageLookupByLibrary.simpleMessage(
+      "هل تريد مسح سجل التسبيح؟ لا يمكن التراجع عن ذلك.",
+    ),
     "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
     "completedKhatmas": m4,
     "continueReading": MessageLookupByLibrary.simpleMessage("أكمل"),
@@ -265,6 +268,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "لا توجد سورة بهذا الاسم",
     ),
     "notificationTime": m13,
+    "notificationsOffMessage": MessageLookupByLibrary.simpleMessage(
+      "الإشعارات متوقفة، فلن يظهر الأذان ولا التذكيرات",
+    ),
+    "notificationsOffTile": MessageLookupByLibrary.simpleMessage(
+      "الإشعارات متوقفة، فلن يظهر الأذان. اضغط لفتح الإعدادات",
+    ),
     "off": MessageLookupByLibrary.simpleMessage("بدون"),
     "onboarding1_body": MessageLookupByLibrary.simpleMessage(
       "رفيقك كل يوم: القرآن والصلاة والأذكار في مكان واحد، ومن غير إعلانات",
@@ -389,6 +398,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "todayPagesOf": m29,
     "todayWird": m30,
+    "tomorrow": MessageLookupByLibrary.simpleMessage("غدًا"),
     "total": m31,
     "totalLabel": MessageLookupByLibrary.simpleMessage("الإجمالي:"),
     "turnOnGpsForQibla": MessageLookupByLibrary.simpleMessage(
