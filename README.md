@@ -11,14 +11,14 @@ direction. Arabic first, with a full English translation.
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="200" alt="Home: prayer times, azkar and hadith">
+  <img src="docs/screenshots/home_dark.png" width="200" alt="Home in dark mode">
   <img src="docs/screenshots/quran.png" width="200" alt="Quran: surah list and reading tracker">
   <img src="docs/screenshots/surah.png" width="200" alt="Reading a surah">
-  <img src="docs/screenshots/ayah_actions.png" width="200" alt="Ayah actions: listen, tafsir, bookmark">
 </p>
 <p align="center">
-  <img src="docs/screenshots/radio.png" width="200" alt="Radio and recitations">
-  <img src="docs/screenshots/hadith.png" width="200" alt="Hadith books">
-  <img src="docs/screenshots/settings.png" width="200" alt="Settings">
+  <img src="docs/screenshots/ayah_actions.png" width="200" alt="Ayah actions: listen, tafsir, bookmark">
+  <img src="docs/screenshots/zekr.png" width="200" alt="A zekr with its tap counter">
+  <img src="docs/screenshots/tasbih.png" width="200" alt="Tasbih">
   <img src="docs/screenshots/home_en.png" width="200" alt="The app in English">
 </p>
 
