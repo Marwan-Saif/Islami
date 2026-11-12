@@ -68,9 +68,13 @@ class _SuraSCreenState extends State<SuraSCreen> {
                                   child: Text(
                                     widget.zekr.txt,
                                     textAlign: TextAlign.center,
+                                    textDirection: TextDirection.rtl,
                                     style: GoogleFonts.amiri(
                                       fontSize: 20.sp,
                                       color: AppColors.primaryColor,
+                                      // من غيرها تشكيل السطر بيلزق في اللي
+                                      // تحته (آية الكرسي مثلاً)
+                                      height: 1.8,
                                     ),
                                   ),
                                 ),

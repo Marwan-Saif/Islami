@@ -74,6 +74,7 @@ class _SettingsViewState extends State<SettingsView> {
 
   Future<void> _setAdhanSound(AdhanSound sound) async {
     await _settings.setAdhanSound(sound);
+    if (!mounted) return;
     setState(() {});
     // الإشعارات المجدولة لازم تتجدول تاني على الـ channel بتاعة الصوت الجديد
     await PrayerNotifications.scheduleUpcoming();
@@ -157,6 +158,7 @@ class _SettingsViewState extends State<SettingsView> {
     );
     if (picked == null) return;
     await PrayerTimesService.setMethod(picked);
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -197,6 +199,7 @@ class _SettingsViewState extends State<SettingsView> {
       }
     } else if (picked != null) {
       await PrayerTimesService.setManualCity(picked);
+      if (!mounted) return;
       setState(() {});
     }
   }
@@ -211,6 +214,7 @@ class _SettingsViewState extends State<SettingsView> {
     );
     if (picked == null) return;
     await saveAyahReciter(picked);
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -325,6 +329,7 @@ class _SettingsViewState extends State<SettingsView> {
                   selected: PrayerTimesService.isHanafi,
                   onChanged: (hanafi) async {
                     await PrayerTimesService.setHanafi(hanafi);
+                    if (!mounted) return;
                     setState(() {});
                   },
                 ),
@@ -339,6 +344,7 @@ class _SettingsViewState extends State<SettingsView> {
                 value: PrayerNotifications.isEnabled,
                 onChanged: (enabled) async {
                   await PrayerNotifications.setEnabled(enabled);
+                  if (!mounted) return;
                   setState(() {});
                 },
                 activeThumbColor: AppColors.primaryColor,
@@ -376,6 +382,7 @@ class _SettingsViewState extends State<SettingsView> {
                             prayer,
                             enabled,
                           );
+                          if (!mounted) return;
                           setState(() {});
                         }
                       : null,
@@ -416,6 +423,7 @@ class _SettingsViewState extends State<SettingsView> {
                       selected: PrayerNotifications.reminderMinutes == minutes,
                       onSelected: (_) async {
                         await PrayerNotifications.setReminderMinutes(minutes);
+                        if (!mounted) return;
                         setState(() {});
                       },
                       selectedColor: AppColors.primaryColor,
@@ -447,6 +455,7 @@ class _SettingsViewState extends State<SettingsView> {
                 label: _settings.quranFontSize.round().toString(),
                 onChanged: (size) async {
                   await _settings.setQuranFontSize(size);
+                  if (!mounted) return;
                   setState(() {});
                 },
               ),
@@ -467,6 +476,7 @@ class _SettingsViewState extends State<SettingsView> {
                 value: _settings.showTranslation,
                 onChanged: (show) async {
                   await _settings.setShowTranslation(show);
+                  if (!mounted) return;
                   setState(() {});
                 },
                 activeThumbColor: AppColors.primaryColor,

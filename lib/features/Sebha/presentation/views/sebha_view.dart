@@ -35,6 +35,7 @@ class _SebhaViewState extends State<SebhaView> {
   Future<void> _initData() async {
     await _sebhaService.init();
 
+    if (!mounted) return;
     setState(() {
       total = _sebhaService.getGlobalTotal();
       var currentItem = _sebhaService.getZekrAt(currentIndex);

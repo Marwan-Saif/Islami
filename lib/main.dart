@@ -89,9 +89,13 @@ Future<void> _scheduleNotifications() async {
     // بيشيل أي إشعارات قديمة بالـ IDs والـ channel القديمة قبل الجدولة
     await NotificationHelper.cancelAllNotifications();
     await AzkarNotifications.scheduleFromStorage();
-    // لو إذن الموقع متاح (مثلاً من شاشة القبلة) المواقيت بتتحسب من مكان المستخدم
-    await PrayerTimesService.updateLocation();
+    // الأذان بيتجدول على طول بآخر موقع متخزن، عشان لو الأبلكيشن اتقفل وهو
+    // مستني الـ GPS (لحد 15 ثانية) ميفضلش من غير أذان
     await PrayerNotifications.scheduleUpcoming();
+    // ولو الموقع اتحدث (الإذن متاح، مثلاً من شاشة القبلة) بيتجدول تاني بيه
+    if (await PrayerTimesService.updateLocation()) {
+      await PrayerNotifications.scheduleUpcoming();
+    }
   } catch (e) {
     log('failed to schedule notifications: $e');
   }

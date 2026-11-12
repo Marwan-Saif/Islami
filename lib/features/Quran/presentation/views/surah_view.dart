@@ -5,6 +5,7 @@ import 'package:islami/core/widgets/brand/pattern_background.dart';
 import 'package:islami/core/utils/quran_utils.dart';
 import 'package:islami/core/widgets/appbar.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/surah_body.dart';
+import 'package:islami/features/Radio/presentation/views/widgets/mini_player.dart';
 
 class SurahScreenArgs {
   const SurahScreenArgs(this.surahNumber, {this.initialAyah});
@@ -29,13 +30,22 @@ class SurahScreen extends StatelessWidget {
         children: [
           const Positioned.fill(child: IslamicPatternLayer()),
           Positioned.fill(
-            left: 24,
-            right: 24,
             top: 8.h,
-            bottom: 16,
-            child: SurahBody(
-              surahNumber: args.surahNumber,
-              initialAyah: args.initialAyah,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                    child: SurahBody(
+                      surahNumber: args.surahNumber,
+                      initialAyah: args.initialAyah,
+                    ),
+                  ),
+                ),
+                // تحكم في صوت الآية (إيقاف/تشغيل) من غير ما تسيب السورة،
+                // وبيختفي لوحده لو مفيش حاجة متحملة في المشغل
+                const SafeArea(top: false, child: MiniPlayer()),
+              ],
             ),
           ),
         ],

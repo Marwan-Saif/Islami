@@ -120,6 +120,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
     // بيتقرا من الإعدادات مش من متغير، عشان يفضل متزامن مع صفحة الإعدادات
     final adhanEnabled = !PrayerNotifications.isEnabled;
     await PrayerNotifications.setEnabled(adhanEnabled);
+    if (!mounted) return;
     setState(() {});
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
