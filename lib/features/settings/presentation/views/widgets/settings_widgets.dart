@@ -20,7 +20,7 @@ class SettingsSection extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 14.h),
       padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 12.h),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(18.r),
         border: Border.all(
           color: AppColors.primaryColor.withValues(alpha: 0.35),
@@ -72,17 +72,17 @@ class SettingsTile extends StatelessWidget {
       leading: icon == null ? null : Icon(icon, color: AppColors.primaryColor),
       title: Text(
         title,
-        style: TextStyle(color: Colors.white, fontSize: 15.sp),
+        style: TextStyle(color: AppColors.text, fontSize: 15.sp),
       ),
       subtitle: value == null
           ? null
           : Text(
               value!,
-              style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+              style: TextStyle(color: AppColors.textFaint, fontSize: 13.sp),
             ),
       trailing: Icon(
         Icons.arrow_forward_ios_rounded,
-        color: Colors.white38,
+        color: AppColors.textFaint,
         size: 16.r,
       ),
     );
@@ -127,8 +127,8 @@ class SegmentedChoice<T> extends StatelessWidget {
                     entry.value,
                     style: TextStyle(
                       color: entry.key == selected
-                          ? AppColors.backgroundColor
-                          : Colors.white,
+                          ? AppColors.onPrimary
+                          : AppColors.text,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),

@@ -70,7 +70,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m22(query) => "نتائج «${query}»";
 
   static String m23(url) =>
-      "تطبيق إسلامي: القرآن الكريم ومواقيت الصلاة والأذكار والأحاديث\n${url}";
+      "أثر: القرآن الكريم ومواقيت الصلاة والأذكار والأحاديث\n${url}";
 
   static String m24(count) => "أيام متتالية: ${count}";
 
@@ -87,6 +87,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m30(today, goal) => "ورد اليوم ${today}/${goal} صفحات";
 
   static String m31(count) => "الإجمالي: ${count}";
+
+  static String m32(count) => "من ${count}";
+
+  static String m33(count) =>
+      "${Intl.plural(count, one: 'مرة واحدة', two: 'مرتين', few: '${count} مرات', other: '${count} مرة')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -114,8 +119,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "adhanTurnedOn":
             MessageLookupByLibrary.simpleMessage("تم تفعيل الأذان"),
         "allowLocation": MessageLookupByLibrary.simpleMessage("السماح بالموقع"),
-        "appSubtitle": MessageLookupByLibrary.simpleMessage("تطبيق إسلامي"),
+        "appName": MessageLookupByLibrary.simpleMessage("أثر"),
+        "appSubtitle": MessageLookupByLibrary.simpleMessage("أثر"),
+        "appTagline":
+            MessageLookupByLibrary.simpleMessage("القرآن والصلاة والأذكار"),
         "appVersion": m0,
+        "appearance": MessageLookupByLibrary.simpleMessage("المظهر"),
         "asr": MessageLookupByLibrary.simpleMessage("العصر"),
         "asrHanafi": MessageLookupByLibrary.simpleMessage("العصر: حنفي"),
         "asrShafi": MessageLookupByLibrary.simpleMessage("العصر: شافعي"),
@@ -175,6 +184,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "فعّل الموقع واسمح للتطبيق بالوصول إليه"),
         "enableNotifications":
             MessageLookupByLibrary.simpleMessage("تفعيل الإشعارات"),
+        "exactAlarmAllow": MessageLookupByLibrary.simpleMessage("اسمح"),
+        "exactAlarmLater": MessageLookupByLibrary.simpleMessage("مش دلوقتي"),
+        "exactAlarmMessage": MessageLookupByLibrary.simpleMessage(
+            "عشان الأذان يشتغل في وقت الصلاة بالظبط، اسمح لأثر بضبط المنبّهات والتذكيرات. من غير الإذن ده أندرويد ممكن يأخر الأذان كام دقيقة."),
+        "exactAlarmTile": MessageLookupByLibrary.simpleMessage(
+            "الأذان ممكن يتأخر كام دقيقة، اضغط واسمح بالمنبّهات"),
+        "exactAlarmTitle":
+            MessageLookupByLibrary.simpleMessage("الأذان في وقته بالظبط"),
         "fajr": MessageLookupByLibrary.simpleMessage("الفجر"),
         "favoriteHadiths":
             MessageLookupByLibrary.simpleMessage("الأحاديث المفضلة"),
@@ -199,6 +216,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("اللغة"),
         "lastRead": MessageLookupByLibrary.simpleMessage("آخر قراءة"),
         "lastReadAt": m9,
+        "licensesAndSources":
+            MessageLookupByLibrary.simpleMessage("التراخيص ومصادر البيانات"),
         "listen": MessageLookupByLibrary.simpleMessage("استماع"),
         "listenToAyah": MessageLookupByLibrary.simpleMessage("استماع للآية"),
         "liveBroadcast": MessageLookupByLibrary.simpleMessage("بث مباشر"),
@@ -234,16 +253,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "notificationTime": m13,
         "off": MessageLookupByLibrary.simpleMessage("بدون"),
         "onboarding1_body": MessageLookupByLibrary.simpleMessage(
-            "نحن متحمسون جدًا لانضمامك إلى مجتمعنا"),
+            "رفيقك كل يوم: القرآن والصلاة والأذكار في مكان واحد، ومن غير إعلانات"),
         "onboarding1_title":
-            MessageLookupByLibrary.simpleMessage("مرحبًا بك في إسلامي"),
-        "onboarding2_body":
-            MessageLookupByLibrary.simpleMessage("اقرأ وربك الأكرم"),
+            MessageLookupByLibrary.simpleMessage("أهلاً بك في أثر"),
+        "onboarding2_body": MessageLookupByLibrary.simpleMessage(
+            "اقرأ المصحف بالتفسير والتلاوة، وتابع وردك اليومي وختمتك"),
         "onboarding2_title":
             MessageLookupByLibrary.simpleMessage("قراءة القرآن"),
-        "onboarding3_body":
-            MessageLookupByLibrary.simpleMessage("سبح اسم ربك الأعلى"),
-        "onboarding3_title": MessageLookupByLibrary.simpleMessage("سبح"),
+        "onboarding3_body": MessageLookupByLibrary.simpleMessage(
+            "مواقيت دقيقة حسب مكانك، وأذان في وقته، وتذكير بأذكار الصباح والمساء"),
+        "onboarding3_title":
+            MessageLookupByLibrary.simpleMessage("الصلاة والأذكار"),
         "onboarding4_body": MessageLookupByLibrary.simpleMessage(
             "يمكنك الاستماع إلى إذاعة القرآن الكريم من خلال التطبيق مجانًا وبسهولة"),
         "onboarding4_title":
@@ -262,6 +282,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "prayerName": m17,
         "prayerTimes": MessageLookupByLibrary.simpleMessage("مواقيت الصلاة"),
         "previous": MessageLookupByLibrary.simpleMessage("السابق"),
+        "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
         "qiblaDirection": MessageLookupByLibrary.simpleMessage("اتجاه القبلة"),
         "quranFontSize": MessageLookupByLibrary.simpleMessage("حجم خط المصحف"),
         "radioAbdulbari":
@@ -296,6 +317,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "rewayatCount": m20,
         "rotateDeviceForQibla": MessageLookupByLibrary.simpleMessage(
             "أدر الجهاز لتحديد اتجاه القبلة"),
+        "saveToHistory":
+            MessageLookupByLibrary.simpleMessage("احفظ وابدأ من جديد"),
         "searchAyahsFor": m21,
         "searchReciter": MessageLookupByLibrary.simpleMessage("ابحث عن قارئ"),
         "searchResultsFor": m22,
@@ -325,6 +348,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("التفسير الميسر"),
         "tafsirUnavailable":
             MessageLookupByLibrary.simpleMessage("التفسير غير متاح لهذه الآية"),
+        "tapToCount": MessageLookupByLibrary.simpleMessage("اضغط للعد"),
+        "themeDark": MessageLookupByLibrary.simpleMessage("داكن"),
+        "themeLight": MessageLookupByLibrary.simpleMessage("فاتح"),
+        "themeSystem": MessageLookupByLibrary.simpleMessage("حسب الموبايل"),
         "timesForCity": m28,
         "timesForMyLocation": MessageLookupByLibrary.simpleMessage(
             "المواقيت حسب موقعك - اضغط للتحديث"),
@@ -337,6 +364,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "turnOnGpsForQibla": MessageLookupByLibrary.simpleMessage(
             "شغّل خدمة الموقع (GPS) لتحديد اتجاه القبلة"),
         "useMyLocation":
-            MessageLookupByLibrary.simpleMessage("استخدام موقعي الحالي (GPS)")
+            MessageLookupByLibrary.simpleMessage("استخدام موقعي الحالي (GPS)"),
+        "zekrDone": MessageLookupByLibrary.simpleMessage("تم، اضغط للإعادة"),
+        "zekrOutOf": m32,
+        "zekrRepeat": m33
       };
 }

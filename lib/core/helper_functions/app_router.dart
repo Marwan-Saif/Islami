@@ -32,26 +32,20 @@ abstract class AppRouter {
   static const String recitersView = '/recitersView';
   static const String reciterSurahsView = '/reciterSurahsView';
 
-  static final router = GoRouter(routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const SplashScreen(),
-    ),
-    GoRoute(
-      path: onBoardingView,
-      builder: (context, state) => const OnBoardingView(),
-    ),
-    GoRoute(
-      path: homeView,
-      builder: (context, state) => const HomeView(),
-    ),
-    GoRoute(
-      path: suoraSCreen,
-      builder: (context, state) => SuraSCreen(
-        txt: state.extra as List<String>,
+  static final router = GoRouter(
+    routes: [
+      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+      GoRoute(
+        path: onBoardingView,
+        builder: (context, state) => const OnBoardingView(),
       ),
-    ),
-    GoRoute(
+      GoRoute(path: homeView, builder: (context, state) => const HomeView()),
+      GoRoute(
+        path: suoraSCreen,
+        builder: (context, state) =>
+            SuraSCreen(zekr: state.extra as ZekrEntity),
+      ),
+      GoRoute(
         path: zekrScreen,
         builder: (context, state) {
           final Map<String, dynamic> args = state.extra as Map<String, dynamic>;
@@ -59,55 +53,60 @@ abstract class AppRouter {
             azkarList: args["azkarList"] as List<ZekrEntity>,
             title: args["title"],
           );
-        }),
-    GoRoute(
-      path: surahScreen,
-      builder: (context, state) =>
-          SurahScreen(args: state.extra as SurahScreenArgs),
-    ),
-    GoRoute(
-      path: settingsView,
-      builder: (context, state) => const SettingsView(),
-    ),
-    GoRoute(
-      path: hadithSectionsView,
-      builder: (context, state) =>
-          HadithSectionsView(bookKey: state.extra as String),
-    ),
-    GoRoute(
-      path: hadithListView,
-      builder: (context, state) {
-        final args = state.extra as ({String book, int section});
-        return HadithListView(bookKey: args.book, sectionNumber: args.section);
-      },
-    ),
-    GoRoute(
-      path: hadithFavoritesView,
-      builder: (context, state) => const HadithFavoritesView(),
-    ),
-    GoRoute(
-      path: readingTrackerView,
-      builder: (context, state) => const ReadingTrackerView(),
-    ),
-    GoRoute(
-      path: ayahSearchView,
-      builder: (context, state) =>
-          AyahSearchView(query: state.extra as String),
-    ),
-    GoRoute(
-      path: recitersView,
-      builder: (context, state) => const RecitersView(),
-    ),
-    GoRoute(
-      path: reciterSurahsView,
-      builder: (context, state) {
-        final selection =
-            state.extra as ({ReciterModel reciter, MoshafModel moshaf});
-        return ReciterSurahsView(
-          reciter: selection.reciter,
-          moshaf: selection.moshaf,
-        );
-      },
-    ),
-  ]);
+        },
+      ),
+      GoRoute(
+        path: surahScreen,
+        builder: (context, state) =>
+            SurahScreen(args: state.extra as SurahScreenArgs),
+      ),
+      GoRoute(
+        path: settingsView,
+        builder: (context, state) => const SettingsView(),
+      ),
+      GoRoute(
+        path: hadithSectionsView,
+        builder: (context, state) =>
+            HadithSectionsView(bookKey: state.extra as String),
+      ),
+      GoRoute(
+        path: hadithListView,
+        builder: (context, state) {
+          final args = state.extra as ({String book, int section});
+          return HadithListView(
+            bookKey: args.book,
+            sectionNumber: args.section,
+          );
+        },
+      ),
+      GoRoute(
+        path: hadithFavoritesView,
+        builder: (context, state) => const HadithFavoritesView(),
+      ),
+      GoRoute(
+        path: readingTrackerView,
+        builder: (context, state) => const ReadingTrackerView(),
+      ),
+      GoRoute(
+        path: ayahSearchView,
+        builder: (context, state) =>
+            AyahSearchView(query: state.extra as String),
+      ),
+      GoRoute(
+        path: recitersView,
+        builder: (context, state) => const RecitersView(),
+      ),
+      GoRoute(
+        path: reciterSurahsView,
+        builder: (context, state) {
+          final selection =
+              state.extra as ({ReciterModel reciter, MoshafModel moshaf});
+          return ReciterSurahsView(
+            reciter: selection.reciter,
+            moshaf: selection.moshaf,
+          );
+        },
+      ),
+    ],
+  );
 }

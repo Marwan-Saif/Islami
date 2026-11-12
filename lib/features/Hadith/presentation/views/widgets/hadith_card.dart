@@ -8,7 +8,11 @@ import 'package:islami/features/Hadith/data/hadith_repo.dart';
 import 'package:islami/generated/l10n.dart';
 
 class HadithCard extends StatefulWidget {
-  const HadithCard({super.key, required this.hadith, this.showBookName = false});
+  const HadithCard({
+    super.key,
+    required this.hadith,
+    this.showBookName = false,
+  });
   final Hadith hadith;
   final bool showBookName;
 
@@ -38,16 +42,22 @@ class _HadithCardState extends State<HadithCard> {
     final added = await _repo.toggleFavorite(widget.hadith);
     if (!mounted) return;
     setState(() => _favorite = added);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(added
-          ? S.of(context).addedToFavorites
-          : S.of(context).removedFromFavorites),
-      duration: const Duration(seconds: 2),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          added
+              ? S.of(context).addedToFavorites
+              : S.of(context).removedFromFavorites,
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   Future<void> _copy() async {
-    await Clipboard.setData(ClipboardData(text: '${widget.hadith.text}\n[$_title]'));
+    await Clipboard.setData(
+      ClipboardData(text: '${widget.hadith.text}\n[$_title]'),
+    );
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -62,9 +72,11 @@ class _HadithCardState extends State<HadithCard> {
     return Container(
       padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 14.h),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.35),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.4)),
+        border: Border.all(
+          color: AppColors.primaryColor.withValues(alpha: 0.4),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +96,7 @@ class _HadithCardState extends State<HadithCard> {
               IconButton(
                 onPressed: _copy,
                 tooltip: S.of(context).copy,
-                icon: const Icon(Icons.copy_rounded, color: Colors.white54),
+                icon: Icon(Icons.copy_rounded, color: AppColors.textFaint),
               ),
               IconButton(
                 onPressed: _toggleFavorite,
@@ -92,7 +104,9 @@ class _HadithCardState extends State<HadithCard> {
                     ? S.of(context).removeFromFavorites
                     : S.of(context).addToFavorites,
                 icon: Icon(
-                  _favorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  _favorite
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
                   color: AppColors.primaryColor,
                 ),
               ),
@@ -103,7 +117,7 @@ class _HadithCardState extends State<HadithCard> {
               widget.hadith.text,
               textDirection: TextDirection.rtl,
               style: GoogleFonts.amiri(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 18.sp,
                 height: 1.8,
               ),
@@ -113,7 +127,7 @@ class _HadithCardState extends State<HadithCard> {
               widget.hadith.text,
               textDirection: TextDirection.ltr,
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 15.sp,
                 height: 1.6,
               ),

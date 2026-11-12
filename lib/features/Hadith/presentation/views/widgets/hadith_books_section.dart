@@ -15,8 +15,10 @@ class HadithBooksSection extends StatelessWidget {
   void _openBook(BuildContext context, HadithBook book) {
     // الأربعون النووية والقدسية باب واحد، فبتفتح الأحاديث على طول
     if (book.sections.length == 1) {
-      context.push(AppRouter.hadithListView,
-          extra: (book: book.key, section: book.sections.first.number));
+      context.push(
+        AppRouter.hadithListView,
+        extra: (book: book.key, section: book.sections.first.number),
+      );
     } else {
       context.push(AppRouter.hadithSectionsView, extra: book.key);
     }
@@ -33,7 +35,7 @@ class HadithBooksSection extends StatelessWidget {
             child: Text(
               S.of(context).hadiths,
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.text,
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -70,7 +72,11 @@ class HadithBooksSection extends StatelessWidget {
 }
 
 class _BookCard extends StatelessWidget {
-  const _BookCard({required this.title, required this.icon, required this.onTap});
+  const _BookCard({
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  });
   final String title;
   final IconData icon;
   final VoidCallback onTap;
@@ -99,7 +105,7 @@ class _BookCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: GoogleFonts.amiri(
-                    color: Colors.white,
+                    color: AppColors.text,
                     fontSize: 17.sp,
                     fontWeight: FontWeight.bold,
                   ),

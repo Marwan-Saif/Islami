@@ -21,19 +21,24 @@ class AyahSearchView extends StatefulWidget {
 }
 
 class _AyahSearchViewState extends State<AyahSearchView> {
-  late final Future<List<Ayah>> _results =
-      getit.get<QuranRepo>().searchAyahs(widget.query, limit: 100);
+  late final Future<List<Ayah>> _results = getit.get<QuranRepo>().searchAyahs(
+    widget.query,
+    limit: 100,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: customAppBar(context, S.of(context).searchResultsFor(widget.query)),
+      appBar: customAppBar(
+        context,
+        S.of(context).searchResultsFor(widget.query),
+      ),
       body: FutureBuilder<List<Ayah>>(
         future: _results,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: AppColors.primaryColor),
             );
           }
@@ -42,7 +47,7 @@ class _AyahSearchViewState extends State<AyahSearchView> {
             return Center(
               child: Text(
                 S.of(context).noAyahsFor(widget.query),
-                style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+                style: TextStyle(color: AppColors.textMuted, fontSize: 16.sp),
               ),
             );
           }
@@ -50,13 +55,16 @@ class _AyahSearchViewState extends State<AyahSearchView> {
             padding: EdgeInsets.all(16.r),
             itemCount: ayahs.length,
             separatorBuilder: (context, index) =>
-                const Divider(color: Colors.white12),
+                Divider(color: AppColors.divider),
             itemBuilder: (context, index) {
               final ayah = ayahs[index];
               return InkWell(
                 onTap: () => context.push(
                   AppRouter.surahScreen,
-                  extra: SurahScreenArgs(ayah.surahNumber, initialAyah: ayah.id),
+                  extra: SurahScreenArgs(
+                    ayah.surahNumber,
+                    initialAyah: ayah.id,
+                  ),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.h),
@@ -64,8 +72,13 @@ class _AyahSearchViewState extends State<AyahSearchView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        S.of(context).ayahRefDot(surahTitle(ayah.surahNumber), ayah.id),
-                        style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+                        S
+                            .of(context)
+                            .ayahRefDot(surahTitle(ayah.surahNumber), ayah.id),
+                        style: TextStyle(
+                          color: AppColors.textFaint,
+                          fontSize: 13.sp,
+                        ),
                       ),
                       SizedBox(height: 4.h),
                       Text(

@@ -29,15 +29,18 @@ void main() {
     expect(tracker.khatmaProgress, closeTo(2 / 604, 1e-9));
   });
 
-  test('reading all 604 pages completes a khatma and starts a new one', () async {
-    bool completed = false;
-    for (int page = 1; page <= ReadingTracker.totalPages; page++) {
-      completed = await tracker.markPageRead(page);
-    }
-    expect(completed, isTrue);
-    expect(tracker.completedKhatmas, 1);
-    expect(tracker.khatmaPages, isEmpty);
-  });
+  test(
+    'reading all 604 pages completes a khatma and starts a new one',
+    () async {
+      bool completed = false;
+      for (int page = 1; page <= ReadingTracker.totalPages; page++) {
+        completed = await tracker.markPageRead(page);
+      }
+      expect(completed, isTrue);
+      expect(tracker.completedKhatmas, 1);
+      expect(tracker.khatmaPages, isEmpty);
+    },
+  );
 
   test('bookmarks toggle and last read is saved', () async {
     const position = ReadingPosition(surah: 2, ayah: 255, page: 42);

@@ -58,8 +58,8 @@ class RecitationsRepoImpl implements RecitationsRepo {
     } catch (e) {
       log('failed to load reciters, using cache: $e');
       // من غير نت ومفيش نسخة باللغة دي، القائمة العربية أحسن من مفيش
-      final String? cached = Prefs.getData(key: _cacheKey) ??
-          Prefs.getData(key: 'reciters_cache');
+      final String? cached =
+          Prefs.getData(key: _cacheKey) ?? Prefs.getData(key: 'reciters_cache');
       if (cached == null) rethrow;
       _reciters = _parse(cached);
     }
@@ -70,8 +70,7 @@ class RecitationsRepoImpl implements RecitationsRepo {
   List<ReciterModel> _parse(String body) {
     final json = jsonDecode(body) as Map<String, dynamic>;
     return [
-      for (var item in json['reciters'] as List)
-        ReciterModel.fromJson(item),
+      for (var item in json['reciters'] as List) ReciterModel.fromJson(item),
     ]..removeWhere((reciter) => reciter.moshaf.isEmpty);
   }
 
@@ -92,10 +91,16 @@ class RecitationsRepoImpl implements RecitationsRepo {
   }
 
   @override
-  Future<void> saveLastSelection(ReciterModel reciter, MoshafModel moshaf) async {
+  Future<void> saveLastSelection(
+    ReciterModel reciter,
+    MoshafModel moshaf,
+  ) async {
     await Prefs.saveData(
       key: _lastSelectionKey,
-      value: jsonEncode({'reciter': reciter.toJson(), 'moshaf': moshaf.toJson()}),
+      value: jsonEncode({
+        'reciter': reciter.toJson(),
+        'moshaf': moshaf.toJson(),
+      }),
     );
   }
 }

@@ -62,10 +62,11 @@ class AzkarCubit extends Cubit<AzkarState> {
     ZekrLocalDataMoel oldone = azkarBox.getAt(index)!;
     log(oldone.toString());
     final updateZekr = ZekrLocalDataMoel(
-        zekrName: oldone.zekrName,
-        zekrBody: oldone.zekrBody,
-        zekrtime: time ?? oldone.zekrtime,
-        zekrAllawed: allowed ?? oldone.zekrAllawed);
+      zekrName: oldone.zekrName,
+      zekrBody: oldone.zekrBody,
+      zekrtime: time ?? oldone.zekrtime,
+      zekrAllawed: allowed ?? oldone.zekrAllawed,
+    );
     azkarBox.putAt(index, updateZekr);
     azkarLocalDataList.clear();
     azkarLocalDataList.addAll(azkarBox.values);
@@ -76,8 +77,12 @@ class AzkarCubit extends Cubit<AzkarState> {
   }
 
   void printt() {
-    log("in azkar Cubit \n ${azkarBox.getAt(0)!.zekrName} \n ${azkarBox.getAt(0)!.zekrtime} \n${azkarBox.getAt(0)!.zekrtime}\n${azkarBox.getAt(0)!.zekrAllawed}");
-    log("in azkar Cubit \n ${azkarLocalDataList[1].zekrName} \n ${azkarLocalDataList[1].zekrtime} \n${azkarLocalDataList[1].zekrtime} \n${azkarLocalDataList[1].zekrAllawed}");
+    log(
+      "in azkar Cubit \n ${azkarBox.getAt(0)!.zekrName} \n ${azkarBox.getAt(0)!.zekrtime} \n${azkarBox.getAt(0)!.zekrtime}\n${azkarBox.getAt(0)!.zekrAllawed}",
+    );
+    log(
+      "in azkar Cubit \n ${azkarLocalDataList[1].zekrName} \n ${azkarLocalDataList[1].zekrtime} \n${azkarLocalDataList[1].zekrtime} \n${azkarLocalDataList[1].zekrAllawed}",
+    );
   }
 
   void addNotifications() {

@@ -17,11 +17,27 @@ class AppSettings {
   static const double minFontSize = 18;
   static const double maxFontSize = 34;
 
-  late final ValueNotifier<Locale> locale =
-      ValueNotifier(Locale(Prefs.getData(key: _languageKey) ?? 'ar'));
+  late final ValueNotifier<Locale> locale = ValueNotifier(
+    Locale(Prefs.getData(key: _languageKey) ?? 'ar'),
+  );
 
   /// بيزيد مع أي تغيير في إعدادات القراءة عشان شاشة السورة تتحدث
   final ValueNotifier<int> readingChanges = ValueNotifier(0);
+
+  static const String _themeKey = 'app_theme';
+
+  /// فاتح أو داكن أو حسب الموبايل (الافتراضي)
+  late final ValueNotifier<ThemeMode> themeMode = ValueNotifier(
+    ThemeMode.values.firstWhere(
+      (mode) => mode.name == Prefs.getData(key: _themeKey),
+      orElse: () => ThemeMode.system,
+    ),
+  );
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    await Prefs.saveData(key: _themeKey, value: mode.name);
+    themeMode.value = mode;
+  }
 
   bool get isArabic => locale.value.languageCode == 'ar';
 
@@ -31,9 +47,9 @@ class AppSettings {
   }
 
   AdhanSound get adhanSound => AdhanSound.values.firstWhere(
-        (sound) => sound.name == Prefs.getData(key: _adhanSoundKey),
-        orElse: () => AdhanSound.full,
-      );
+    (sound) => sound.name == Prefs.getData(key: _adhanSoundKey),
+    orElse: () => AdhanSound.full,
+  );
 
   Future<void> setAdhanSound(AdhanSound sound) =>
       Prefs.saveData(key: _adhanSoundKey, value: sound.name);

@@ -18,7 +18,10 @@ class SuraCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.push(AppRouter.surahScreen, extra: SurahScreenArgs(surah.number));
+        context.push(
+          AppRouter.surahScreen,
+          extra: SurahScreenArgs(surah.number),
+        );
       },
       highlightColor: AppColors.primaryColor.withValues(alpha: 0.2),
       splashColor: AppColors.primaryColor.withValues(alpha: 0),
@@ -40,7 +43,7 @@ class SuraCard extends StatelessWidget {
                   Text(
                     surah.nameEn,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.text,
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -49,7 +52,7 @@ class SuraCard extends StatelessWidget {
                     '   ${S.of(context).Verse} ${surah.ayahCount}',
                     textDirection: TextDirection.rtl,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.text,
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                     ),
@@ -67,7 +70,7 @@ class SuraCard extends StatelessWidget {
               child: Text(
                 surahTitleArabic(surah.number),
                 style: GoogleFonts.amiri(
-                  color: Colors.white,
+                  color: AppColors.text,
                   fontSize: 26.sp,
                   fontWeight: FontWeight.bold,
                 ),

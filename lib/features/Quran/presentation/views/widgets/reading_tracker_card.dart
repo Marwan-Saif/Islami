@@ -27,10 +27,11 @@ class ReadingTrackerCard extends StatelessWidget {
             margin: EdgeInsets.symmetric(vertical: 8.h),
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.45),
+              color: AppColors.card,
               borderRadius: BorderRadius.circular(18.r),
               border: Border.all(
-                  color: AppColors.primaryColor.withValues(alpha: 0.4)),
+                color: AppColors.primaryColor.withValues(alpha: 0.4),
+              ),
             ),
             child: Row(
               children: [
@@ -44,27 +45,47 @@ class ReadingTrackerCard extends StatelessWidget {
                       Text(
                         S.of(context).readingTracker,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.text,
                           fontSize: 15.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        S.of(context).todayWird(tracker.todayPages, tracker.dailyGoal) +
-                            (tracker.streak > 1 ? S.of(context).streakSuffix(tracker.streak) : ''),
+                        S
+                                .of(context)
+                                .todayWird(
+                                  tracker.todayPages,
+                                  tracker.dailyGoal,
+                                ) +
+                            (tracker.streak > 1
+                                ? S.of(context).streakSuffix(tracker.streak)
+                                : ''),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                        style: TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 12.sp,
+                        ),
                       ),
                       Text(
                         lastRead == null
                             ? S.of(context).startKhatmaHint
-                            : S.of(context).lastReadAt(
-                                S.of(context).ayahRef(surahTitle(lastRead.surah), lastRead.ayah),
-                              ),
+                            : S
+                                  .of(context)
+                                  .lastReadAt(
+                                    S
+                                        .of(context)
+                                        .ayahRef(
+                                          surahTitle(lastRead.surah),
+                                          lastRead.ayah,
+                                        ),
+                                  ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+                        style: TextStyle(
+                          color: AppColors.textFaint,
+                          fontSize: 12.sp,
+                        ),
                       ),
                     ],
                   ),
@@ -75,8 +96,10 @@ class ReadingTrackerCard extends StatelessWidget {
                     AppRouter.surahScreen,
                     extra: lastRead == null
                         ? const SurahScreenArgs(1)
-                        : SurahScreenArgs(lastRead.surah,
-                            initialAyah: lastRead.ayah),
+                        : SurahScreenArgs(
+                            lastRead.surah,
+                            initialAyah: lastRead.ayah,
+                          ),
                   ),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
@@ -84,9 +107,11 @@ class ReadingTrackerCard extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 14.w),
                     visualDensity: VisualDensity.compact,
                   ),
-                  child: Text(lastRead == null
-                      ? S.of(context).start
-                      : S.of(context).continueReading),
+                  child: Text(
+                    lastRead == null
+                        ? S.of(context).start
+                        : S.of(context).continueReading,
+                  ),
                 ),
               ],
             ),
@@ -115,7 +140,7 @@ class ProgressRing extends StatelessWidget {
               value: progress,
               strokeWidth: size / 10,
               color: AppColors.primaryColor,
-              backgroundColor: Colors.white12,
+              backgroundColor: AppColors.divider,
             ),
           ),
           FittedBox(
@@ -124,8 +149,8 @@ class ProgressRing extends StatelessWidget {
               padding: EdgeInsets.all(size / 6),
               child: Text(
                 '${(progress * 100).floor()}%',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: AppColors.text,
                   fontWeight: FontWeight.bold,
                 ),
               ),

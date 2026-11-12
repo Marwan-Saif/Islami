@@ -25,13 +25,17 @@ class RecitersCubit extends Cubit<RecitersState> {
   void search(String query) {
     if (_allReciters.isEmpty) return;
     final normalized = _normalize(query);
-    emit(RecitersSuccess(
-      reciters: normalized.isEmpty
-          ? _allReciters
-          : _allReciters
-              .where((reciter) => _normalize(reciter.name).contains(normalized))
-              .toList(),
-    ));
+    emit(
+      RecitersSuccess(
+        reciters: normalized.isEmpty
+            ? _allReciters
+            : _allReciters
+                  .where(
+                    (reciter) => _normalize(reciter.name).contains(normalized),
+                  )
+                  .toList(),
+      ),
+    );
   }
 
   // عشان "عبد الباسط" تلاقي "عبدالباسط" و "احمد" تلاقي "أحمد"

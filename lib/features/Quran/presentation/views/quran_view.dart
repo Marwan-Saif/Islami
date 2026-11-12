@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/utils/app_colors.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/brand_header.dart';
 import 'package:islami/features/Quran/domain/quran_repo.dart';
 import 'package:islami/features/Quran/presentation/manager/quran_cubit/quran_cubit.dart';
 import 'package:islami/features/Quran/presentation/views/widgets/reading_tracker_card.dart';
@@ -14,9 +14,7 @@ import 'package:islami/features/Quran/presentation/views/widgets/sura_list.dart'
 import 'package:islami/generated/l10n.dart';
 
 class QuranView extends StatefulWidget {
-  const QuranView({
-    super.key,
-  });
+  const QuranView({super.key});
 
   @override
   State<QuranView> createState() => _QuranViewState();
@@ -37,49 +35,48 @@ class _QuranViewState extends State<QuranView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 40.sp),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsetsDirectional.symmetric(horizontal: 60.sp),
-            child: Image.asset(
-              Assets.imagesMosque001,
-              width: 200.sp,
-            ),
-          ),
+          const BrandHeader(),
+          SizedBox(height: 4.h),
           //*****Screen */
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Column(children: [
-                const ReadingTrackerCard(),
-                Builder(
-                  builder: (context) => SearchTextField(
-                    hintText: S.of(context).searchSurahOrAyah,
-                    onChanged: (query) {
-                      setState(() => _query = query);
-                      context.read<QuranCubit>().search(query);
-                    },
+              child: Column(
+                children: [
+                  const ReadingTrackerCard(),
+                  Builder(
+                    builder: (context) => SearchTextField(
+                      hintText: S.of(context).searchSurahOrAyah,
+                      onChanged: (query) {
+                        setState(() => _query = query);
+                        context.read<QuranCubit>().search(query);
+                      },
+                    ),
                   ),
-                ),
-                if (_canSearchAyahs)
-                  _AyahSearchTile(
-                    query: _query,
-                    onTap: () => context.push(AppRouter.ayahSearchView,
-                        extra: _query.trim()),
-                  ),
-                Align(
+                  if (_canSearchAyahs)
+                    _AyahSearchTile(
+                      query: _query,
+                      onTap: () => context.push(
+                        AppRouter.ayahSearchView,
+                        extra: _query.trim(),
+                      ),
+                    ),
+                  Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(
                       S.of(context).Suras_List,
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold),
-                    )),
-                const SurasList()
-              ]),
+                        color: AppColors.text,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SurasList(),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -97,8 +94,7 @@ class _AyahSearchTile extends StatelessWidget {
       onTap: onTap,
       dense: true,
       contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.manage_search_rounded,
-          color: AppColors.primaryColor),
+      leading: Icon(Icons.manage_search_rounded, color: AppColors.primaryColor),
       title: Text(
         S.of(context).searchAyahsFor(query.trim()),
         maxLines: 1,

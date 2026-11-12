@@ -24,8 +24,11 @@ void main() {
     }
   }
 
-  Future<void> waitFor(WidgetTester tester, Finder finder,
-      {Duration timeout = const Duration(seconds: 60)}) async {
+  Future<void> waitFor(
+    WidgetTester tester,
+    Finder finder, {
+    Duration timeout = const Duration(seconds: 60),
+  }) async {
     final end = DateTime.now().add(timeout);
     while (finder.evaluate().isEmpty) {
       if (DateTime.now().isAfter(end)) {
@@ -46,7 +49,10 @@ void main() {
     final stopwatch = Stopwatch()..start();
     await binding.traceAction(() async {
       // أول تشغيل بيفتح الـ onboarding، والتيست بيبدأ من الرئيسية
-      await (await SharedPreferences.getInstance()).setBool(kOnboardingSeenKey, true);
+      await (await SharedPreferences.getInstance()).setBool(
+        kOnboardingSeenKey,
+        true,
+      );
       app.main();
       await waitFor(tester, find.byType(BottomNavItem));
       binding.reportData = {
@@ -71,7 +77,11 @@ void main() {
         await pumpFor(tester, const Duration(milliseconds: 800));
       }
       for (int i = 0; i < 3; i++) {
-        await tester.fling(find.byType(SuraCard).first, const Offset(0, 600), 3000);
+        await tester.fling(
+          find.byType(SuraCard).first,
+          const Offset(0, 600),
+          3000,
+        );
         await pumpFor(tester, const Duration(milliseconds: 800));
       }
 

@@ -90,20 +90,20 @@ class S {
     );
   }
 
-  /// `Welcome To Islami`
+  /// `Welcome to Athar`
   String get onboarding1_title {
     return Intl.message(
-      'Welcome To Islami',
+      'Welcome to Athar',
       name: 'onboarding1_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `We Are Very Excited To Have You In Our Community`
+  /// `Your daily companion: the Quran, prayer and azkar in one place, with no ads`
   String get onboarding1_body {
     return Intl.message(
-      'We Are Very Excited To Have You In Our Community',
+      'Your daily companion: the Quran, prayer and azkar in one place, with no ads',
       name: 'onboarding1_body',
       desc: '',
       args: [],
@@ -120,30 +120,30 @@ class S {
     );
   }
 
-  /// `Read, and your Lord is the Most Generous`
+  /// `Read the mushaf with tafsir and recitations, and keep up with your daily wird and khatma`
   String get onboarding2_body {
     return Intl.message(
-      'Read, and your Lord is the Most Generous',
+      'Read the mushaf with tafsir and recitations, and keep up with your daily wird and khatma',
       name: 'onboarding2_body',
       desc: '',
       args: [],
     );
   }
 
-  /// `Tasbeeh`
+  /// `Prayer and azkar`
   String get onboarding3_title {
     return Intl.message(
-      'Tasbeeh',
+      'Prayer and azkar',
       name: 'onboarding3_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Praise the name of your Lord, the Most High`
+  /// `Accurate prayer times for where you are, the adhan on time, and reminders for the morning and evening azkar`
   String get onboarding3_body {
     return Intl.message(
-      'Praise the name of your Lord, the Most High',
+      'Accurate prayer times for where you are, the adhan on time, and reminders for the morning and evening azkar',
       name: 'onboarding3_body',
       desc: '',
       args: [],
@@ -1254,10 +1254,10 @@ class S {
     );
   }
 
-  /// `Islami app`
+  /// `Athar`
   String get appSubtitle {
     return Intl.message(
-      'Islami app',
+      'Athar',
       name: 'appSubtitle',
       desc: '',
       args: [],
@@ -1816,10 +1816,10 @@ class S {
     );
   }
 
-  /// `Islami: the Holy Quran, prayer times, azkar and hadiths\n{url}`
+  /// `Athar: the Holy Quran, prayer times, azkar and hadiths\n{url}`
   String shareAppText(Object url) {
     return Intl.message(
-      'Islami: the Holy Quran, prayer times, azkar and hadiths\n$url',
+      'Athar: the Holy Quran, prayer times, azkar and hadiths\n$url',
       name: 'shareAppText',
       desc: '',
       args: [url],
@@ -1901,6 +1901,189 @@ class S {
     return Intl.message(
       'A notification before every prayer, even when the adhan is off',
       name: 'reminderHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Adhan right on time`
+  String get exactAlarmTitle {
+    return Intl.message(
+      'Adhan right on time',
+      name: 'exactAlarmTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To play the adhan exactly at prayer time, allow Athar to set alarms and reminders. Without this permission Android may delay the adhan by a few minutes.`
+  String get exactAlarmMessage {
+    return Intl.message(
+      'To play the adhan exactly at prayer time, allow Athar to set alarms and reminders. Without this permission Android may delay the adhan by a few minutes.',
+      name: 'exactAlarmMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow`
+  String get exactAlarmAllow {
+    return Intl.message(
+      'Allow',
+      name: 'exactAlarmAllow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not now`
+  String get exactAlarmLater {
+    return Intl.message(
+      'Not now',
+      name: 'exactAlarmLater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The adhan may be a few minutes late. Tap to allow alarms`
+  String get exactAlarmTile {
+    return Intl.message(
+      'The adhan may be a few minutes late. Tap to allow alarms',
+      name: 'exactAlarmTile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy policy`
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Licenses and data sources`
+  String get licensesAndSources {
+    return Intl.message(
+      'Licenses and data sources',
+      name: 'licensesAndSources',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count, plural, one{Once} two{Twice} other{{count} times}}`
+  String zekrRepeat(num count) {
+    return Intl.plural(
+      count,
+      one: 'Once',
+      two: 'Twice',
+      other: '$count times',
+      name: 'zekrRepeat',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Tap to count`
+  String get tapToCount {
+    return Intl.message(
+      'Tap to count',
+      name: 'tapToCount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done, tap to restart`
+  String get zekrDone {
+    return Intl.message(
+      'Done, tap to restart',
+      name: 'zekrDone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `of {count}`
+  String zekrOutOf(Object count) {
+    return Intl.message(
+      'of $count',
+      name: 'zekrOutOf',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Appearance`
+  String get appearance {
+    return Intl.message(
+      'Appearance',
+      name: 'appearance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dark`
+  String get themeDark {
+    return Intl.message(
+      'Dark',
+      name: 'themeDark',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Athar`
+  String get appName {
+    return Intl.message(
+      'Athar',
+      name: 'appName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Light`
+  String get themeLight {
+    return Intl.message(
+      'Light',
+      name: 'themeLight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System`
+  String get themeSystem {
+    return Intl.message(
+      'System',
+      name: 'themeSystem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save and start over`
+  String get saveToHistory {
+    return Intl.message(
+      'Save and start over',
+      name: 'saveToHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quran, prayer and azkar`
+  String get appTagline {
+    return Intl.message(
+      'Quran, prayer and azkar',
+      name: 'appTagline',
       desc: '',
       args: [],
     );

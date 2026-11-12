@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:islami/core/services/app_settings.dart';
+import 'package:islami/features/Timer/data/azkar_notifications.dart';
+import 'package:islami/features/Timer/data/prayer_times_service.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -45,20 +47,20 @@ class NotificationHelper {
   };
   static const AndroidNotificationChannel _reminderChannel =
       AndroidNotificationChannel(
-    'prayer_reminder_channel',
-    'التذكير قبل الصلاة',
-    description: 'تذكير قبل دخول وقت الصلاة',
-    importance: Importance.high,
-    sound: RawResourceAndroidNotificationSound('notification'),
-  );
+        'prayer_reminder_channel',
+        'التذكير قبل الصلاة',
+        description: 'تذكير قبل دخول وقت الصلاة',
+        importance: Importance.high,
+        sound: RawResourceAndroidNotificationSound('notification'),
+      );
   static const AndroidNotificationChannel _azkarChannel =
       AndroidNotificationChannel(
-    'azkar_channel',
-    'الأذكار',
-    description: 'تذكير بأذكار الصباح والمساء',
-    importance: Importance.high,
-    sound: RawResourceAndroidNotificationSound('notification'),
-  );
+        'azkar_channel',
+        'الأذكار',
+        description: 'تذكير بأذكار الصباح والمساء',
+        importance: Importance.high,
+        sound: RawResourceAndroidNotificationSound('notification'),
+      );
 
   // الـ channel القديمة كانت بصوت واحد لكل الإشعارات
   static const String _legacyChannelId = 'important_notification';
@@ -66,7 +68,8 @@ class NotificationHelper {
   // مش بنعتمد على tz.local لأن مكتبة prayers_times بتعمل initializeTimeZones
   // جوه الـ constructor وده بيرجع tz.local لـ UTC
   static tz.Location? _location;
-  static tz.Location get location => _location ?? tz.getLocation('Africa/Cairo');
+  static tz.Location get location =>
+      _location ?? tz.getLocation('Africa/Cairo');
 
   static Future<void> init() async {
     // flutter_local_notifications مش بتدعم الويب
@@ -75,14 +78,16 @@ class NotificationHelper {
     _location = await _deviceLocation();
     tz.setLocalLocation(location);
 
-    await _notification.initialize(const InitializationSettings(
-      android: AndroidInitializationSettings('ic_notification'),
-      iOS: DarwinInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false,
+    await _notification.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('ic_notification'),
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        ),
       ),
-    ));
+    );
 
     final android = _androidPlugin;
     if (android != null) {
@@ -106,23 +111,56 @@ class NotificationHelper {
   }
 
   static AndroidFlutterLocalNotificationsPlugin? get _androidPlugin =>
-      _notification.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      _notification
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
 
   /// أندرويد 13+ و iOS لازم المستخدم يوافق على الإشعارات الأول
-  static Future<void> requestPermissions() async {
+  /// مرة واحدة بس في كل تشغيل: الرئيسية بتتبني من جديد مع تغيير الثيم،
+  /// وطلب تاني وهو لسه مفتوح كان بيرمي permissionRequestInProgress
+  static Future<void>? _permissionRequest;
+
+  static Future<void> requestPermissions() =>
+      _permissionRequest ??= _requestPermissions();
+
+  static Future<void> _requestPermissions() async {
     if (kIsWeb) return;
-    await _androidPlugin?.requestNotificationsPermission();
-    await _notification
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(alert: true, badge: true, sound: true);
+    try {
+      await _androidPlugin?.requestNotificationsPermission();
+      await _notification
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+    } catch (e) {
+      log('notification permission request failed: $e');
+    }
+  }
+
+  /// على أندرويد 12+ الأذان في وقته بالظبط محتاج إذن "المنبّهات والتذكيرات"،
+  /// وعلى أندرويد 14+ ده مقفول افتراضياً للتطبيقات الجديدة
+  static Future<bool> canScheduleExact() async {
+    if (kIsWeb) return true;
+    return await _androidPlugin?.canScheduleExactNotifications() ?? true;
+  }
+
+  /// بيفتح صفحة الإذن في إعدادات النظام، وبيرجع لما المستخدم يرجع للتطبيق
+  static Future<bool> requestExactAlarms() async {
+    if (kIsWeb) return true;
+    await _androidPlugin?.requestExactAlarmsPermission();
+    return canScheduleExact();
+  }
+
+  /// الأذان والأذكار اللي اتجدولوا inexact قبل الإذن بيتجدولوا تاني في وقتهم بالظبط
+  static Future<void> rescheduleAfterExactAlarmGrant() async {
+    await AzkarNotifications.scheduleFromStorage();
+    await PrayerNotifications.scheduleUpcoming();
   }
 
   // لو إذن الـ exact alarm مش متاح بنجدول inexact بدل ما الجدولة تفشل
   static Future<AndroidScheduleMode> _scheduleMode() async {
-    final canScheduleExact =
-        await _androidPlugin?.canScheduleExactNotifications() ?? true;
+    final canScheduleExact = await NotificationHelper.canScheduleExact();
     return canScheduleExact
         ? AndroidScheduleMode.exactAllowWhileIdle
         : AndroidScheduleMode.inexactAllowWhileIdle;
@@ -228,7 +266,13 @@ class NotificationHelper {
     if (kIsWeb) return;
     final now = tz.TZDateTime.now(location);
     var scheduledDate = tz.TZDateTime(
-        location, now.year, now.month, now.day, time.hour, time.minute);
+      location,
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
     // لو الوقت عدى النهارده يبدأ من بكرة
     if (!scheduledDate.isAfter(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));

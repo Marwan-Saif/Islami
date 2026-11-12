@@ -4,7 +4,10 @@ import 'package:islami/constants.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/shared_prefs.dart';
 import 'package:islami/core/utils/app_colors.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/brand_header.dart';
+import 'package:islami/core/widgets/brand/pattern_background.dart';
+import 'package:islami/core/widgets/brand/athar_logo.dart';
+import 'package:islami/generated/l10n.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,18 +20,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // بعد أول frame بنفك صور الشاشة الرئيسية وإحنا لسه على الـ splash،
-    // عشان أول ما الرئيسية تظهر متقفش وهي بتفك الصور
+    // مفيش صور تتفك قبل الرئيسية دلوقتي (كل الرسومات بالكود)،
+    // فالـ splash بيستنى الأنيميشن بس
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.wait([
-        Future.delayed(const Duration(milliseconds: 1200)),
-        for (final image in const [
-          Assets.imagesTajMahalAgraIndia,
-          Assets.imagesMosque001,
-          Assets.imagesTimerBackground,
-        ])
-          precacheImage(AssetImage(image), context),
-      ]);
+      await Future.delayed(const Duration(milliseconds: 1400));
       if (!mounted) return;
       // الـ onboarding أول مرة بس، وبعد كده على الرئيسية على طول
       final seen = Prefs.getData(key: kOnboardingSeenKey) == true;
@@ -43,106 +38,53 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 class SplashBody extends StatelessWidget {
-  const SplashBody({
-    super.key,
-  });
+  const SplashBody({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        Image.asset(
-          Assets.imagesBackground,
-          fit: BoxFit.fill,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-        ),
-        const Positioned(
-          right: 20,
-          child: Image(
-            image: AssetImage(Assets.imagesGlow),
-            height: 270,
-          ),
-        ),
-    
-        const Positioned(
-          top: 170,
-          left: 0,
-          child: Image(
-            image: AssetImage(Assets.imagesShape07),
-            height: 170,
-          ),
-        ),
-        const Positioned(
-          bottom: 110,
-          right: 0,
-          child: Image(
-            image: AssetImage(Assets.imagesShape04),
-            height: 170,
-          ),
-        ),
-        const Positioned(
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
+      body: PatternBackground(
+        child: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Spacer(
-                flex: 1,
+              const Spacer(flex: 3),
+              // اللوجو بيظهر بتكبير ونور خفيف
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.85, end: 1),
+                duration: const Duration(milliseconds: 900),
+                curve: Curves.easeOutBack,
+                builder: (context, scale, child) => Opacity(
+                  opacity: ((scale - 0.85) / 0.15).clamp(0, 1),
+                  child: Transform.scale(scale: scale, child: child),
+                ),
+                child: const Column(
+                  children: [
+                    AtharLogo(size: 170),
+                    SizedBox(height: 8),
+                    BrandName(fontSize: 44),
+                  ],
+                ),
               ),
-              Image(
-                image: AssetImage(Assets.imagesMosque01),
-                height: 200,
-              ),
-              Spacer(
-                flex: 10,
-              ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(
-                      left: 0,
-                      right: 0,
-                      top: -170,
-                      child: Image(
-                        image: AssetImage(Assets.imagesOBJECTS),
-                      )),
-                  Positioned(
-                      // top: 20,
-                      // left: 0,
-                      // right: 0,
-                      child: Image(
-                    image: AssetImage(Assets.imagesIslami1),
-                  )),
-                ],
-              ),
-              Spacer(
-                flex: 10,
-              ),
+              const SizedBox(height: 6),
               Text(
-                'Supervised by Marwan Saif ',
+                S.of(context).appTagline,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.textMuted, fontSize: 15),
+              ),
+              const Spacer(flex: 4),
+              Text(
+                'Marwan Saif',
                 style: TextStyle(
-                    color: AppColors.primaryColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400),
+                  color: AppColors.textFaint,
+                  fontSize: 13,
+                  letterSpacing: 1,
+                ),
               ),
-              Spacer(
-                flex: 1,
-              ),
+              const SizedBox(height: 20),
             ],
           ),
-        )
-        // Positioned(
-        //   child: FittedBox(child: Image.asset(Assets.imagesMosque01,width: 200,fit: BoxFit.fitWidth,)),
-        //   top: 120,
-        //   left: 0,
-        //   right: 0,
-        // ),
-      ],
-    ));
+        ),
+      ),
+    );
   }
 }

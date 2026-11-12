@@ -190,7 +190,7 @@ class _SurahHeader extends StatelessWidget {
         children: [
           Text(
             '$place • ${ayahCountLabel(meta.ayahCount)}',
-            style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+            style: TextStyle(color: AppColors.textFaint, fontSize: 13.sp),
           ),
           if (showBasmala) ...[
             SizedBox(height: 8.h),
@@ -302,7 +302,7 @@ class _QuranPageState extends State<_QuranPage> {
                       '(${ayah.id}) ${widget.translation![ayah.id] ?? ''}',
                       textDirection: TextDirection.ltr,
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: AppColors.textMuted,
                         fontSize: 13.sp,
                         height: 1.5,
                       ),

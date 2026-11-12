@@ -7,10 +7,11 @@ import 'package:islami/features/Timer/domain/zekr_entity.dart';
 import 'package:islami/features/Timer/domain/zekr_repo.dart';
 
 class ZekrRepoImpl extends ZekrRepo {
-  List<List<ZekrEntity>> azkarList = [];
   @override
   Future<List<List<ZekrEntity>>> getZekrList() async {
     log('Getting Zekr List');
+    // list جديدة مع كل تحميل، عشان التحميل التاني ميكررش الأذكار
+    final List<List<ZekrEntity>> azkarList = [];
     try {
       for (var file in kFiles) {
         String jsonString = await rootBundle.loadString(file);

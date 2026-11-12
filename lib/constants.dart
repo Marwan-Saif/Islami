@@ -14,6 +14,7 @@ const List<String> kFiles = [
   'assets/data/أذكا_ الطعام.json',
   'assets/data/أذكار_النوم.json',
 ];
+
 /// أسماء الأذكار بنفس ترتيب kFiles وبلغة التطبيق
 /// (الـ widgets تبعت S.of(context) عشان تتبني تاني لما اللغة تتغير)
 List<String> azkarNames(S s) => [
@@ -30,13 +31,15 @@ List<String> azkarNames(S s) => [
 List<String> get kFileNames => azkarNames(S.current);
 List<ZekrLocalDataMoel> kAzkarData = [
   ZekrLocalDataMoel(
-      zekrName: 'أذكار الصباح',
-      zekrBody: 'لا تنسَ أذكار الصباح',
-      zekrtime: "07:00",
-      zekrAllawed: true),
+    zekrName: 'أذكار الصباح',
+    zekrBody: 'لا تنسَ أذكار الصباح',
+    zekrtime: "07:00",
+    zekrAllawed: true,
+  ),
   ZekrLocalDataMoel(
-      zekrName: 'أذكار المساء',
-      zekrBody: 'لا تنسَ أذكار المساء',
-      zekrtime: '19:00',
-      zekrAllawed: true)
+    zekrName: 'أذكار المساء',
+    zekrBody: 'لا تنسَ أذكار المساء',
+    zekrtime: '19:00',
+    zekrAllawed: true,
+  ),
 ];

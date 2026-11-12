@@ -4,7 +4,7 @@ import 'package:islami/features/Sebha/presentation/views/local_sypha.dart';
 
 class SebhaService {
   late Box<LocalSypha> _syphaBox;
-  final String _totalKey = 'total'; 
+  final String _totalKey = 'total';
 
   // 1. (Initialization)
   Future<void> init() async {
@@ -21,7 +21,7 @@ class SebhaService {
     }
   }
 
-  // 2. (Get All Azkar) 
+  // 2. (Get All Azkar)
   List<LocalSypha> getAllAzkar() {
     return _syphaBox.values.toList();
   }
@@ -44,9 +44,9 @@ class SebhaService {
       var item = _syphaBox.getAt(i)!;
       int history = int.parse(item.historyCounter);
       int current = int.parse(item.counter);
-      
+
       item.historyCounter = (history + current).toString();
-      item.counter = '0'; 
+      item.counter = '0';
       _syphaBox.putAt(i, item);
     }
     Prefs.saveData(key: _totalKey, value: 0);

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/services/app_settings.dart';
+import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'package:islami/core/widgets/appbar.dart';
 import 'package:islami/features/Timer/data/azkar_notifications.dart';
@@ -28,6 +29,8 @@ class _SettingsViewState extends State<SettingsView> {
   // معاينة الأصوات بـ audioplayers لأن just_audio_background بيسمح بمشغل واحد بس
   final AudioPlayer _preview = AudioPlayer();
   AdhanSound? _previewing;
+  // null لحد ما نعرف، والزرار بيظهر بس لو الإذن مقفول فعلاً
+  bool? _exactAlarmsAllowed;
 
   static const Map<AdhanSound, String> _soundAssets = {
     AdhanSound.full: 'sound/azan.mp3',
@@ -41,6 +44,16 @@ class _SettingsViewState extends State<SettingsView> {
     _preview.onPlayerComplete.listen((_) {
       if (mounted) setState(() => _previewing = null);
     });
+    NotificationHelper.canScheduleExact().then((allowed) {
+      if (mounted) setState(() => _exactAlarmsAllowed = allowed);
+    });
+  }
+
+  Future<void> _requestExactAlarms() async {
+    final allowed = await NotificationHelper.requestExactAlarms();
+    if (!mounted) return;
+    setState(() => _exactAlarmsAllowed = allowed);
+    if (allowed) await NotificationHelper.rescheduleAfterExactAlarmGrant();
   }
 
   @override
@@ -86,7 +99,7 @@ class _SettingsViewState extends State<SettingsView> {
       backgroundColor: AppColors.backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-        side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+        side: BorderSide(color: AppColors.primaryColor, width: 1.5),
       ),
       builder: (context) => ConstrainedBox(
         constraints: BoxConstraints(
@@ -116,15 +129,12 @@ class _SettingsViewState extends State<SettingsView> {
                         title: Text(
                           label(option),
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.text,
                             fontSize: 15.sp,
                           ),
                         ),
                         trailing: isSelected(option)
-                            ? const Icon(
-                                Icons.check,
-                                color: AppColors.primaryColor,
-                              )
+                            ? Icon(Icons.check, color: AppColors.primaryColor)
                             : null,
                       ),
                   ],
@@ -164,13 +174,13 @@ class _SettingsViewState extends State<SettingsView> {
             useGps = true;
             Navigator.of(sheetContext).pop();
           },
-          leading: const Icon(Icons.my_location, color: AppColors.primaryColor),
+          leading: Icon(Icons.my_location, color: AppColors.primaryColor),
           title: Text(
             S.of(context).useMyLocation,
             style: TextStyle(color: AppColors.primaryColor, fontSize: 15.sp),
           ),
           trailing: current == null
-              ? const Icon(Icons.check, color: AppColors.primaryColor)
+              ? Icon(Icons.check, color: AppColors.primaryColor)
               : null,
         ),
       ),
@@ -233,6 +243,21 @@ class _SettingsViewState extends State<SettingsView> {
             ],
           ),
           SettingsSection(
+            title: S.of(context).appearance,
+            icon: Icons.contrast_rounded,
+            children: [
+              SegmentedChoice<ThemeMode>(
+                options: {
+                  ThemeMode.system: S.of(context).themeSystem,
+                  ThemeMode.light: S.of(context).themeLight,
+                  ThemeMode.dark: S.of(context).themeDark,
+                },
+                selected: _settings.themeMode.value,
+                onChanged: _settings.setThemeMode,
+              ),
+            ],
+          ),
+          SettingsSection(
             title: S.of(context).adhanSound,
             icon: Icons.volume_up_rounded,
             children: [
@@ -254,7 +279,7 @@ class _SettingsViewState extends State<SettingsView> {
                             AdhanSound.silent => S.of(context).adhanSilent,
                           },
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.text,
                             fontSize: 15.sp,
                           ),
                         ),
@@ -327,7 +352,20 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                 ),
               ),
-              const Divider(color: Colors.white12, height: 1),
+              if (_exactAlarmsAllowed == false && PrayerNotifications.isEnabled)
+                ListTile(
+                  onTap: _requestExactAlarms,
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    Icons.alarm_off_rounded,
+                    color: AppColors.warning,
+                  ),
+                  title: Text(
+                    S.of(context).exactAlarmTile,
+                    style: TextStyle(color: AppColors.warning, fontSize: 14.sp),
+                  ),
+                ),
+              Divider(color: AppColors.divider, height: 1),
               for (int prayer = 0; prayer < 5; prayer++)
                 SwitchListTile(
                   value: PrayerNotifications.isPrayerEnabled(prayer),
@@ -347,8 +385,8 @@ class _SettingsViewState extends State<SettingsView> {
                     S.of(context).prayerName(prayerDisplayName(prayer)),
                     style: TextStyle(
                       color: PrayerNotifications.isEnabled
-                          ? Colors.white
-                          : Colors.white38,
+                          ? AppColors.text
+                          : AppColors.textFaint,
                       fontSize: 15.sp,
                     ),
                   ),
@@ -361,7 +399,7 @@ class _SettingsViewState extends State<SettingsView> {
             children: [
               Text(
                 S.of(context).reminderHint,
-                style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+                style: TextStyle(color: AppColors.textFaint, fontSize: 13.sp),
               ),
               SizedBox(height: 8.h),
               Wrap(
@@ -370,20 +408,22 @@ class _SettingsViewState extends State<SettingsView> {
                 children: [
                   for (final minutes in PrayerNotifications.reminderOptions)
                     ChoiceChip(
-                      label: Text(minutes == 0
-                          ? S.of(context).off
-                          : S.of(context).minutesCount(minutes)),
+                      label: Text(
+                        minutes == 0
+                            ? S.of(context).off
+                            : S.of(context).minutesCount(minutes),
+                      ),
                       selected: PrayerNotifications.reminderMinutes == minutes,
                       onSelected: (_) async {
                         await PrayerNotifications.setReminderMinutes(minutes);
                         setState(() {});
                       },
                       selectedColor: AppColors.primaryColor,
-                      backgroundColor: Colors.black,
+                      backgroundColor: AppColors.surfaceHigh,
                       labelStyle: TextStyle(
                         color: PrayerNotifications.reminderMinutes == minutes
                             ? AppColors.backgroundColor
-                            : Colors.white,
+                            : AppColors.text,
                       ),
                     ),
                 ],
@@ -396,7 +436,7 @@ class _SettingsViewState extends State<SettingsView> {
             children: [
               Text(
                 S.of(context).quranFontSize,
-                style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+                style: TextStyle(color: AppColors.textMuted, fontSize: 14.sp),
               ),
               Slider(
                 value: _settings.quranFontSize,
@@ -433,11 +473,11 @@ class _SettingsViewState extends State<SettingsView> {
                 contentPadding: EdgeInsets.zero,
                 title: Text(
                   S.of(context).showEnglishTranslation,
-                  style: TextStyle(color: Colors.white, fontSize: 15.sp),
+                  style: TextStyle(color: AppColors.text, fontSize: 15.sp),
                 ),
                 subtitle: Text(
                   'Saheeh International',
-                  style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+                  style: TextStyle(color: AppColors.textFaint, fontSize: 12.sp),
                 ),
               ),
             ],

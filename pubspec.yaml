@@ -1,7 +1,7 @@
 name: islami
-description: "Islami: the Holy Quran with tafsir and recitations, prayer times and adhan, azkar, hadith, tasbih and qibla."
+description: "Athar: the Holy Quran with tafsir and recitations, prayer times and adhan, azkar, hadith, tasbih and qibla."
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0+1
 
 environment:
   sdk: ^3.10.1
@@ -83,18 +83,22 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   remove_alpha_ios: true
-  background_color_ios: "#212121"
-  adaptive_icon_background: "#212121"
-  adaptive_icon_foreground: "assets/images/app_icon.png"
+  background_color_ios: "#0D1720"
+  adaptive_icon_background: "#0D1720"
+  adaptive_icon_foreground: "assets/brand/icon_foreground.png"
+  # الرسمة نفسها سايبة مساحة الأمان، فمن غير هامش زيادة
+  adaptive_icon_foreground_inset: 0
   image_path: "assets/images/app_icon.png"
   min_sdk_android: 21
 
 # run `dart run flutter_native_splash:create` after changing this section
+# (the images come from tool/render_brand_test.dart)
 flutter_native_splash:
-  # matches the tone of assets/images/background.png used by the Flutter splash
-  color: "#2D2C2C"
+  color: "#F7F1E6"
+  color_dark: "#0D1720"
   image: assets/splash/splash_logo.png
   android_12:
-    color: "#2D2C2C"
+    color: "#F7F1E6"
+    color_dark: "#0D1720"
     image: assets/splash/splash_icon_android12.png
   web: false

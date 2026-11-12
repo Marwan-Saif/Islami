@@ -12,24 +12,19 @@ import 'package:islami/features/Timer/presentation/views/widgets/zekr_card.dart'
 import 'package:islami/generated/l10n.dart';
 
 class ZekrListView extends StatelessWidget {
-  const ZekrListView({
-    super.key,
-  });
+  const ZekrListView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AzkarCubit(getit.get<ZekrRepo>())
-        ..getAzkar(),
+      create: (context) => AzkarCubit(getit.get<ZekrRepo>())..getAzkar(),
       child: ZekrListViewBodyConsumer(),
     );
   }
 }
 
 class ZekrListViewBodyConsumer extends StatelessWidget {
-  const ZekrListViewBodyConsumer({
-    super.key,
-  });
+  const ZekrListViewBodyConsumer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +34,14 @@ class ZekrListViewBodyConsumer extends StatelessWidget {
         log(state.toString());
         return state is! AzkarLoadedSuccessfuly
             ? const Center(child: CircularProgressIndicator())
-            : AzkarListViewBody(
-                azkar: state.zekrList,
-              );
+            : AzkarListViewBody(azkar: state.zekrList);
       },
     );
   }
 }
 
 class AzkarListViewBody extends StatelessWidget {
-  const AzkarListViewBody({
-    super.key,
-    required this.azkar,
-  });
+  const AzkarListViewBody({super.key, required this.azkar});
   final List<List<ZekrEntity>> azkar;
 
   @override
@@ -60,17 +50,21 @@ class AzkarListViewBody extends StatelessWidget {
     final names = azkarNames(S.of(context));
     return SizedBox(
       height: 200.h,
-        child: ListView.separated(
-      padding:
-          EdgeInsetsDirectional.symmetric(vertical: 20.sp, horizontal: 20.sp),
-      itemBuilder: (context, index) => ZekrCard(
-        name: names[index],
-        zekrList: azkar[index],
+      child: ListView.separated(
+        padding: EdgeInsetsDirectional.symmetric(
+          vertical: 20.sp,
+          horizontal: 20.sp,
+        ),
+        itemBuilder: (context, index) => ZekrCard(
+          name: names[index],
+          zekrList: azkar[index],
+          icon: kAzkarIcons[index % kAzkarIcons.length],
+        ),
+        separatorBuilder: (context, index) => SizedBox(width: 20.sp),
+        // كان مكتوب 7 ثابت فـ "أذكار النوم" (الملف التامن) مكنتش بتظهر
+        itemCount: azkar.length,
+        scrollDirection: Axis.horizontal,
       ),
-      separatorBuilder: (context, index) => SizedBox(width: 20.sp),
-      // كان مكتوب 7 ثابت فـ "أذكار النوم" (الملف التامن) مكنتش بتظهر
-      itemCount: azkar.length,
-      scrollDirection: Axis.horizontal,
-    ));
+    );
   }
 }

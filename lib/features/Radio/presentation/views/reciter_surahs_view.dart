@@ -24,7 +24,10 @@ class ReciterSurahsView extends StatelessWidget {
 
   Future<void> _play(int index) async {
     try {
-      await AudioService().playList(moshaf.toPlaylist(reciter), initialIndex: index);
+      await AudioService().playList(
+        moshaf.toPlaylist(reciter),
+        initialIndex: index,
+      );
     } catch (e) {
       debugPrint('failed to play recitation: $e');
     }
@@ -50,7 +53,7 @@ class ReciterSurahsView extends StatelessWidget {
             Text(
               moshaf.name,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+              style: TextStyle(color: AppColors.textFaint, fontSize: 13.sp),
             ),
             SizedBox(height: 12.h),
             Row(
@@ -68,7 +71,8 @@ class ReciterSurahsView extends StatelessWidget {
                   child: _HeaderButton(
                     icon: Icons.swap_horiz_rounded,
                     label: S.of(context).changeReciter,
-                    onTap: () => context.pushReplacement(AppRouter.recitersView),
+                    onTap: () =>
+                        context.pushReplacement(AppRouter.recitersView),
                   ),
                 ),
               ],
@@ -85,7 +89,7 @@ class ReciterSurahsView extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: 12.h),
                     itemCount: moshaf.surahList.length,
                     separatorBuilder: (context, index) => Divider(
-                      color: Colors.white12,
+                      color: AppColors.divider,
                       height: 1,
                       indent: 40.w,
                       endIndent: 40.w,
@@ -135,14 +139,16 @@ class SurahAudioTile extends StatelessWidget {
               child: Text(
                 surahTitle(surahNumber),
                 style: GoogleFonts.amiri(
-                  color: isCurrent ? AppColors.primaryColor : Colors.white,
+                  color: isCurrent ? AppColors.primaryColor : AppColors.text,
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             Icon(
-              isCurrent ? Icons.graphic_eq_rounded : Icons.play_circle_outline_rounded,
+              isCurrent
+                  ? Icons.graphic_eq_rounded
+                  : Icons.play_circle_outline_rounded,
               color: AppColors.primaryColor,
               size: 28.r,
             ),
@@ -167,14 +173,16 @@ class _HeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = filled ? AppColors.backgroundColor : AppColors.primaryColor;
+    final foreground = filled
+        ? AppColors.backgroundColor
+        : AppColors.primaryColor;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14.r),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
-          color: filled ? AppColors.primaryColor : Colors.black.withValues(alpha: 0.4),
+          color: filled ? AppColors.primaryColor : AppColors.card,
           borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: AppColors.primaryColor, width: 1.5),
         ),

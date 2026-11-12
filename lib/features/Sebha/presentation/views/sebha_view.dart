@@ -1,9 +1,11 @@
+import 'package:islami/core/utils/app_colors.dart';
 import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:islami/core/utils/app_images.dart';
+import 'package:islami/core/widgets/brand/brand_header.dart';
+import 'package:islami/features/Sebha/presentation/views/widgets/sebha_beads.dart';
 import 'package:islami/features/Sebha/data/sebha_services.dart';
 import 'package:islami/features/Sebha/presentation/views/local_sypha.dart';
 import 'package:islami/generated/l10n.dart';
@@ -45,8 +47,8 @@ class _SebhaViewState extends State<SebhaView> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: Color(0xFFC9A063)),
+      return Center(
+        child: CircularProgressIndicator(color: AppColors.primaryColor),
       );
     }
 
@@ -56,17 +58,14 @@ class _SebhaViewState extends State<SebhaView> {
       bottom: false,
       child: Padding(
         // مساحة لدواير الـ bottom nav اللي طالعة فوق الشريط
-        padding: EdgeInsets.only(top: 12.h, bottom: 28.h),
+        padding: EdgeInsets.only(
+          top: 12.h,
+          bottom: MediaQuery.paddingOf(context).bottom + 8.h,
+        ),
         child: Column(
           children: [
-            Flexible(
-              flex: 3,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 60.w),
-                child: Image.asset(Assets.imagesMosque001, fit: BoxFit.contain),
-              ),
-            ),
-            SizedBox(height: 12.h),
+            const BrandHeader(),
+            SizedBox(height: 8.h),
             carousalSliderSection(),
             SizedBox(height: 8.h),
             Expanded(flex: 9, child: _beads()),
@@ -97,24 +96,19 @@ class _SebhaViewState extends State<SebhaView> {
       onTap: _increment,
       child: Center(
         child: AspectRatio(
-          aspectRatio: 379 / 460,
+          aspectRatio: 1,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final height = constraints.maxHeight;
-              return DecoratedBox(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(Assets.imagesSebha),
-                    fit: BoxFit.contain,
-                  ),
-                ),
+              return SebhaBeads(
+                count: counter,
                 child: Padding(
-                  // الدايرة نفسها أوطى من نص الصورة بسبب الشرّابة اللي فوق
+                  // الكلام جوه الدايرة اللي نازلة شوية بسبب الشرّابة اللي فوق
                   padding: EdgeInsets.fromLTRB(
-                    height * 0.12,
                     height * 0.2,
-                    height * 0.12,
-                    height * 0.08,
+                    height * 0.3,
+                    height * 0.2,
+                    height * 0.18,
                   ),
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
@@ -125,7 +119,7 @@ class _SebhaViewState extends State<SebhaView> {
                           selectedValue,
                           style: GoogleFonts.amiri(
                             fontSize: height * 0.085,
-                            color: Colors.white,
+                            color: AppColors.text,
                           ),
                         ),
                         AnimatedSwitcher(
@@ -137,7 +131,7 @@ class _SebhaViewState extends State<SebhaView> {
                             key: ValueKey<int>(counter),
                             style: GoogleFonts.amiri(
                               fontSize: height * 0.11,
-                              color: Colors.white,
+                              color: AppColors.text,
                               fontWeight: FontWeight.bold,
                               fontFeatures: [const FontFeature('arab')],
                             ),
@@ -164,7 +158,7 @@ class _SebhaViewState extends State<SebhaView> {
           Text(
             S.of(context).totalLabel,
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.text,
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -179,7 +173,7 @@ class _SebhaViewState extends State<SebhaView> {
               key: ValueKey<int>(total),
               style: GoogleFonts.amiri(
                 fontSize: 30.sp,
-                color: Colors.white,
+                color: AppColors.text,
                 fontWeight: FontWeight.bold,
                 fontFeatures: [const FontFeature('arab')],
               ),
@@ -196,8 +190,9 @@ class _SebhaViewState extends State<SebhaView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
-            onTap: () {
+          // IconButton: مساحة لمس 48dp وتأثير ضغط واسم للقارئ الصوتي
+          IconButton(
+            onPressed: () {
               log("Refresh/Save to History");
               _sebhaService.moveCurrentToHistory();
               setState(() {
@@ -205,22 +200,20 @@ class _SebhaViewState extends State<SebhaView> {
                 total = 0;
               });
             },
-            child: Image.asset(
-              Assets.imagesRefresh,
-              width: 35.w,
-              color: Colors.white,
-            ),
+            tooltip: S.of(context).saveToHistory,
+            iconSize: 30.r,
+            color: AppColors.primaryColor,
+            icon: const Icon(Icons.restart_alt_rounded),
           ),
-          GestureDetector(
-            onTap: () {
+          IconButton(
+            onPressed: () {
               log("Reset History");
               resetDialog(context);
             },
-            child: Image.asset(
-              Assets.imagesReset,
-              width: 35.w,
-              color: Colors.white,
-            ),
+            tooltip: S.of(context).history,
+            iconSize: 30.r,
+            color: AppColors.primaryColor,
+            icon: const Icon(Icons.history_rounded),
           ),
         ],
       ),
@@ -231,13 +224,13 @@ class _SebhaViewState extends State<SebhaView> {
     List<LocalSypha> azkarList = _sebhaService.getAllAzkar();
 
     return CarouselSlider.builder(
-      itemCount: azkarList.length, 
+      itemCount: azkarList.length,
       itemBuilder: (context, index, realIndex) {
         return FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
             azkarList[index].name,
-            style: GoogleFonts.amiri(fontSize: 32.sp, color: Colors.white),
+            style: GoogleFonts.amiri(fontSize: 32.sp, color: AppColors.text),
           ),
         );
       },
@@ -307,14 +300,14 @@ class _SebhaViewState extends State<SebhaView> {
                         );
                       }),
                       Divider(
-                        color: Colors.black,
+                        color: AppColors.divider,
                         thickness: 1.5.h,
                         height: 20.h,
                       ),
                       Text(
                         S.of(context).total(_sebhaService.getTotalHistory()),
                         style: TextStyle(
-                          color: Colors.black,
+                          color: AppColors.text,
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -328,17 +321,20 @@ class _SebhaViewState extends State<SebhaView> {
                 TextButton(
                   onPressed: () {
                     _sebhaService.clearHistoryData();
-                    setStateDialog(() {}); 
-                    setState(() {}); 
+                    setStateDialog(() {});
+                    setState(() {});
                   },
                   child: Text(
                     S.of(context).clear,
-                    style: TextStyle(color: Colors.red, fontSize: 16.sp),
+                    style: TextStyle(color: AppColors.danger, fontSize: 16.sp),
                   ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text(S.of(context).close, style: TextStyle(fontSize: 16.sp)),
+                  child: Text(
+                    S.of(context).close,
+                    style: TextStyle(fontSize: 16.sp),
+                  ),
                 ),
               ],
             );

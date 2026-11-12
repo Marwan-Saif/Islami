@@ -16,21 +16,24 @@ class _FakeRecitationsRepo implements RecitationsRepo {
       (reciter: reciters.first, moshaf: reciters.first.moshaf.first);
 
   @override
-  Future<void> saveLastSelection(ReciterModel reciter, MoshafModel moshaf) async {}
+  Future<void> saveLastSelection(
+    ReciterModel reciter,
+    MoshafModel moshaf,
+  ) async {}
 }
 
 ReciterModel _reciter(int id, String name) => ReciterModel.fromJson({
+  'id': id,
+  'name': name,
+  'moshaf': [
+    {
       'id': id,
-      'name': name,
-      'moshaf': [
-        {
-          'id': id,
-          'name': 'حفص عن عاصم - مرتل',
-          'server': 'https://server8.mp3quran.net/afs/',
-          'surah_list': '1,2,114',
-        }
-      ],
-    });
+      'name': 'حفص عن عاصم - مرتل',
+      'server': 'https://server8.mp3quran.net/afs/',
+      'surah_list': '1,2,114',
+    },
+  ],
+});
 
 void main() {
   group('MoshafModel', () {
@@ -44,9 +47,15 @@ void main() {
     test('playlist uses surah names and the reciter as artist', () {
       final reciter = _reciter(1, 'مشاري العفاسي');
       final playlist = reciter.moshaf.first.toPlaylist(reciter);
-      expect(playlist.map((audio) => audio.title),
-          [surahTitle(1), surahTitle(2), surahTitle(114)]);
-      expect(playlist.every((audio) => audio.subtitle == 'مشاري العفاسي'), isTrue);
+      expect(playlist.map((audio) => audio.title), [
+        surahTitle(1),
+        surahTitle(2),
+        surahTitle(114),
+      ]);
+      expect(
+        playlist.every((audio) => audio.subtitle == 'مشاري العفاسي'),
+        isTrue,
+      );
     });
 
     test('survives a json round trip (used for the saved selection)', () {
@@ -61,11 +70,13 @@ void main() {
     late RecitersCubit cubit;
 
     setUp(() async {
-      cubit = RecitersCubit(_FakeRecitationsRepo([
-        _reciter(1, 'عبدالباسط عبدالصمد'),
-        _reciter(2, 'أحمد العجمي'),
-        _reciter(3, 'ماهر المعيقلي'),
-      ]));
+      cubit = RecitersCubit(
+        _FakeRecitationsRepo([
+          _reciter(1, 'عبدالباسط عبدالصمد'),
+          _reciter(2, 'أحمد العجمي'),
+          _reciter(3, 'ماهر المعيقلي'),
+        ]),
+      );
       await cubit.getReciters();
     });
 
