@@ -235,13 +235,17 @@ class PrayerNotifications {
 
   static const List<int> reminderOptions = [0, 5, 10, 15, 30];
 
-  // iOS بيحتفظ بـ 64 إشعار بس، فلما التذكير شغال (إشعارين لكل صلاة) بنجدول أيام أقل
+  // iOS بيحتفظ بـ 64 إشعار بس، فلما التذكير شغال (إشعارين لكل صلاة) بنجدول أيام أقل.
+  // الجدولة بتتجدد مع كل فتحة للأبلكيشن، وعلى أندرويد كمان في الخلفية مرتين
+  // في اليوم (BackgroundTasks)، فالأذان مبيقفش لو المستخدم مفتحش الأبلكيشن.
+  // (30 يوم = 300 منبّه كانت بتعمل ANR: المكتبة بتعيد حفظ القايمة كلها مع كل إشعار)
   static int get _daysAhead => reminderMinutes > 0 ? 5 : 7;
   static const int _maxDaysAhead = 7;
 
-  // 100 + يوم * 10 + رقم الصلاة للأذان، و 200 + ... للتذكير
-  static int _idFor(int day, int prayer) => 100 + day * 10 + prayer;
-  static int _reminderIdFor(int day, int prayer) => 200 + day * 10 + prayer;
+  // 1000 + يوم * 10 + رقم الصلاة للأذان، و 2000 + ... للتذكير
+  // (الإشعارات بالأرقام القديمة 100 و 200 بتتمسح مع cancelAll عند فتح الأبلكيشن)
+  static int _idFor(int day, int prayer) => 1000 + day * 10 + prayer;
+  static int _reminderIdFor(int day, int prayer) => 2000 + day * 10 + prayer;
 
   /// المفتاح الرئيسي (زرار الكتم في كارت المواقيت)
   static bool get isEnabled => Prefs.getData(key: _enabledKey) ?? true;
@@ -282,6 +286,8 @@ class PrayerNotifications {
   }
 
   static Future<void> _schedule() async {
+    // إذن الـ exact alarm بيتقرا مرة واحدة لكل الجدولة بدل مرة لكل إشعار
+    NotificationHelper.refreshScheduleMode();
     await Future.wait([
       for (int day = 0; day < _maxDaysAhead; day++)
         for (int prayer = 0; prayer < 5; prayer++) ...[
@@ -317,7 +323,7 @@ class PrayerNotifications {
             id: _reminderIdFor(day, i),
             title: arabic ? 'اقترب موعد صلاة $name' : '$name is coming up',
             body: arabic
-                ? 'باقي ${_arabicMinutes(reminder)} على صلاة $name'
+                ? 'تبقّى ${_arabicMinutes(reminder)} على صلاة $name'
                 : '$reminder minutes left until $name prayer',
             time: time.subtract(Duration(minutes: reminder)),
           );

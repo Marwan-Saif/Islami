@@ -149,7 +149,20 @@ class NotificationHelper {
   static Future<bool> requestExactAlarms() async {
     if (kIsWeb) return true;
     await _androidPlugin?.requestExactAlarmsPermission();
+    refreshScheduleMode();
     return canScheduleExact();
+  }
+
+  /// false لو المستخدم رفض الإشعارات (أو قفلها من الإعدادات)، وساعتها
+  /// الأذان مش هيظهر خالص. على iOS بنفترض إنها متاحة
+  static Future<bool> notificationsEnabled() async {
+    if (kIsWeb) return true;
+    try {
+      return await _androidPlugin?.areNotificationsEnabled() ?? true;
+    } catch (e) {
+      log('could not read notification permission: $e');
+      return true;
+    }
   }
 
   /// الأذان والأذكار اللي اتجدولوا inexact قبل الإذن بيتجدولوا تاني في وقتهم بالظبط
@@ -158,8 +171,17 @@ class NotificationHelper {
     await PrayerNotifications.scheduleUpcoming();
   }
 
+  // نتيجة الإذن بتتحفظ طول جدولة واحدة (لحد 300 إشعار) بدل ما تتسأل لكل إشعار
+  static Future<AndroidScheduleMode>? _modeCache;
+
+  /// بيتنده في أول كل جدولة وبعد تغيير الإذن عشان يتقرا من جديد
+  static void refreshScheduleMode() => _modeCache = null;
+
   // لو إذن الـ exact alarm مش متاح بنجدول inexact بدل ما الجدولة تفشل
-  static Future<AndroidScheduleMode> _scheduleMode() async {
+  static Future<AndroidScheduleMode> _scheduleMode() =>
+      _modeCache ??= _readScheduleMode();
+
+  static Future<AndroidScheduleMode> _readScheduleMode() async {
     final canScheduleExact = await NotificationHelper.canScheduleExact();
     return canScheduleExact
         ? AndroidScheduleMode.exactAllowWhileIdle

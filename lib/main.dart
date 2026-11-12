@@ -10,6 +10,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:islami/constants.dart';
 import 'package:islami/core/helper_functions/app_router.dart';
 import 'package:islami/core/services/app_settings.dart';
+import 'package:islami/core/services/background_tasks.dart';
 import 'package:islami/core/services/get_it.dart';
 import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/services/shared_prefs.dart';
@@ -49,6 +50,7 @@ void main() async {
   ]);
   runApp(const MainApp());
   _scheduleNotifications();
+  BackgroundTasks.start();
 }
 
 Future<void> _openHiveBoxes() async {

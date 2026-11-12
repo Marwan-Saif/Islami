@@ -1727,6 +1727,41 @@ class S {
       args: [],
     );
   }
+
+  /// `Notifications are off, so the adhan and reminders won't appear`
+  String get notificationsOffMessage {
+    return Intl.message(
+      'Notifications are off, so the adhan and reminders won\'t appear',
+      name: 'notificationsOffMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications are off, so the adhan won't appear. Tap to open settings`
+  String get notificationsOffTile {
+    return Intl.message(
+      'Notifications are off, so the adhan won\'t appear. Tap to open settings',
+      name: 'notificationsOffTile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `tomorrow`
+  String get tomorrow {
+    return Intl.message('tomorrow', name: 'tomorrow', desc: '', args: []);
+  }
+
+  /// `Clear the tasbih history? This can't be undone.`
+  String get clearHistoryConfirm {
+    return Intl.message(
+      'Clear the tasbih history? This can\'t be undone.',
+      name: 'clearHistoryConfirm',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -201,5 +201,9 @@
   "themeLight": "Light",
   "themeSystem": "System",
   "saveToHistory": "Save and start over",
-  "appTagline": "Quran, prayer and azkar"
+  "appTagline": "Quran, prayer and azkar",
+  "notificationsOffMessage": "Notifications are off, so the adhan and reminders won't appear",
+  "notificationsOffTile": "Notifications are off, so the adhan won't appear. Tap to open settings",
+  "tomorrow": "tomorrow",
+  "clearHistoryConfirm": "Clear the tasbih history? This can't be undone."
 }

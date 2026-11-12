@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -31,6 +32,9 @@ class _SettingsViewState extends State<SettingsView> {
   AdhanSound? _previewing;
   // null لحد ما نعرف، والزرار بيظهر بس لو الإذن مقفول فعلاً
   bool? _exactAlarmsAllowed;
+  bool? _notificationsAllowed;
+  // لما المستخدم يرجع من إعدادات الموبايل بنقرا الأذونات تاني
+  late final AppLifecycleListener _lifecycle;
 
   static const Map<AdhanSound, String> _soundAssets = {
     AdhanSound.full: 'sound/azan.mp3',
@@ -44,9 +48,8 @@ class _SettingsViewState extends State<SettingsView> {
     _preview.onPlayerComplete.listen((_) {
       if (mounted) setState(() => _previewing = null);
     });
-    NotificationHelper.canScheduleExact().then((allowed) {
-      if (mounted) setState(() => _exactAlarmsAllowed = allowed);
-    });
+    _lifecycle = AppLifecycleListener(onResume: _readPermissions);
+    _readPermissions();
   }
 
   Future<void> _requestExactAlarms() async {
@@ -56,8 +59,19 @@ class _SettingsViewState extends State<SettingsView> {
     if (allowed) await NotificationHelper.rescheduleAfterExactAlarmGrant();
   }
 
+  Future<void> _readPermissions() async {
+    final exact = await NotificationHelper.canScheduleExact();
+    final notifications = await NotificationHelper.notificationsEnabled();
+    if (!mounted) return;
+    setState(() {
+      _exactAlarmsAllowed = exact;
+      _notificationsAllowed = notifications;
+    });
+  }
+
   @override
   void dispose() {
+    _lifecycle.dispose();
     _preview.dispose();
     super.dispose();
   }
@@ -358,7 +372,23 @@ class _SettingsViewState extends State<SettingsView> {
                   ),
                 ),
               ),
-              if (_exactAlarmsAllowed == false && PrayerNotifications.isEnabled)
+              // الإشعارات مقفولة: الأذان مش هيظهر خالص، فده أهم من إذن المنبّهات
+              if (_notificationsAllowed == false &&
+                  PrayerNotifications.isEnabled)
+                ListTile(
+                  onTap: Geolocator.openAppSettings,
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    Icons.notifications_off_rounded,
+                    color: AppColors.danger,
+                  ),
+                  title: Text(
+                    S.of(context).notificationsOffTile,
+                    style: TextStyle(color: AppColors.danger, fontSize: 14.sp),
+                  ),
+                )
+              else if (_exactAlarmsAllowed == false &&
+                  PrayerNotifications.isEnabled)
                 ListTile(
                   onTap: _requestExactAlarms,
                   contentPadding: EdgeInsets.zero,

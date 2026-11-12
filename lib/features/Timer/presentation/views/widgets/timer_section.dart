@@ -22,7 +22,11 @@ class PrayerTimer extends StatefulWidget {
 class _PrayerTimerState extends State<PrayerTimer> {
   // الأسماء والتواريخ بتتعمل format في build عشان تتغير مع لغة التطبيق
   DayPrayerTimes? _today;
+  // بعد العشاء الصلاة الجاية فجر بكرة، فبنحسب بكرة كمان عشان نعرض ميعاده الصح
+  DayPrayerTimes? _tomorrow;
   DateTime? _todayDate;
+  // كل حساب ليه رقم، والنتيجة بتتعرض بس لو مفيش حساب أحدث منها اتطلب
+  int _request = 0;
 
   // الكارت اللي في النص هو الصلاة الجاية، وبيتحرك لوحده لما وقتها ييجي
   final CarouselSliderController _carousel = CarouselSliderController();
@@ -99,13 +103,16 @@ class _PrayerTimerState extends State<PrayerTimer> {
 
   Future<void> _initializePrayerTimes() async {
     // جدولة الأذان بقت في main عشان تشتغل حتى لو الشاشة دي متفتحتش
+    final request = ++_request;
     final now = DateTime.now();
-    final days = await PrayerTimesService.forDays(now);
-    if (!mounted) return;
+    final days = await PrayerTimesService.forDays(now, days: 2);
+    // الموقع واليوم الجديد ممكن يطلبوا حساب في نفس الوقت، والأقدم ميكتبش فوق الأحدث
+    if (!mounted || request != _request) return;
     final today = days.first;
     final next = _nextIndex(today, now);
     setState(() {
       _today = today;
+      _tomorrow = days.length > 1 ? days[1] : null;
       _todayDate = now;
     });
     // أول مرة الكاروسيل بيتبني على الصلاة الجاية (initialPage)، وبعد كده
@@ -149,7 +156,7 @@ class _PrayerTimerState extends State<PrayerTimer> {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('hh:mm').format(date);
+    return _format('hh:mm', null, date);
   }
 
   @override
@@ -161,18 +168,27 @@ class _PrayerTimerState extends State<PrayerTimer> {
 
     final language = Localizations.localeOf(context).languageCode;
     final now = DateTime.now();
-    final currentDay = DateFormat('EEEE', language).format(now);
+    final currentDay = _format('EEEE', language, now);
+    // بعد العشاء الصلاة الجاية فجر بكرة: كارت الفجر والسطر اللي تحت بيعرضوا
+    // ميعاد بكرة (كانوا بيعرضوا فجر النهارده اللي عدّى)
+    final tomorrow = _tomorrow;
+    final afterIsha = today.nextIndex(now) == null && tomorrow != null;
+    DateTime wallTime(int i) =>
+        afterIsha && i == 0 ? tomorrow.wallTime(0) : today.wallTime(i);
     final prayerTimesList = [
       for (int i = 0; i < DayPrayerTimes.names.length; i++)
         (
           _prayerName(DayPrayerTimes.names[i]),
-          _formatDate(today.wallTime(i)),
-          DateFormat('a', language).format(today.wallTime(i)),
+          _formatDate(wallTime(i)),
+          _format('a', language, wallTime(i)),
         ),
     ];
     final nextIndex = _nextIndex(today, now);
     final next = DayPrayerTimes.names[nextIndex];
-    final nextTime = today.wallTime(nextIndex);
+    final nextTime = wallTime(nextIndex);
+    final nextName = afterIsha
+        ? '${_prayerName(next)} ${S.of(context).tomorrow}'
+        : _prayerName(next);
     final city = PrayerTimesService.manualCity;
     final adhanEnabled = PrayerNotifications.isEnabled;
     return Container(
@@ -267,8 +283,8 @@ class _PrayerTimerState extends State<PrayerTimer> {
                       S
                           .of(context)
                           .nextPrayer(
-                            _prayerName(next),
-                            DateFormat('hh:mm a', language).format(nextTime),
+                            nextName,
+                            _format('hh:mm a', language, nextTime),
                           ),
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -298,23 +314,21 @@ class _PrayerTimerState extends State<PrayerTimer> {
   }
 
   String _gregorianDate(DateTime now, String language) =>
-      '${DateFormat('d MMMM', language).format(now)}\n'
-      '${DateFormat('y', language).format(now)}';
+      '${_format('d MMMM', language, now)}\n'
+      '${_format('y', language, now)}';
 
-  // تقويم أم القرى، وبيتكتب بأرقام عربية لو اللغة عربي زي باقي الكارت
+  // تقويم أم القرى، بنفس الأرقام اللي في باقي التطبيق
   String _hijriDate(DateTime now, String language) {
     HijriCalendar.setLocal(language);
     final hijri = HijriCalendar.fromDate(now);
-    final text =
-        '${hijri.hDay} ${hijri.longMonthName}\n'
+    return '${hijri.hDay} ${hijri.longMonthName}\n'
         '${hijri.hYear} ${language == 'ar' ? 'هـ' : 'AH'}';
-    return language == 'ar' ? _arabicDigits(text) : text;
   }
 
-  static String _arabicDigits(String text) => text.replaceAllMapped(
-    RegExp('[0-9]'),
-    (m) => String.fromCharCode(0x0660 + int.parse(m[0]!)),
-  );
+  /// الأرقام إنجليزي في كل الواجهة: DateFormat بالعربي بيطلّع أرقام عربية
+  /// لوحده، فكان الكارت ده بس بأرقام مختلفة عن باقي التطبيق
+  static String _format(String pattern, String? language, DateTime date) =>
+      (DateFormat(pattern, language)..useNativeDigits = false).format(date);
 }
 
 class _DateText extends StatelessWidget {

@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:islami/core/services/local_scheduled_notification.dart';
 import 'package:islami/core/services/shared_prefs.dart';
@@ -44,8 +45,28 @@ class _DefaultScreenState extends State<DefaultScreen> {
 
   static const String _exactAlarmAskedKey = 'exact_alarm_asked';
 
+  // الرسالة بتظهر مرة واحدة في كل تشغيل (الرئيسية بتتبني تاني مع تغيير الثيم)
+  static bool _notificationsWarningShown = false;
+
   Future<void> _requestPermissions() async {
     await NotificationHelper.requestPermissions();
+    // لو المستخدم رفض الإشعارات الأذان مش هيظهر خالص، فبنقوله ونوديه للإعدادات
+    if (PrayerNotifications.isEnabled &&
+        !await NotificationHelper.notificationsEnabled()) {
+      if (!mounted || _notificationsWarningShown) return;
+      _notificationsWarningShown = true;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context).notificationsOffMessage),
+          duration: const Duration(seconds: 8),
+          action: SnackBarAction(
+            label: S.of(context).openSettings,
+            onPressed: Geolocator.openAppSettings,
+          ),
+        ),
+      );
+      return;
+    }
     // بعد إذن الإشعارات، بنشرح مرة واحدة ليه محتاجين إذن المنبّهات
     // (والإعدادات فيها زرار للإذن لو المستخدم قال مش دلوقتي)
     if (!PrayerNotifications.isEnabled ||
