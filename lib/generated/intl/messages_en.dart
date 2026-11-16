@@ -174,6 +174,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
     "completedKhatmas": m4,
+    "contactUs": MessageLookupByLibrary.simpleMessage("Contact us"),
     "continueReading": MessageLookupByLibrary.simpleMessage("Continue"),
     "copy": MessageLookupByLibrary.simpleMessage("Copy"),
     "copyAyah": MessageLookupByLibrary.simpleMessage("Copy ayah"),
@@ -184,9 +185,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "defaultCity": m5,
     "defaultCityName": MessageLookupByLibrary.simpleMessage("Menofia"),
     "deleteBookmark": MessageLookupByLibrary.simpleMessage("Remove bookmark"),
+    "developedBy": MessageLookupByLibrary.simpleMessage(
+      "Developed by Marwan Saif",
+    ),
     "dhuhr": MessageLookupByLibrary.simpleMessage("Dhuhr"),
     "disableAdhan": MessageLookupByLibrary.simpleMessage("Turn off adhan"),
     "editGoal": MessageLookupByLibrary.simpleMessage("Edit goal"),
+    "emailCopied": MessageLookupByLibrary.simpleMessage("Email address copied"),
     "enableAdhan": MessageLookupByLibrary.simpleMessage("Turn on adhan"),
     "enableLocationForTimes": MessageLookupByLibrary.simpleMessage(
       "Turn on location and allow access to update the prayer times",

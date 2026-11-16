@@ -166,6 +166,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
     "completedKhatmas": m4,
+    "contactUs": MessageLookupByLibrary.simpleMessage("تواصل معنا"),
     "continueReading": MessageLookupByLibrary.simpleMessage("أكمل"),
     "copy": MessageLookupByLibrary.simpleMessage("نسخ"),
     "copyAyah": MessageLookupByLibrary.simpleMessage("نسخ الآية"),
@@ -176,9 +177,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "defaultCity": m5,
     "defaultCityName": MessageLookupByLibrary.simpleMessage("المنوفية"),
     "deleteBookmark": MessageLookupByLibrary.simpleMessage("حذف العلامة"),
+    "developedBy": MessageLookupByLibrary.simpleMessage("تطوير مروان سيف"),
     "dhuhr": MessageLookupByLibrary.simpleMessage("الظهر"),
     "disableAdhan": MessageLookupByLibrary.simpleMessage("إيقاف الأذان"),
     "editGoal": MessageLookupByLibrary.simpleMessage("تعديل الهدف"),
+    "emailCopied": MessageLookupByLibrary.simpleMessage(
+      "تم نسخ عنوان البريد الإلكتروني",
+    ),
     "enableAdhan": MessageLookupByLibrary.simpleMessage("تفعيل الأذان"),
     "enableLocationForTimes": MessageLookupByLibrary.simpleMessage(
       "فعّل الموقع واسمح للتطبيق بالوصول إليه لتحديث المواقيت",

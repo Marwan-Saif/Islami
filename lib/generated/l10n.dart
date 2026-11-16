@@ -1762,6 +1762,31 @@ class S {
       args: [],
     );
   }
+
+  /// `Developed by Marwan Saif`
+  String get developedBy {
+    return Intl.message(
+      'Developed by Marwan Saif',
+      name: 'developedBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email address copied`
+  String get emailCopied {
+    return Intl.message(
+      'Email address copied',
+      name: 'emailCopied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact us`
+  String get contactUs {
+    return Intl.message('Contact us', name: 'contactUs', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

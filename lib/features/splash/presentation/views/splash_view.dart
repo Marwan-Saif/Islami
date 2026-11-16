@@ -73,11 +73,11 @@ class SplashBody extends StatelessWidget {
               ),
               const Spacer(flex: 4),
               Text(
-                'Marwan Saif',
+                S.of(context).developedBy,
                 style: TextStyle(
-                  color: AppColors.textFaint,
-                  fontSize: 13,
-                  letterSpacing: 1,
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 20),

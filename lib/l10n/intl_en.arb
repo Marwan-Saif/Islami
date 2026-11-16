@@ -205,5 +205,8 @@
   "notificationsOffMessage": "Notifications are off, so the adhan and reminders won't appear",
   "notificationsOffTile": "Notifications are off, so the adhan won't appear. Tap to open settings",
   "tomorrow": "tomorrow",
-  "clearHistoryConfirm": "Clear the tasbih history? This can't be undone."
+  "clearHistoryConfirm": "Clear the tasbih history? This can't be undone.",
+  "developedBy": "Developed by Marwan Saif",
+  "emailCopied": "Email address copied",
+  "contactUs": "Contact us"
 }
