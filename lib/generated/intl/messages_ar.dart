@@ -237,6 +237,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "listen": MessageLookupByLibrary.simpleMessage("استماع"),
     "listenToAyah": MessageLookupByLibrary.simpleMessage("استماع للآية"),
     "liveBroadcast": MessageLookupByLibrary.simpleMessage("بث مباشر"),
+    "locatingYou": MessageLookupByLibrary.simpleMessage("جارٍ تحديد موقعك…"),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "locationDeniedForever": MessageLookupByLibrary.simpleMessage(
       "إذن الموقع مرفوض، فعّله من إعدادات التطبيق",
@@ -333,6 +334,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "readPagesOf": m18,
     "reading": MessageLookupByLibrary.simpleMessage("القراءة"),
     "readingTracker": MessageLookupByLibrary.simpleMessage("متابعة التلاوة"),
+    "recalculateTimes": MessageLookupByLibrary.simpleMessage(
+      "إعادة ضبط المواقيت حسب موقعي",
+    ),
+    "recalculateTimesHint": MessageLookupByLibrary.simpleMessage(
+      "استخدمه إذا كانت المواقيت غير دقيقة",
+    ),
     "recitations": MessageLookupByLibrary.simpleMessage("التلاوات"),
     "reciterLabel": m19,
     "recitersLoadError": MessageLookupByLibrary.simpleMessage(

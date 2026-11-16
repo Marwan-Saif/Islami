@@ -1787,6 +1787,36 @@ class S {
   String get contactUs {
     return Intl.message('Contact us', name: 'contactUs', desc: '', args: []);
   }
+
+  /// `Use this if the prayer times look wrong`
+  String get recalculateTimesHint {
+    return Intl.message(
+      'Use this if the prayer times look wrong',
+      name: 'recalculateTimesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset times to my location`
+  String get recalculateTimes {
+    return Intl.message(
+      'Reset times to my location',
+      name: 'recalculateTimes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finding your location…`
+  String get locatingYou {
+    return Intl.message(
+      'Finding your location…',
+      name: 'locatingYou',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -208,5 +208,8 @@
   "clearHistoryConfirm": "هل تريد مسح سجل التسبيح؟ لا يمكن التراجع عن ذلك.",
   "developedBy": "تطوير مروان سيف",
   "emailCopied": "تم نسخ عنوان البريد الإلكتروني",
-  "contactUs": "تواصل معنا"
+  "contactUs": "تواصل معنا",
+  "recalculateTimesHint": "استخدمه إذا كانت المواقيت غير دقيقة",
+  "recalculateTimes": "إعادة ضبط المواقيت حسب موقعي",
+  "locatingYou": "جارٍ تحديد موقعك…"
 }
