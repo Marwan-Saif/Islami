@@ -218,6 +218,31 @@ class _SettingsViewState extends State<SettingsView> {
     }
   }
 
+  /// لو المواقيت مش مظبوطة: بنجيب الموقع الحالي من الـ GPS (وبنلغي المدينة
+  /// اليدوي)، وبنعيد حساب المواقيت وجدولة الأذان مهما كانت المسافة
+  Future<void> _recalculateTimes() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final s = S.of(context);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(s.locatingYou),
+        duration: const Duration(seconds: 15),
+      ),
+    );
+    final updated = await PrayerTimesService.updateLocation(request: true);
+    if (updated) await PrayerNotifications.scheduleUpcoming();
+    messenger.hideCurrentSnackBar();
+    if (!mounted) return;
+    setState(() {});
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          updated ? s.timesUpdatedForLocation : s.enableLocationHint,
+        ),
+      ),
+    );
+  }
+
   Future<void> _pickReciter() async {
     final current = selectedAyahReciter;
     final picked = await _pickFromSheet<AyahReciter>(
@@ -332,6 +357,12 @@ class _SettingsViewState extends State<SettingsView> {
                 title: S.of(context).location,
                 value: _locationLabel,
                 onTap: _pickLocation,
+              ),
+              SettingsTile(
+                title: S.of(context).recalculateTimes,
+                value: S.of(context).recalculateTimesHint,
+                icon: Icons.my_location_rounded,
+                onTap: _recalculateTimes,
               ),
               Padding(
                 padding: EdgeInsets.only(top: 8.h),

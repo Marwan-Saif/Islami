@@ -208,5 +208,8 @@
   "clearHistoryConfirm": "Clear the tasbih history? This can't be undone.",
   "developedBy": "Developed by Marwan Saif",
   "emailCopied": "Email address copied",
-  "contactUs": "Contact us"
+  "contactUs": "Contact us",
+  "recalculateTimesHint": "Use this if the prayer times look wrong",
+  "recalculateTimes": "Reset times to my location",
+  "locatingYou": "Finding your location…"
 }

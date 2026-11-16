@@ -245,6 +245,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "listen": MessageLookupByLibrary.simpleMessage("Listen"),
     "listenToAyah": MessageLookupByLibrary.simpleMessage("Listen to the ayah"),
     "liveBroadcast": MessageLookupByLibrary.simpleMessage("Live"),
+    "locatingYou": MessageLookupByLibrary.simpleMessage(
+      "Finding your location…",
+    ),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
     "locationDeniedForever": MessageLookupByLibrary.simpleMessage(
       "Location permission is denied, enable it from the app settings",
@@ -349,6 +352,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "readPagesOf": m18,
     "reading": MessageLookupByLibrary.simpleMessage("Reading"),
     "readingTracker": MessageLookupByLibrary.simpleMessage("Reading tracker"),
+    "recalculateTimes": MessageLookupByLibrary.simpleMessage(
+      "Reset times to my location",
+    ),
+    "recalculateTimesHint": MessageLookupByLibrary.simpleMessage(
+      "Use this if the prayer times look wrong",
+    ),
     "recitations": MessageLookupByLibrary.simpleMessage("Recitations"),
     "reciterLabel": m19,
     "recitersLoadError": MessageLookupByLibrary.simpleMessage(
