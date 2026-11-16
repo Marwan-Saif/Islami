@@ -43,6 +43,9 @@ abstract class BackgroundTasks {
         _rescheduleAdhan,
         _rescheduleAdhan,
         frequency: const Duration(hours: 12),
+        // من غيرها أول تشغيل بيحصل وقت التسجيل نفسه، يعني مع فتح الأبلكيشن
+        // وفي نفس وقت الجدولة اللي في main، فالـ thread الرئيسي كان بيتقل
+        initialDelay: const Duration(hours: 6),
         // لو المهمة متسجلة من فتحة قبل كده بتفضل زي ما هي
         existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
       );

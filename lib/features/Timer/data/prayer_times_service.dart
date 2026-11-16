@@ -79,6 +79,20 @@ class PrayerTimesService {
   static bool get usesDeviceLocation =>
       manualCity == null && Prefs.getData(key: _latitudeKey) != null;
 
+  /// إحداثيات الـ GPS المتخزنة (من غير المدينة اليدوي)، للمقارنة بعد التحديث
+  static (double, double)? get storedDeviceLocation {
+    final double? latitude = Prefs.getData(key: _latitudeKey);
+    final double? longitude = Prefs.getData(key: _longitudeKey);
+    if (latitude == null || longitude == null) return null;
+    return (latitude, longitude);
+  }
+
+  /// الإحداثيات اللي المواقيت بتتحسب بيها (GPS أو المدينة اليدوي أو الافتراضي)
+  static (double, double) get currentCoordinates {
+    final coordinates = _coordinates;
+    return (coordinates.latitude, coordinates.longitude);
+  }
+
   static Coordinates get _coordinates {
     final city = manualCity;
     if (city != null) return Coordinates(city.latitude, city.longitude);
