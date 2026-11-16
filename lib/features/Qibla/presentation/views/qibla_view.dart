@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islami/core/utils/app_colors.dart';
 import 'dart:math' as math;
+import 'package:islami/features/Qibla/data/magnetic_declination.dart';
 import 'package:islami/generated/l10n.dart';
 
 // import 'package:flutter_qibla/flutter_qibla.dart'; // باكدج القبلة
@@ -36,6 +37,16 @@ class _QiblaScreenState extends State<QiblaScreen>
 
   // من غير إذن الموقع الـ stream بيرجع error والبوصلة كانت بتتعرض على زاوية 0
   _QiblaStatus _status = _QiblaStatus.checking;
+
+  // بيتضاف على قراية البوصلة عشان تبقى من الشمال الجغرافي زي اتجاه القبلة
+  double _declination = 0;
+
+  Future<void> _loadDeclination() async {
+    final declination = await MagneticDeclination.forCurrentLocation();
+    if (mounted && declination != _declination) {
+      setState(() => _declination = declination);
+    }
+  }
 
   @override
   void initState() {
@@ -95,6 +106,7 @@ class _QiblaScreenState extends State<QiblaScreen>
     // الـ stream بتاع المكتبة singleton، فلو كان خلص بـ error لازم يتعمل من جديد
     if (status == _QiblaStatus.ready && _status != _QiblaStatus.ready) {
       FlutterQiblah().dispose();
+      _loadDeclination();
     }
     setState(() => _status = status);
   }
@@ -186,11 +198,13 @@ class _QiblaScreenState extends State<QiblaScreen>
               // الباكدج بترجع qiblah = heading - offset، فالإبرة (بالنسبة لأعلى
               // الموبايل) لازم تلف بالسالب زي مثال flutter_qiblah. قبل كده كانت
               // بتلف بالموجب فكانت معكوسة وبتلف مع الموبايل بدل ما تثبت على القبلة
+              // والانحراف المغناطيسي بيتضاف عشان قراية البوصلة تبقى من الشمال
+              // الجغرافي زي اتجاه القبلة (من غيره كان فيه انحراف 4-5 درجات في مصر)
               final double qiblaAngle =
-                  -snapshot.data!.qiblah * (math.pi / 180);
+                  -(snapshot.data!.qiblah + _declination) * (math.pi / 180);
               // حلقة الاتجاهات بتلف عكس اتجاه الموبايل عشان الشمال يفضل شمال
               final double dialAngle =
-                  -snapshot.data!.direction * (math.pi / 180);
+                  -(snapshot.data!.direction + _declination) * (math.pi / 180);
               final arabic = AppSettings.instance.isArabic;
 
               return Center(
