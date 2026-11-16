@@ -93,5 +93,10 @@ Retrieved 2025-12-04, License - CC BY-SA 4.0
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
         </intent>
+        <!-- url_launcher: "تواصل معنا" بيفتح برنامج الإيميل -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
     </queries>
 </manifest>

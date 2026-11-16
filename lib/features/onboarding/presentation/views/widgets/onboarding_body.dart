@@ -162,6 +162,15 @@ class _OnboardingVisual extends StatelessWidget {
             children: [
               AtharLogo(size: side * 0.75),
               BrandName(fontSize: side * 0.2),
+              // اسم المطوّر تحت اسم التطبيق في أول صفحة
+              Text(
+                S.of(context).developedBy,
+                style: TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           );
         }
