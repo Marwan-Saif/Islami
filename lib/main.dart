@@ -94,20 +94,13 @@ Future<void> _scheduleNotifications() async {
     // الأذان بيتجدول على طول بآخر موقع متخزن، عشان لو الأبلكيشن اتقفل وهو
     // مستني الـ GPS (لحد 15 ثانية) ميفضلش من غير أذان
     await PrayerNotifications.scheduleUpcoming();
-    // ولو المكان اتغير فعلاً (أكتر من ~2 كم) بيتجدول تاني بيه. قبل كده كان
-    // بيتجدول تاني مع كل فتحة حتى لو المكان هو هو، فالجدولة كانت بتحصل مرتين
-    // (حوالي 280 عملية على الـ thread الرئيسي) وده كان بيعمل ANR مع فتح الأبلكيشن
-    final before = PrayerTimesService.storedDeviceLocation;
-    if (await PrayerTimesService.updateLocation()) {
-      final after = PrayerTimesService.storedDeviceLocation;
-      final moved =
-          before == null ||
-          after == null ||
-          (before.$1 - after.$1).abs() > 0.02 ||
-          (before.$2 - after.$2).abs() > 0.02;
-      if (moved && PrayerTimesService.manualCity == null) {
-        await PrayerNotifications.scheduleUpcoming();
-      }
+    // ولو المستخدم بعد أكتر من 20 كم عن المكان اللي الأذان اتجدول بيه
+    // بيتجدول تاني بالمكان الجديد (الفرق أقل من كده دقيقة في المواقيت على الأكتر).
+    // قبل كده كان بيتجدول تاني مع كل فتحة، والجدولة المزدوجة كانت بتعمل ANR
+    if (await PrayerTimesService.updateLocation() &&
+        PrayerTimesService.manualCity == null &&
+        PrayerNotifications.movedSinceLastSchedule()) {
+      await PrayerNotifications.scheduleUpcoming();
     }
   } catch (e) {
     log('failed to schedule notifications: $e');

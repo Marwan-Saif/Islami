@@ -79,14 +79,6 @@ class PrayerTimesService {
   static bool get usesDeviceLocation =>
       manualCity == null && Prefs.getData(key: _latitudeKey) != null;
 
-  /// إحداثيات الـ GPS المتخزنة (من غير المدينة اليدوي)، للمقارنة بعد التحديث
-  static (double, double)? get storedDeviceLocation {
-    final double? latitude = Prefs.getData(key: _latitudeKey);
-    final double? longitude = Prefs.getData(key: _longitudeKey);
-    if (latitude == null || longitude == null) return null;
-    return (latitude, longitude);
-  }
-
   /// الإحداثيات اللي المواقيت بتتحسب بيها (GPS أو المدينة اليدوي أو الافتراضي)
   static (double, double) get currentCoordinates {
     final coordinates = _coordinates;
@@ -299,9 +291,39 @@ class PrayerNotifications {
     return _queue;
   }
 
+  // المكان اللي الأذان اتجدول بيه آخر مرة
+  static const String _scheduledLatitudeKey = 'adhan_scheduled_latitude';
+  static const String _scheduledLongitudeKey = 'adhan_scheduled_longitude';
+
+  /// الأذان بيتجدول تاني مع تغيير مكان الـ GPS لو المسافة أكبر من كده بس.
+  /// المواقيت بتتغير حوالي دقيقة كل ~25 كم، فإعادة الجدولة مع كل تحرك
+  /// صغير (كانت ~2 كم) ملهاش لازمة وبتتقّل فتح الأبلكيشن
+  static const double rescheduleDistanceMeters = 20000;
+
+  /// true لو المكان الحالي بعيد عن المكان اللي الأذان اتجدول بيه بأكتر من
+  /// [rescheduleDistanceMeters]. المقارنة بآخر جدولة مش بآخر فتحة، عشان
+  /// التحرك القليل كل يوم يتجمع ويعيد الجدولة لما يوصل للمسافة دي
+  static bool movedSinceLastSchedule() {
+    final double? latitude = Prefs.getData(key: _scheduledLatitudeKey);
+    final double? longitude = Prefs.getData(key: _scheduledLongitudeKey);
+    if (latitude == null || longitude == null) return true;
+    final (currentLatitude, currentLongitude) =
+        PrayerTimesService.currentCoordinates;
+    return Geolocator.distanceBetween(
+          latitude,
+          longitude,
+          currentLatitude,
+          currentLongitude,
+        ) >
+        rescheduleDistanceMeters;
+  }
+
   static Future<void> _schedule() async {
     // إذن الـ exact alarm بيتقرا مرة واحدة لكل الجدولة بدل مرة لكل إشعار
     NotificationHelper.refreshScheduleMode();
+    final (latitude, longitude) = PrayerTimesService.currentCoordinates;
+    await Prefs.saveData(key: _scheduledLatitudeKey, value: latitude);
+    await Prefs.saveData(key: _scheduledLongitudeKey, value: longitude);
     await Future.wait([
       for (int day = 0; day < _maxDaysAhead; day++)
         for (int prayer = 0; prayer < 5; prayer++) ...[
